@@ -208,7 +208,7 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
 
 <!-- HEADER -->
 <header>
-  <div class="logo">☀ SOLENVER <span>· Generador d'Estudis Fotovoltaics</span></div>
+  <div class="logo">☀ SOLENVER <span>· Generador d'Estudis FV</span></div>
   <div class="api-status" id="apiStatus">
     <span class="status-chip"><span class="dot no" id="dotMaps"></span>Maps</span>
     <span class="status-chip"><span class="dot no" id="dotIA"></span>IA</span>
@@ -670,7 +670,8 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
 
 <script>
 // ─── CONSTANTS ─────────────────────────────────────────────────────────────
-const API = 'http://localhost:5000/api';
+const N8N = 'https://geri.app.n8n.cloud/webhook';
+const API = N8N; // tots els endpoints apunten a n8n
 const MESOS = ['Gener','Febrer','Març','Abril','Maig','Juny',
                'Juliol','Agost','Setembre','Octubre','Novembre','Desembre'];
 
@@ -699,35 +700,60 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function checkHealth() {
   try {
-    const r = await fetch(`${API}/health`);
+    // Verifica connexió amb n8n
+    const r = await fetch(`${N8N}/solenver/cataleg`);
     const d = await r.json();
-    const integ = d.integracions || {};
-    document.getElementById('dotMaps').className = 'dot ' + (integ.google_maps?.includes('actiu') && !integ.google_maps.includes('sense') ? 'ok':'no');
-    document.getElementById('dotIA').className = 'dot ' + (integ.agent_ia?.includes('actiu') ? 'ok':'no');
-    if (!integ.agent_ia?.includes('actiu')) {
-      document.getElementById('iaNoKey').style.display = 'block';
-    }
-  } catch(e) {}
+    const ok = d.success === true;
+    document.getElementById('dotMaps').className = 'dot ' + (ok ? 'ok' : 'no');
+    document.getElementById('dotIA').className = 'dot no'; // s'activa quan hi hagi workflow IA
+  } catch(e) {
+    document.getElementById('dotMaps').className = 'dot no';
+  }
 }
 
 async function loadCataleg() {
   try {
-    const [modR, invR, muntR] = await Promise.all([
-      fetch(`${API}/cataleg/moduls`).then(r=>r.json()),
-      fetch(`${API}/cataleg/inversors`).then(r=>r.json()),
-      fetch(`${API}/cataleg/muntatges`).then(r=>r.json()),
-    ]);
-    state.cataleg.moduls = modR.moduls || [];
-    state.cataleg.mono = invR.mono || [];
-    state.cataleg.trifasic = invR.trifasic || [];
-    state.cataleg.muntatges = muntR.muntatges || [];
+    const r = await fetch(`${N8N}/solenver/cataleg`);
+    const d = await r.json();
+    if (!d.success) throw new Error('Error catàleg');
+
+    state.cataleg.moduls    = d.moduls    || [];
+    state.cataleg.mono      = (d.inversors||[]).filter(i => i.trifasic===false || i.trifasic==='FALSE');
+    state.cataleg.trifasic  = (d.inversors||[]).filter(i => i.trifasic===true  || i.trifasic==='TRUE');
+    state.cataleg.muntatges = d.muntatges || [];
+    state.cataleg.comercials= d.comercials|| [];
+
     renderModulGrid();
     renderInversorGrid('mono');
     renderMuntatgeGrid();
+    renderComercialsSelect();
+    console.log('✅ Catàleg carregat des de Google Sheets via n8n');
   } catch(e) {
-    // Fallback si el servidor no está actiu
-    state.cataleg.moduls = [{id:'jinko_510',model:'Tiger Neo 510Wp',potencia_wp:510,preu:66.30}];
+    console.warn('⚠ Error carregant catàleg n8n:', e);
+    // Fallback hardcoded mentre no hi ha connexió
+    state.cataleg.moduls = [
+      {id:'jinko_510',model:'Tiger Neo 510Wp',potencia_wp:510,preu:66.30,eficiencia:21.3},
+      {id:'jinko_540',model:'Tiger Neo 540Wp',potencia_wp:540,preu:70.20,eficiencia:22.0},
+      {id:'jinko_550',model:'Tiger Neo 550Wp',potencia_wp:550,preu:71.50,eficiencia:22.3},
+    ];
+    state.cataleg.mono = [
+      {id:'hw_6ktl_l',model:'SUN2000-6KTL-L1',potencia_kw:6,preu:793,trifasic:false},
+    ];
+    state.cataleg.muntatges = [
+      {id:'coplanar_teula',nom:'Coplanar sobre teula',preu:612},
+    ];
+    renderModulGrid();
+    renderInversorGrid('mono');
+    renderMuntatgeGrid();
   }
+}
+
+function renderComercialsSelect() {
+  const sel = document.getElementById('comercial_id');
+  if (!sel || !state.cataleg.comercials?.length) return;
+  sel.innerHTML = state.cataleg.comercials.map(c =>
+    `<option value="${c.id}">${c.nom}</option>`
+  ).join('');
 }
 
 // ─── STEP NAVIGATION ────────────────────────────────────────────────────────
@@ -899,7 +925,7 @@ async function uploadCupsFile(file) {
   status.innerHTML = '⏳ Processant fitxer CUPS...';
   try {
     const fd = new FormData(); fd.append('file', file);
-    const r = await fetch(`${API}/processar-cups`, {method:'POST', body:fd});
+    const r = await fetch(`${N8N}/solenver/processar-cups`, {method:'POST', body:fd});
     const d = await r.json();
     if(d.success) {
       const cons = d.consumos;
@@ -944,7 +970,7 @@ function onFormChange() {
 async function fetchKpis() {
   try {
     const payload = buildPayload(true);
-    const r = await fetch(`${API}/calcular-kpis`, {
+    const r = await fetch(`${N8N}/solenver/calcular-kpis`, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify(payload)
     });
@@ -967,7 +993,7 @@ function updateKpiDisplay(k) {
 // ─── PRESSUPOST AUTO ─────────────────────────────────────────────────────────
 async function calcPressupost() {
   try {
-    const r = await fetch(`${API}/calcular-pressupost`, {
+    const r = await fetch(`${N8N}/solenver/calcular-pressupost`, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ instalacio: {
         modul_id: state.selectedModul,
@@ -1066,7 +1092,7 @@ async function previewPDF() {
   try {
     const payload = buildPayload();
     payload.meta.preview_only = true;
-    const r = await fetch(`${API}/generar-pdf`, {
+    const r = await fetch(`${N8N}/solenver/generar-pdf`, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify(payload)
     });
@@ -1085,7 +1111,7 @@ async function generarEnviar() {
   try {
     const payload = buildPayload();
     payload.meta.preview_only = false;
-    const r = await fetch(`${API}/generar-pdf`, {
+    const r = await fetch(`${N8N}/solenver/generar-pdf`, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify(payload)
     });
