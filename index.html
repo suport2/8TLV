@@ -671,7 +671,7 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
 <script>
 // ─── CONSTANTS ─────────────────────────────────────────────────────────────
 const N8N = 'https://geri.app.n8n.cloud/webhook';
-const API = N8N; // tots els endpoints apunten a n8n
+const API = N8N;
 const MESOS = ['Gener','Febrer','Març','Abril','Maig','Juny',
                'Juliol','Agost','Setembre','Octubre','Novembre','Desembre'];
 
@@ -716,35 +716,17 @@ async function loadCataleg() {
     const r = await fetch(`${N8N}/solenver/cataleg`);
     const d = await r.json();
     if (!d.success) throw new Error('Error catàleg');
-
     state.cataleg.moduls    = d.moduls    || [];
     state.cataleg.mono      = (d.inversors||[]).filter(i => i.trifasic===false || i.trifasic==='FALSE');
     state.cataleg.trifasic  = (d.inversors||[]).filter(i => i.trifasic===true  || i.trifasic==='TRUE');
     state.cataleg.muntatges = d.muntatges || [];
     state.cataleg.comercials= d.comercials|| [];
-
     renderModulGrid();
     renderInversorGrid('mono');
     renderMuntatgeGrid();
-    renderComercialsSelect();
-    console.log('✅ Catàleg carregat des de Google Sheets via n8n');
+    console.log('Catàleg carregat des de Google Sheets via n8n');
   } catch(e) {
-    console.warn('⚠ Error carregant catàleg n8n:', e);
-    // Fallback hardcoded mentre no hi ha connexió
-    state.cataleg.moduls = [
-      {id:'jinko_510',model:'Tiger Neo 510Wp',potencia_wp:510,preu:66.30,eficiencia:21.3},
-      {id:'jinko_540',model:'Tiger Neo 540Wp',potencia_wp:540,preu:70.20,eficiencia:22.0},
-      {id:'jinko_550',model:'Tiger Neo 550Wp',potencia_wp:550,preu:71.50,eficiencia:22.3},
-    ];
-    state.cataleg.mono = [
-      {id:'hw_6ktl_l',model:'SUN2000-6KTL-L1',potencia_kw:6,preu:793,trifasic:false},
-    ];
-    state.cataleg.muntatges = [
-      {id:'coplanar_teula',nom:'Coplanar sobre teula',preu:612},
-    ];
-    renderModulGrid();
-    renderInversorGrid('mono');
-    renderMuntatgeGrid();
+    console.warn('Error catàleg:', e);
   }
 }
 
