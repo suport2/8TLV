@@ -274,6 +274,18 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
             <label>CUPS <span style="font-weight:400;text-transform:none">(Codi Universal Punt Subministrament)</span></label>
             <input type="text" id="client_cups" placeholder="ES0031405912188001JJ" oninput="onFormChange()">
           </div>
+          <div class="form-group">
+            <label>Perfil de consum <span style="font-weight:400;color:var(--gm)">· determina la distribució horària del consum</span></label>
+            <select id="perfil_client" onchange="onFormChange()">
+              <option value="industria_general">🏭 Indústria general</option>
+              <option value="logistica_magatzem">📦 Logística / Magatzem</option>
+              <option value="granja_porcina">🐷 Granja porcina</option>
+              <option value="granja_avicola">🐔 Granja avícola</option>
+              <option value="comercial_oficines">🏢 Comerç / Oficines</option>
+              <option value="domestica_residencial">🏠 Domèstica / Residencial</option>
+              <option value="agricola_reg">🌱 Agrícola / Reg</option>
+            </select>
+          </div>
         </div>
         <div class="nav-buttons">
           <div></div>
@@ -671,7 +683,7 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
 <script>
 // ─── CONSTANTS ─────────────────────────────────────────────────────────────
 const N8N = 'https://geri.app.n8n.cloud/webhook';
-const API = N8N;
+const API = N8N; // tots els endpoints apunten a n8n
 const MESOS = ['Gener','Febrer','Març','Abril','Maig','Juny',
                'Juliol','Agost','Setembre','Octubre','Novembre','Desembre'];
 
@@ -716,17 +728,35 @@ async function loadCataleg() {
     const r = await fetch(`${N8N}/solenver/cataleg`);
     const d = await r.json();
     if (!d.success) throw new Error('Error catàleg');
+
     state.cataleg.moduls    = d.moduls    || [];
     state.cataleg.mono      = (d.inversors||[]).filter(i => i.trifasic===false || i.trifasic==='FALSE');
     state.cataleg.trifasic  = (d.inversors||[]).filter(i => i.trifasic===true  || i.trifasic==='TRUE');
     state.cataleg.muntatges = d.muntatges || [];
     state.cataleg.comercials= d.comercials|| [];
+
     renderModulGrid();
     renderInversorGrid('mono');
     renderMuntatgeGrid();
-    console.log('Catàleg carregat des de Google Sheets via n8n');
+    renderComercialsSelect();
+    console.log('✅ Catàleg carregat des de Google Sheets via n8n');
   } catch(e) {
-    console.warn('Error catàleg:', e);
+    console.warn('⚠ Error carregant catàleg n8n:', e);
+    // Fallback hardcoded mentre no hi ha connexió
+    state.cataleg.moduls = [
+      {id:'jinko_510',model:'Tiger Neo 510Wp',potencia_wp:510,preu:66.30,eficiencia:21.3},
+      {id:'jinko_540',model:'Tiger Neo 540Wp',potencia_wp:540,preu:70.20,eficiencia:22.0},
+      {id:'jinko_550',model:'Tiger Neo 550Wp',potencia_wp:550,preu:71.50,eficiencia:22.3},
+    ];
+    state.cataleg.mono = [
+      {id:'hw_6ktl_l',model:'SUN2000-6KTL-L1',potencia_kw:6,preu:793,trifasic:false},
+    ];
+    state.cataleg.muntatges = [
+      {id:'coplanar_teula',nom:'Coplanar sobre teula',preu:612},
+    ];
+    renderModulGrid();
+    renderInversorGrid('mono');
+    renderMuntatgeGrid();
   }
 }
 
@@ -951,25 +981,71 @@ function onFormChange() {
 
 async function fetchKpis() {
   try {
-    const payload = buildPayload(true);
+    const p = buildPayload(true);
+    const modul = state.cataleg.moduls.find(m => m.id === state.selectedModul) || {};
+    const inv   = (state.cataleg.mono.concat(state.cataleg.trifasic||[])).find(i => i.id === state.selectedInversor) || {};
+    const munt  = state.cataleg.muntatges.find(m => m.id === state.selectedMuntatge) || {};
+
+    // Consums mensuals com a array de 12 valors
+    const consumsMensuals = MESOS.map(mes => {
+      const p1 = parseFloat(document.querySelector(`.p1[data-mes="${mes}"]`)?.value||0);
+      const p2 = parseFloat(document.querySelector(`.p2[data-mes="${mes}"]`)?.value||0);
+      const p3 = parseFloat(document.querySelector(`.p3[data-mes="${mes}"]`)?.value||0);
+      return p1 + p2 + p3;
+    });
+    const consumAnual = consumsMensuals.reduce((a,b)=>a+b,0) || 
+                        parseFloat(document.getElementById('consum_total')?.value||6792);
+
+    const kpiPayload = {
+      num_moduls:       p.instalacio.num_moduls,
+      potencia_modul:   modul.potencia_wp || 510,
+      preu_modul:       modul.preu || 66.30,
+      preu_inversor:    inv.preu || 793,
+      trifasic:         inv.trifasic || false,
+      latitud:          p.client.lat || 41,
+      inclinacio:       p.instalacio.inclinacio || 30,
+      acimut:           p.instalacio.acimut || 0,
+      perfil_client:    document.getElementById('perfil_client')?.value || 'industria_general',
+      tarifa:           p.economics.tipus_tarifa || '2.0TD',
+      preu_p1:          p.economics.preu_p1,
+      preu_p2:          p.economics.preu_p2,
+      preu_p3:          p.economics.preu_p3,
+      preu_excedent:    p.economics.preu_compensacio,
+      consum_anual:     consumAnual,
+      consums_mensuals: consumsMensuals.some(v=>v>0) ? consumsMensuals : null,
+      cost_instalacio:  p.economics.cost_instalacio || null,
+      metres_cable_cc:  p.instalacio.metres_cablejat || 15,
+      metres_cable_ca:  p.instalacio.metres_cablejat || 15,
+      ma_obra_modul:    parseFloat(document.getElementById('ma_obra_modul')?.value||100),
+      projecte_tecnic:  parseFloat(document.getElementById('projecte_tecnic')?.value||550),
+      manteniment_anual:p.economics.manteniment_anual,
+      tipus_estructura: state.selectedMuntatge || 'coplanar_teula',
+    };
+
     const r = await fetch(`${N8N}/solenver/calcular-kpis`, {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(payload)
+      body: JSON.stringify(kpiPayload)
     });
     const d = await r.json();
-    if(d.success && d.kpis) updateKpiDisplay(d.kpis);
-  } catch(e) {}
+    if(d.success) updateKpiDisplay(d);
+  } catch(e) { console.warn('KPI error:', e); }
 }
 
 function updateKpiDisplay(k) {
   const set = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
-  set('kpi_kwp', k.potencia_kwp?.toFixed(2)||'—');
-  set('kpi_sub_kwp', `${document.getElementById('num_moduls')?.value||12} mòduls`);
-  set('kpi_estalvi', k.estalvi_anual ? k.estalvi_anual.toLocaleString('ca') : '—');
-  set('kpi_retorn', k.retorn_inversio_anys?.toFixed(1)||'—');
-  set('kpi_autoconsum', k.pct_autoconsum?.toFixed(0)||'—');
-  set('kpi_produccio', k.produccio_anual_kwh ? k.produccio_anual_kwh.toLocaleString('ca',{maximumFractionDigits:0}) : '—');
-  set('kpi_co2', k.co2_estalviat_kg?.toLocaleString('ca',{maximumFractionDigits:0})||'—');
+  const fmt = (v, dec=0) => v != null ? parseFloat(v).toLocaleString('ca',{maximumFractionDigits:dec}) : '—';
+  set('kpi_kwp',        fmt(k.kwp, 2));
+  set('kpi_sub_kwp',    `${document.getElementById('num_moduls')?.value||12} mòduls · ${fmt(k.hsp_anual)} HSP`);
+  set('kpi_estalvi',    fmt(k.estalvi_any1, 0));
+  set('kpi_retorn',     k.retorn_anys ? fmt(k.retorn_anys, 1) : '—');
+  set('kpi_autoconsum', fmt(k.pct_autoconsum, 1));
+  set('kpi_produccio',  fmt(k.produccio_anual, 0));
+  set('kpi_co2',        fmt(k.co2_estalviat_kg, 0));
+  // Extra KPIs si existeixen els elements
+  set('kpi_cost',       fmt(k.cost_instalacio, 0));
+  set('kpi_van',        fmt(k.van_25anys, 0));
+  set('kpi_tir',        k.tir_pct != null ? fmt(k.tir_pct,1)+'%' : '—');
+  set('kpi_benefici',   fmt(k.benefici_net_25, 0));
 }
 
 // ─── PRESSUPOST AUTO ─────────────────────────────────────────────────────────
