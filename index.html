@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Solenver — Generador d'Estudis FV</title>
+<title>Solenver â Generador d'Estudis FV</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ─── RESET & BASE ─────────────────────────────────────────────────────── */
+/* âââ RESET & BASE âââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --v1:#1B5E20;--v2:#2E7D32;--v3:#388E3C;--vc:#4CAF50;--vbg:#E8F5E9;--vb2:#C8E6C9;
@@ -25,7 +25,7 @@ input,select,textarea{font-family:var(--font);font-size:13px;color:var(--gf)}
 button{font-family:var(--font);cursor:pointer}
 a{color:var(--v2)}
 
-/* ─── HEADER ───────────────────────────────────────────────────────────── */
+/* âââ HEADER âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 header{background:var(--v1);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3)}
 header .logo{color:#fff;font-weight:700;font-size:18px;letter-spacing:.5px}
 header .logo span{color:var(--vb2);font-weight:300}
@@ -36,17 +36,17 @@ header .dot.ok{background:#69F0AE}
 header .dot.no{background:#FF5722}
 header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:center}
 
-/* ─── LAYOUT ───────────────────────────────────────────────────────────── */
+/* âââ LAYOUT âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .layout{display:grid;grid-template-columns:1fr 320px;gap:20px;max-width:1200px;margin:0 auto;padding:20px}
 @media(max-width:900px){.layout{grid-template-columns:1fr}}
 
-/* ─── FORM CARD ─────────────────────────────────────────────────────────── */
+/* âââ FORM CARD âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .form-card{background:var(--wh);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
 .form-card-header{background:var(--v2);padding:16px 24px;color:#fff;display:flex;justify-content:space-between;align-items:center}
 .form-card-header h2{font-size:15px;font-weight:600}
 .form-card-body{padding:24px}
 
-/* ─── STEPPER ───────────────────────────────────────────────────────────── */
+/* âââ STEPPER âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .stepper{display:flex;gap:0;margin-bottom:24px;border-radius:8px;overflow:hidden;border:1px solid var(--gl)}
 .step-tab{flex:1;padding:10px 4px;text-align:center;background:var(--gc);cursor:pointer;transition:all .2s;border-right:1px solid var(--gl);font-size:11px;font-weight:500;color:var(--gm);line-height:1.3}
 .step-tab:last-child{border-right:none}
@@ -54,12 +54,12 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
 .step-tab.done{background:var(--vbg);color:var(--v2)}
 .step-tab .num{display:block;font-size:16px;font-weight:700;margin-bottom:2px}
 
-/* ─── SECTIONS ──────────────────────────────────────────────────────────── */
+/* âââ SECTIONS ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .section{display:none}
 .section.active{display:block}
 .section-title{font-size:16px;font-weight:600;color:var(--v2);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--vb2)}
 
-/* ─── FORM FIELDS ───────────────────────────────────────────────────────── */
+/* âââ FORM FIELDS âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .field-grid{display:grid;gap:14px}
 .field-grid-2{grid-template-columns:1fr 1fr}
 .field-grid-3{grid-template-columns:1fr 1fr 1fr}
@@ -73,19 +73,19 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
 .field textarea{resize:vertical;min-height:70px}
 .field .hint{font-size:10.5px;color:var(--gm);margin-top:3px}
 
-/* ─── TOGGLE SWITCH ─────────────────────────────────────────────────────── */
+/* âââ TOGGLE SWITCH âââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .toggle-group{display:flex;gap:8px;flex-wrap:wrap}
 .toggle-btn{padding:7px 14px;border-radius:20px;border:1.5px solid var(--gl);background:#fff;font-size:12px;font-weight:500;color:var(--gm);transition:all .15s;cursor:pointer}
 .toggle-btn.active{background:var(--v2);color:#fff;border-color:var(--v2)}
 .toggle-btn:hover:not(.active){border-color:var(--v3);color:var(--v3)}
 
-/* ─── MODE TOGGLE ───────────────────────────────────────────────────────── */
+/* âââ MODE TOGGLE âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .mode-toggle{display:flex;border-radius:8px;overflow:hidden;border:2px solid var(--v2);margin-bottom:16px;width:fit-content}
 .mode-btn{padding:8px 20px;font-size:12px;font-weight:600;border:none;cursor:pointer;transition:all .2s}
 .mode-btn.active{background:var(--v2);color:#fff}
 .mode-btn:not(.active){background:#fff;color:var(--v2)}
 
-/* ─── CATALOG CARDS ─────────────────────────────────────────────────────── */
+/* âââ CATALOG CARDS âââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .catalog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:8px}
 .cat-card{border:2px solid var(--gl);border-radius:8px;padding:10px;cursor:pointer;transition:all .15s;background:#fff;text-align:center}
 .cat-card:hover{border-color:var(--v3);background:var(--vbg)}
@@ -95,12 +95,12 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
 .cat-card .cat-price{font-size:11px;font-weight:600;color:var(--v2);margin-top:4px}
 .cat-card .cat-icon{font-size:24px;margin-bottom:2px}
 
-/* ─── SLIDER ────────────────────────────────────────────────────────────── */
+/* âââ SLIDER ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .slider-wrap{display:flex;align-items:center;gap:10px}
 .slider-wrap input[type=range]{flex:1;accent-color:var(--v2)}
 .slider-val{min-width:50px;text-align:center;font-weight:600;color:var(--v2);font-size:14px;background:var(--vbg);padding:4px 8px;border-radius:6px}
 
-/* ─── CONSUM TABLE ──────────────────────────────────────────────────────── */
+/* âââ CONSUM TABLE ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .consum-table{width:100%;border-collapse:collapse;font-size:12px}
 .consum-table th{background:var(--v2);color:#fff;padding:7px 8px;text-align:center;font-weight:600}
 .consum-table td{padding:5px 6px;border:1px solid var(--gl)}
@@ -109,14 +109,14 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
 .consum-table .mes-label{font-weight:600;color:var(--gf);white-space:nowrap}
 .consum-total{font-weight:700;color:var(--v2)}
 
-/* ─── DRAG DROP ─────────────────────────────────────────────────────────── */
+/* âââ DRAG DROP âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .drop-zone{border:2px dashed var(--gl);border-radius:10px;padding:32px;text-align:center;cursor:pointer;transition:all .2s;background:var(--gc)}
 .drop-zone:hover,.drop-zone.drag-over{border-color:var(--v3);background:var(--vbg)}
 .drop-zone .icon{font-size:36px;margin-bottom:8px}
 .drop-zone p{color:var(--gm);font-size:13px}
 .drop-zone .btn-link{color:var(--v2);font-weight:600;text-decoration:underline;cursor:pointer}
 
-/* ─── IA PANEL ──────────────────────────────────────────────────────────── */
+/* âââ IA PANEL ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .ia-panel{background:var(--ambg);border:2px solid var(--am);border-radius:10px;padding:16px;margin-top:12px}
 .ia-panel h3{color:var(--am);font-size:13px;font-weight:600;margin-bottom:8px}
 .ia-objetiu-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
@@ -129,7 +129,7 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
 .ia-result .ia-badge{display:inline-block;background:var(--v2);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-bottom:6px}
 .ia-result .ia-text{font-size:12px;color:var(--gf);line-height:1.6}
 
-/* ─── NAV BUTTONS ───────────────────────────────────────────────────────── */
+/* âââ NAV BUTTONS âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .nav-buttons{display:flex;justify-content:space-between;margin-top:24px;padding-top:16px;border-top:1px solid var(--gl)}
 .btn{padding:10px 24px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
 .btn-primary{background:var(--v2);color:#fff}
@@ -142,7 +142,7 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
 .btn-success:hover{background:#2E7D32}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
 
-/* ─── SIDEBAR KPIs ──────────────────────────────────────────────────────── */
+/* âââ SIDEBAR KPIs ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .sidebar{position:sticky;top:72px;align-self:start}
 .kpi-card-wrap{background:var(--wh);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
 .kpi-header{background:var(--v2);padding:14px 18px;color:#fff;font-weight:600;font-size:13px;display:flex;justify-content:space-between;align-items:center}
@@ -159,26 +159,26 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
 .kpi-item.positive .kpi-value{color:#2E7D32}
 .kpi-loading{opacity:.5;font-size:11px;color:var(--gm);text-align:center;padding:8px}
 
-/* ─── ACTION BUTTONS ────────────────────────────────────────────────────── */
+/* âââ ACTION BUTTONS ââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .action-buttons{background:var(--wh);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-top:14px}
 .action-buttons h3{font-size:12px;font-weight:600;color:var(--gm);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px}
 .action-btn-full{width:100%;margin-bottom:8px;justify-content:center}
 
-/* ─── LOADING OVERLAY ───────────────────────────────────────────────────── */
+/* âââ LOADING OVERLAY âââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .loading-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:16px}
 .loading-overlay.show{display:flex}
 .spinner{width:48px;height:48px;border:4px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-msg{color:#fff;font-size:15px;font-weight:500}
 
-/* ─── TOAST ─────────────────────────────────────────────────────────────── */
+/* âââ TOAST âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .toast{position:fixed;bottom:24px;right:24px;padding:14px 20px;border-radius:10px;color:#fff;font-size:13px;font-weight:500;z-index:300;box-shadow:var(--shadow);transform:translateY(100px);opacity:0;transition:all .3s}
 .toast.show{transform:translateY(0);opacity:1}
 .toast.success{background:var(--v2)}
 .toast.error{background:var(--rj)}
 .toast.info{background:var(--bl)}
 
-/* ─── COMPASS ───────────────────────────────────────────────────────────── */
+/* âââ COMPASS âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .compass-wrap{display:flex;align-items:center;gap:16px}
 .compass{width:64px;height:64px;border-radius:50%;border:3px solid var(--gl);background:var(--gc);position:relative;flex-shrink:0}
 .compass-needle{position:absolute;top:50%;left:50%;width:3px;height:28px;background:var(--v2);transform-origin:bottom center;border-radius:2px;transform:translateX(-50%) rotate(0deg)}
@@ -188,11 +188,11 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
 .compass-E{right:4px;top:50%;transform:translateY(-50%)}
 .compass-W{left:4px;top:50%;transform:translateY(-50%)}
 
-/* ─── INFO BOX ──────────────────────────────────────────────────────────── */
+/* âââ INFO BOX ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .info-box{background:var(--blbg);border-left:4px solid var(--bl);border-radius:0 8px 8px 0;padding:10px 14px;font-size:12px;color:var(--bl);margin:10px 0}
 .warn-box{background:var(--tobg);border-left:4px solid var(--to);border-radius:0 8px 8px 0;padding:10px 14px;font-size:12px;color:var(--to);margin:10px 0}
 
-/* ─── MISC ──────────────────────────────────────────────────────────────── */
+/* âââ MISC ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .divider{height:1px;background:var(--gl);margin:16px 0}
 .tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:600}
 .tag-green{background:var(--vbg);color:var(--v2)}
@@ -208,7 +208,7 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
 
 <!-- HEADER -->
 <header>
-  <div class="logo">☀ SOLENVER <span>· Generador d'Estudis FV</span></div>
+  <div class="logo">&#9728; SOLENVER <span>&middot; Generador d'Estudis FV</span></div>
   <div class="api-status" id="apiStatus">
     <span class="status-chip"><span class="dot no" id="dotMaps"></span>Maps</span>
     <span class="status-chip"><span class="dot no" id="dotIA"></span>IA</span>
@@ -230,7 +230,7 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
   <!-- FORM -->
   <div class="form-card">
     <div class="form-card-header">
-      <h2 id="sectionTitle">Secció 1 — Dades del Client</h2>
+      <h2 id="sectionTitle">Secci&oacute; 1 &mdash; Dades del Client</h2>
       <span class="text-muted" style="color:#C8E6C9;font-size:11px" id="sectionProgress">1 de 6</span>
     </div>
     <div class="form-card-body">
@@ -238,14 +238,14 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
       <!-- STEPPER -->
       <div class="stepper">
         <div class="step-tab active" id="tab0" onclick="goTo(0)"><span class="num">1</span>Client</div>
-        <div class="step-tab" id="tab1" onclick="goTo(1)"><span class="num">2</span>Ubicació</div>
-        <div class="step-tab" id="tab2" onclick="goTo(2)"><span class="num">3</span>Instal·lació</div>
+        <div class="step-tab" id="tab1" onclick="goTo(1)"><span class="num">2</span>Ubicaci&oacute;</div>
+        <div class="step-tab" id="tab2" onclick="goTo(2)"><span class="num">3</span>Instal&middot;laci&oacute;</div>
         <div class="step-tab" id="tab3" onclick="goTo(3)"><span class="num">4</span>Consums</div>
-        <div class="step-tab" id="tab4" onclick="goTo(4)"><span class="num">5</span>Econòmics</div>
+        <div class="step-tab" id="tab4" onclick="goTo(4)"><span class="num">5</span>Econ&ograve;mics</div>
         <div class="step-tab" id="tab5" onclick="goTo(5)"><span class="num">6</span>Enviar</div>
       </div>
 
-      <!-- ── SECCIÓ 1: CLIENT ──────────────────────────────────────────── -->
+      <!-- SECCI&Oacute; 1: CLIENT -->
       <div class="section active" id="sec0">
         <div class="section-title">Dades del Client</div>
         <div class="field-grid field-grid-2">
@@ -258,16 +258,16 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
             <input type="text" id="client_nif" placeholder="B12345678" oninput="onFormChange()">
           </div>
           <div class="field" style="grid-column:1/-1">
-            <label>Adreça completa <span class="req">*</span></label>
+            <label>Adre&ccedil;a completa <span class="req">*</span></label>
             <input type="text" id="client_adreca" placeholder="Carrer Major 10, 08001 Barcelona" oninput="onAddressChange(this.value)">
-            <div class="hint">L'adreça s'usa per a la foto aèria i les dades d'irradiació solar</div>
+            <div class="hint">L'adre&ccedil;a s'usa per a la foto a&egrave;ria i les dades d'irradiaci&oacute; solar</div>
           </div>
           <div class="field">
             <label>Email client</label>
             <input type="email" id="client_email" placeholder="client@empresa.com" oninput="onFormChange()">
           </div>
           <div class="field">
-            <label>Telèfon</label>
+            <label>Tel&egrave;fon</label>
             <input type="tel" id="client_telefon" placeholder="+34 600 000 000" oninput="onFormChange()">
           </div>
           <div class="field" style="grid-column:1/-1">
@@ -275,27 +275,27 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
             <input type="text" id="client_cups" placeholder="ES0031405912188001JJ" oninput="onFormChange()">
           </div>
           <div class="form-group">
-            <label>Perfil de consum <span style="font-weight:400;color:var(--gm)">· determina la distribució horària del consum</span></label>
+            <label>Perfil de consum <span style="font-weight:400;color:var(--gm)">&middot; determina la distribuci&oacute; hor&agrave;ria del consum</span></label>
             <select id="perfil_client" onchange="onFormChange()">
-              <option value="industria_general">🏭 Indústria general</option>
-              <option value="logistica_magatzem">📦 Logística / Magatzem</option>
-              <option value="granja_porcina">🐷 Granja porcina</option>
-              <option value="granja_avicola">🐔 Granja avícola</option>
-              <option value="comercial_oficines">🏢 Comerç / Oficines</option>
-              <option value="domestica_residencial">🏠 Domèstica / Residencial</option>
-              <option value="agricola_reg">🌱 Agrícola / Reg</option>
+              <option value="industria_general">&#127981; Ind&uacute;stria general</option>
+              <option value="logistica_magatzem">&#128230; Log&iacute;stica / Magatzem</option>
+              <option value="granja_porcina">&#128055; Granja porcina</option>
+              <option value="granja_avicola">&#128020; Granja av&iacute;cola</option>
+              <option value="comercial_oficines">&#127970; Comer&ccedil; / Oficines</option>
+              <option value="domestica_residencial">&#127968; Dom&egrave;stica / Residencial</option>
+              <option value="agricola_reg">&#127793; Agr&iacute;cola / Reg</option>
             </select>
           </div>
         </div>
         <div class="nav-buttons">
           <div></div>
-          <button class="btn btn-primary" onclick="goTo(1)">Següent → Ubicació</button>
+          <button class="btn btn-primary" onclick="goTo(1)">Seg&uuml;ent &rarr; Ubicaci&oacute;</button>
         </div>
       </div>
 
-      <!-- ── SECCIÓ 2: UBICACIÓ ────────────────────────────────────────── -->
+      <!-- SECCI&Oacute; 2: UBICACI&Oacute; -->
       <div class="section" id="sec1">
-        <div class="section-title">Ubicació i Coberta</div>
+        <div class="section-title">Ubicaci&oacute; i Coberta</div>
         <div class="field-grid field-grid-2">
           <div class="field">
             <label>Latitud</label>
@@ -307,10 +307,9 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
           </div>
         </div>
         <div class="divider"></div>
-
         <div class="field-grid field-grid-2">
           <div class="field">
-            <label>Orientació de la coberta (Acimut)</label>
+            <label>Orientaci&oacute; de la coberta (Acimut)</label>
             <div class="compass-wrap">
               <div class="compass" id="compassEl">
                 <div class="compass-needle" id="compassNeedle"></div>
@@ -322,84 +321,83 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
               <div style="flex:1">
                 <div class="slider-wrap">
                   <input type="range" id="acimut" min="-180" max="180" value="0"
-                    oninput="document.getElementById('acimutVal').textContent=this.value+'°';updateCompass();onFormChange()">
-                  <span class="slider-val" id="acimutVal">0°</span>
+                    oninput="document.getElementById('acimutVal').textContent=this.value+'&deg;';updateCompass();onFormChange()">
+                  <span class="slider-val" id="acimutVal">0&deg;</span>
                 </div>
-                <div class="text-muted" style="margin-top:4px">0° = Sud (òptim) · +90° = Oest · -90° = Est</div>
+                <div class="text-muted" style="margin-top:4px">0&deg; = Sud (&ograve;ptim) &middot; +90&deg; = Oest &middot; -90&deg; = Est</div>
               </div>
             </div>
           </div>
           <div class="field">
-            <label>Inclinació de la coberta</label>
+            <label>Inclinaci&oacute; de la coberta</label>
             <div class="slider-wrap">
               <input type="range" id="inclinacio" min="0" max="60" value="30"
-                oninput="document.getElementById('inclVal').textContent=this.value+'°';onFormChange()">
-              <span class="slider-val" id="inclVal">30°</span>
+                oninput="document.getElementById('inclVal').textContent=this.value+'&deg;';onFormChange()">
+              <span class="slider-val" id="inclVal">30&deg;</span>
             </div>
-            <div class="text-muted" style="margin-top:6px">Inclinació típica teula: 20–40°. Coberta plana: 0–5°</div>
+            <div class="text-muted" style="margin-top:6px">Inclinaci&oacute; t&iacute;pica teula: 20&ndash;40&deg;. Coberta plana: 0&ndash;5&deg;</div>
           </div>
         </div>
         <div class="divider"></div>
-
         <div class="field-grid field-grid-2">
           <div class="field">
             <label>Tipus de coberta</label>
             <select id="tipus_coberta" onchange="onFormChange()">
-              <option value="teula">Teula ceràmica / formigó</option>
-              <option value="xapa">Xapa metàl·lica (grecada o sandwich)</option>
+              <option value="teula">Teula cer&agrave;mica / formig&oacute;</option>
+              <option value="xapa">Xapa met&agrave;l&middot;lica (grecada o sandwich)</option>
               <option value="plana">Coberta plana (llosa o impermeabilitzada)</option>
-              <option value="terra">Instal·lació en terra</option>
-              <option value="pergola">Pèrgola / Aparcament</option>
+              <option value="terra">Instal&middot;laci&oacute; en terra</option>
+              <option value="pergola">P&egrave;rgola / Aparcament</option>
             </select>
           </div>
           <div class="field">
-            <label>Presència d'ombres</label>
+            <label>Pres&egrave;ncia d'ombres</label>
             <select id="ombres" onchange="onFormChange()">
-              <option value="cap">Cap — coberta completament lliure</option>
-              <option value="parcials">Parcials — ombres menors</option>
-              <option value="importants">Importants — ombres significatives</option>
+              <option value="cap">Cap &mdash; coberta completament lliure</option>
+              <option value="parcials">Parcials &mdash; ombres menors</option>
+              <option value="importants">Importants &mdash; ombres significatives</option>
             </select>
           </div>
           <div class="field">
-            <label>Superfície disponible (m²) <span class="text-muted">(opcional)</span></label>
+            <label>Superf&iacute;cie disponible (m&sup2;) <span class="text-muted">(opcional)</span></label>
             <input type="number" id="superficie" placeholder="50" min="1" oninput="onFormChange()">
           </div>
           <div class="field">
-            <label>Alçada de l'edifici (m)</label>
+            <label>Al&ccedil;ada de l'edifici (m)</label>
             <input type="number" id="alcada" placeholder="6" min="1" oninput="onFormChange()">
           </div>
         </div>
         <div id="ombraWarn" class="warn-box" style="display:none">
-          ⚠ Amb ombres importants es recomana considerar optimitzadors de potència per mòdul.
+          &#9888; Amb ombres importants es recomana considerar optimitzadors de pot&egrave;ncia per m&ograve;dul.
         </div>
         <div class="nav-buttons">
-          <button class="btn btn-secondary" onclick="goTo(0)">← Client</button>
-          <button class="btn btn-primary" onclick="goTo(2)">Següent → Instal·lació</button>
+          <button class="btn btn-secondary" onclick="goTo(0)">&larr; Client</button>
+          <button class="btn btn-primary" onclick="goTo(2)">Seg&uuml;ent &rarr; Instal&middot;laci&oacute;</button>
         </div>
       </div>
 
-      <!-- ── SECCIÓ 3: INSTAL·LACIÓ ────────────────────────────────────── -->
+      <!-- SECCI&Oacute; 3: INSTAL&middot;LACI&Oacute; -->
       <div class="section" id="sec2">
-        <div class="section-title">Configuració de la Instal·lació</div>
+        <div class="section-title">Configuraci&oacute; de la Instal&middot;laci&oacute;</div>
 
         <div class="mode-toggle">
-          <button class="mode-btn active" id="btnManual" onclick="setInstalMode('manual')">✏ Mode Manual</button>
-          <button class="mode-btn" id="btnIA" onclick="setInstalMode('ia')">🤖 Mode IA Optimitzador</button>
+          <button class="mode-btn active" id="btnManual" onclick="setInstalMode('manual')">&#9998; Mode Manual</button>
+          <button class="mode-btn" id="btnIA" onclick="setInstalMode('ia')">&#129302; Mode IA Optimitzador</button>
         </div>
 
         <!-- Mode Manual -->
         <div id="modeManual">
           <div class="field-grid field-grid-2" style="margin-bottom:16px">
             <div class="field">
-              <label>Nombre de mòduls <span class="req">*</span></label>
+              <label>Nombre de m&ograve;duls <span class="req">*</span></label>
               <div class="slider-wrap">
                 <input type="range" id="num_moduls" min="2" max="60" value="12"
-                  oninput="document.getElementById('numModulsVal').textContent=this.value+' mòduls';calcPressupost();onFormChange()">
-                <span class="slider-val" id="numModulsVal">12 mòduls</span>
+                  oninput="document.getElementById('numModulsVal').textContent=this.value+' m&ograve;duls';calcPressupost();onFormChange()">
+                <span class="slider-val" id="numModulsVal">12 m&ograve;duls</span>
               </div>
             </div>
             <div class="field">
-              <label>Mètres de cablejat estimats</label>
+              <label>M&egrave;tres de cablejat estimats</label>
               <div class="slider-wrap">
                 <input type="range" id="metres_cablejat" min="5" max="100" value="15"
                   oninput="document.getElementById('metresVal').textContent=this.value+'m';onFormChange()">
@@ -409,84 +407,83 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
           </div>
 
           <div class="field" style="margin-bottom:12px">
-            <label>Selecciona el mòdul fotovoltaic</label>
-            <div class="catalog-grid" id="modulGrid">
-              <!-- Generat dinàmicament -->
-            </div>
+            <label>Selecciona el m&ograve;dul fotovoltaic</label>
+            <div class="catalog-grid" id="modulGrid"></div>
           </div>
 
           <div style="margin-bottom:12px">
             <label style="display:block;font-size:11px;font-weight:600;color:var(--gm);margin-bottom:8px;text-transform:uppercase">Inversor</label>
             <div class="toggle-group" style="margin-bottom:8px">
-              <button class="toggle-btn active" id="btnMono" onclick="setInvType('mono')">Monofàsic (1F)</button>
-              <button class="toggle-btn" id="btnTri"  onclick="setInvType('tri')">Trifàsic (3F)</button>
+              <button class="toggle-btn active" id="btnMono" onclick="setInvType('mono')">Monof&agrave;sic (1F)</button>
+              <button class="toggle-btn" id="btnTri"  onclick="setInvType('tri')">Trif&agrave;sic (3F)</button>
             </div>
-            <div class="catalog-grid" id="inversorGrid">
-              <!-- Generat dinàmicament -->
-            </div>
+            <div class="catalog-grid" id="inversorGrid"></div>
           </div>
 
           <div class="field">
             <label>Tipus de muntatge</label>
-            <div class="catalog-grid" id="muntGrid">
-              <!-- Generat dinàmicament -->
-            </div>
+            <div class="catalog-grid" id="muntGrid"></div>
           </div>
         </div>
 
         <!-- Mode IA -->
         <div id="modeIA" style="display:none">
           <div class="ia-panel">
-            <h3>🤖 Agent IA — Optimitzador de Configuració</h3>
-            <p style="font-size:12px;color:var(--gm)">L'agent analitzarà el teu perfil de consum i trobarà la configuració òptima.</p>
+            <h3>&#129302; Agent IA &mdash; Optimitzador de Configuraci&oacute;</h3>
+            <p style="font-size:12px;color:var(--gm)">L'agent analitzar&agrave; el teu perfil de consum i trobar&agrave; la configuraci&oacute; &ograve;ptima.</p>
             <div class="divider"></div>
             <label style="display:block;font-size:11px;font-weight:600;color:var(--gm);text-transform:uppercase;margin-bottom:8px">Objectiu de negoci</label>
             <div class="ia-objetiu-grid">
               <div class="ia-obj-btn active" id="iobj_roi_max" onclick="setIAObj('roi_max')">
-                <div class="title">📈 ROI Màxim</div>
-                <div class="desc">Maximitza la rendibilitat de la inversió</div>
+                <div class="title">&#128200; ROI M&agrave;xim</div>
+                <div class="desc">Maximitza la rendibilitat de la inversi&oacute;</div>
               </div>
               <div class="ia-obj-btn" id="iobj_autoconsum_max" onclick="setIAObj('autoconsum_max')">
-                <div class="title">🔋 Autoconsum Màxim</div>
-                <div class="desc">Cobreix el màxim % del consum</div>
+                <div class="title">&#128267; Autoconsum M&agrave;xim</div>
+                <div class="desc">Cobreix el m&agrave;xim % del consum</div>
               </div>
               <div class="ia-obj-btn" id="iobj_cost_minim" onclick="setIAObj('cost_minim')">
-                <div class="title">💶 Cost Mínim</div>
-                <div class="desc">Inversió mínima amb retorn < 10 anys</div>
+                <div class="title">&#128182; Cost M&iacute;nim</div>
+                <div class="desc">Inversi&oacute; m&iacute;nima amb retorn &lt; 10 anys</div>
               </div>
               <div class="ia-obj-btn" id="iobj_potencia_max" onclick="setIAObj('potencia_max')">
-                <div class="title">⚡ Potència Màxima</div>
-                <div class="desc">Omple la superfície disponible</div>
+                <div class="title">&#9889; Pot&egrave;ncia M&agrave;xima</div>
+                <div class="desc">Omple la superf&iacute;cie disponible</div>
               </div>
             </div>
-            <button class="btn btn-primary" style="width:100%;margin-top:12px" onclick="fetchOptimitzar()" id="btnOptimitzar">🤖 Optimitzar amb IA</button>
             <div class="ia-result" id="iaResult">
-              <div class="ia-badge">🤖 Proposta IA</div>
+              <div class="ia-badge">&#129302; Proposta IA</div>
               <div class="ia-text" id="iaResultText"></div>
             </div>
-            <div id="iaNoKey" class="warn-box" style="margin-top:12px;display:none">
-              ⚠ ANTHROPIC_API_KEY no configurada. Afegeix-la al fitxer .env per activar l'agent IA.
+            <button class="btn btn-primary" id="btnRunIA"
+              onclick="fetchOptimitzar()"
+              style="width:100%;margin-top:14px;background:var(--am);font-size:13px;padding:12px">
+              &#129302; Generar proposta IA
+            </button>
+            <div id="iaLoading" style="display:none;text-align:center;padding:20px;color:var(--gm);font-size:12px">
+              <div style="font-size:28px;margin-bottom:8px">&#129302;</div>
+              <strong>L'agent est&agrave; treballant...</strong><br>
+              Consultant cat&agrave;leg &rarr; Calculant configuraci&oacute; &rarr; Redactant informe
+              <div style="margin-top:6px;font-size:11px">Pot trigar 20-40 segons</div>
             </div>
+            <div id="iaError" class="warn-box" style="display:none;margin-top:10px"></div>
           </div>
         </div>
 
         <div class="nav-buttons">
-          <button class="btn btn-secondary" onclick="goTo(1)">← Ubicació</button>
-          <button class="btn btn-primary" onclick="goTo(3)">Següent → Consums</button>
+          <button class="btn btn-secondary" onclick="goTo(1)">&larr; Ubicaci&oacute;</button>
+          <button class="btn btn-primary" onclick="goTo(3)">Seg&uuml;ent &rarr; Consums</button>
         </div>
       </div>
 
-      <!-- ── SECCIÓ 4: CONSUMS ─────────────────────────────────────────── -->
+      <!-- SECCI&Oacute; 4: CONSUMS -->
       <div class="section" id="sec3">
-        <div class="section-title">Consums Energètics</div>
-
+        <div class="section-title">Consums Energ&egrave;tics</div>
         <div class="mode-toggle">
-          <button class="mode-btn active" id="btnConsA" onclick="setConsumMode('taula')">📊 Taula mensual</button>
-          <button class="mode-btn" id="btnConsB" onclick="setConsumMode('cups')">📁 Upload CUPS</button>
-          <button class="mode-btn" id="btnConsC" onclick="setConsumMode('anual')">🔢 Total anual</button>
+          <button class="mode-btn active" id="btnConsA" onclick="setConsumMode('taula')">&#128202; Taula mensual</button>
+          <button class="mode-btn" id="btnConsB" onclick="setConsumMode('cups')">&#128193; Upload CUPS</button>
+          <button class="mode-btn" id="btnConsC" onclick="setConsumMode('anual')">&#128290; Total anual</button>
         </div>
-
-        <!-- Taula mensual -->
         <div id="modeConsumTaula">
           <table class="consum-table">
             <thead>
@@ -495,77 +492,71 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
             <tbody id="consumTableBody"></tbody>
           </table>
           <div class="info-box" style="margin-top:10px">
-            ℹ P1 = Hores punta · P2 = Hores vall · P3 = Supervall/festius. Pots deixar P2 i P3 a 0 si només tens el total.
+            &#8505; P1 = Hores punta &middot; P2 = Hores vall &middot; P3 = Supervall/festius. Pots deixar P2 i P3 a 0 si nom&eacute;s tens el total.
           </div>
         </div>
-
-        <!-- Upload CUPS -->
         <div id="modeConsumCups" style="display:none">
           <div class="drop-zone" id="dropZone" onclick="document.getElementById('cupsFile').click()" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="this.classList.remove('drag-over')">
-            <div class="icon">📄</div>
-            <p><b>Arrossega el fitxer XLS del CUPS aquí</b></p>
+            <div class="icon">&#128196;</div>
+            <p><b>Arrossega el fitxer XLS del CUPS aqu&iacute;</b></p>
             <p>o <span class="btn-link">selecciona el fitxer</span></p>
-            <p style="margin-top:6px;font-size:11px">Fitxer XLS de Red Eléctrica / Endesa / Iberdrola / Naturgy</p>
+            <p style="margin-top:6px;font-size:11px">Fitxer XLS de Red El&eacute;ctrica / Endesa / Iberdrola / Naturgy</p>
           </div>
           <input type="file" id="cupsFile" accept=".xls,.xlsx" style="display:none" onchange="uploadCups(this)">
           <div id="cupsStatus" style="margin-top:8px;font-size:12px;color:var(--gm)"></div>
         </div>
-
-        <!-- Total anual -->
         <div id="modeConsumAnual" style="display:none">
           <div class="field" style="max-width:280px">
             <label>Consum anual total (kWh/any)</label>
             <input type="number" id="consum_anual_total" placeholder="7000" min="100"
               oninput="calcFromTotal();onFormChange()">
-            <div class="hint">El sistema distribuirà el consum en 12 mesos amb perfil estacional</div>
+            <div class="hint">El sistema distribuir&agrave; el consum en 12 mesos amb perfil estacional</div>
           </div>
         </div>
-
         <div class="divider"></div>
-
         <div class="field-grid field-grid-2" style="margin-top:8px">
           <div class="field">
             <label>Tipus de tarifa</label>
             <select id="tarifa" onchange="onFormChange()">
               <option value="2.0TD">2.0TD (Residencial / Petit comercial)</option>
               <option value="3.0TD">3.0TD (Industrial / Gran comercial)</option>
-              <option value="6.1TD">6.1TD (Alta tensió)</option>
+              <option value="6.1TD">6.1TD (Alta tensi&oacute;)</option>
             </select>
           </div>
           <div class="field">
-            <label>Preu compensació excedents (€/kWh)</label>
+            <label>Preu compensaci&oacute; excedents (&euro;/kWh)</label>
             <input type="number" id="preu_comp" value="0.07" step="0.005" min="0" oninput="onFormChange()">
           </div>
           <div class="field">
-            <label>Preu P1 (€/kWh)</label>
+            <label>Preu P1 (&euro;/kWh)</label>
             <input type="number" id="preu_p1" value="0.11025" step="0.001" min="0" oninput="onFormChange()">
           </div>
           <div class="field">
-            <label>Preu P2 (€/kWh)</label>
+            <label>Preu P2 (&euro;/kWh)</label>
             <input type="number" id="preu_p2" value="0.095" step="0.001" min="0" oninput="onFormChange()">
           </div>
           <div class="field">
-            <label>Preu P3 (€/kWh)</label>
+            <label>Preu P3 (&euro;/kWh)</label>
             <input type="number" id="preu_p3" value="0.075" step="0.001" min="0" oninput="onFormChange()">
           </div>
         </div>
         <div class="nav-buttons">
-          <button class="btn btn-secondary" onclick="goTo(2)">← Instal·lació</button>
-          <button class="btn btn-primary" onclick="goTo(4)">Següent → Econòmics</button>
+          <button class="btn btn-secondary" onclick="goTo(2)">&larr; Instal&middot;laci&oacute;</button>
+          <button class="btn btn-primary" onclick="goTo(4)">Seg&uuml;ent &rarr; Econ&ograve;mics</button>
         </div>
       </div>
 
-      <!-- ── SECCIÓ 5: ECONÒMICS ───────────────────────────────────────── -->
+      <!-- SECCI&Oacute; 5: ECON&Ograve;MICS -->
       <div class="section" id="sec4">
-        <div class="section-title">Paràmetres Econòmics</div>
+        <div class="section-title">Par&agrave;metres Econ&ograve;mics</div>
         <div class="field-grid field-grid-2">
           <div class="field">
-            <label>Cost total de la instal·lació (€) <span class="req">*</span></label>
+            <label>Cost total de la instal&middot;laci&oacute; (&euro;) <span class="req">*</span></label>
             <input type="number" id="cost_instalacio" value="5900" min="500" oninput="onFormChange()">
-            <div class="hint" id="costHint">Calculat automàticament del catàleg. Pots ajustar-lo.</div>
+            <div class="hint" id="costHint">Calculat autom&agrave;ticament del cat&agrave;leg. Pots ajustar-lo.</div>
           </div>
           <div class="field">
-            <label>Anys d'anàlisi</label>
+            <label>Anys d'an&agrave;lisi</label>
             <div class="slider-wrap">
               <input type="range" id="anys_analisi" min="10" max="30" value="25"
                 oninput="document.getElementById('anysVal').textContent=this.value+' anys';onFormChange()">
@@ -581,33 +572,31 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
             </div>
           </div>
           <div class="field">
-            <label>Manteniment anual (€/any)</label>
+            <label>Manteniment anual (&euro;/any)</label>
             <input type="number" id="manteniment" value="0" min="0" oninput="onFormChange()">
-            <div class="hint">0€ = sense contracte de manteniment</div>
+            <div class="hint">0&euro; = sense contracte de manteniment</div>
           </div>
         </div>
         <div class="nav-buttons">
-          <button class="btn btn-secondary" onclick="goTo(3)">← Consums</button>
-          <button class="btn btn-primary" onclick="goTo(5)">Últim pas → Enviar</button>
+          <button class="btn btn-secondary" onclick="goTo(3)">&larr; Consums</button>
+          <button class="btn btn-primary" onclick="goTo(5)">&Uacute;ltim pas &rarr; Enviar</button>
         </div>
       </div>
 
-      <!-- ── SECCIÓ 6: ENVIAR ──────────────────────────────────────────── -->
+      <!-- SECCI&Oacute; 6: ENVIAR -->
       <div class="section" id="sec5">
-        <div class="section-title">Revisió i Enviament</div>
-
+        <div class="section-title">Revisi&oacute; i Enviament</div>
         <div id="resumEstudi" style="background:var(--vbg);border-radius:8px;padding:16px;margin-bottom:16px">
           <div style="font-weight:600;color:var(--v2);margin-bottom:8px">Resum de l'estudi</div>
           <div id="resumContent" style="font-size:12px;color:var(--gf);line-height:1.8"></div>
         </div>
-
         <div class="field-grid field-grid-2">
           <div class="field">
             <label>Comercial assignat</label>
             <select id="comercial_id" onchange="onFormChange()">
               <option value="joan">Joan Garcia</option>
-              <option value="maria">Maria López</option>
-              <option value="pau">Pau Martínez</option>
+              <option value="maria">Maria L&oacute;pez</option>
+              <option value="pau">Pau Mart&iacute;nez</option>
               <option value="anna">Anna Puig</option>
             </select>
           </div>
@@ -620,22 +609,21 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
             </div>
           </div>
           <div class="field" style="grid-column:1/-1">
-            <label>Notes internes <span class="text-muted">(no apareixerà al PDF)</span></label>
+            <label>Notes internes <span class="text-muted">(no apareixer&agrave; al PDF)</span></label>
             <textarea id="notes_internes" placeholder="Notes per a l'equip intern..."></textarea>
           </div>
         </div>
-
         <div class="nav-buttons">
-          <button class="btn btn-secondary" onclick="goTo(4)">← Econòmics</button>
+          <button class="btn btn-secondary" onclick="goTo(4)">&larr; Econ&ograve;mics</button>
           <div style="display:flex;gap:10px">
-            <button class="btn btn-outline" onclick="previewPDF()">👁 Previsualitzar PDF</button>
-            <button class="btn btn-success" onclick="generarEnviar()">🚀 Generar i Enviar</button>
+            <button class="btn btn-outline" onclick="previewPDF()">&#128065; Previsualitzar PDF</button>
+            <button class="btn btn-success" onclick="generarEnviar()">&#128228; Generar i Enviar</button>
           </div>
         </div>
       </div>
 
-    </div><!-- /form-card-body -->
-  </div><!-- /form-card -->
+    </div>
+  </div>
 
   <!-- SIDEBAR KPIs -->
   <div class="sidebar">
@@ -646,49 +634,46 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
       </div>
       <div class="kpi-body" id="kpiBody">
         <div class="kpi-item highlight">
-          <div><div class="kpi-label">Potència FV</div><div class="kpi-subvalue" id="kpi_sub_kwp">—</div></div>
-          <div><span class="kpi-value" id="kpi_kwp">—</span><span class="kpi-unit">kWp</span></div>
+          <div><div class="kpi-label">Pot&egrave;ncia FV</div><div class="kpi-subvalue" id="kpi_sub_kwp">&mdash;</div></div>
+          <div><span class="kpi-value" id="kpi_kwp">&mdash;</span><span class="kpi-unit">kWp</span></div>
         </div>
         <div class="kpi-item positive">
           <div><div class="kpi-label">Estalvi any 1</div></div>
-          <div><span class="kpi-value" id="kpi_estalvi">—</span><span class="kpi-unit">€/any</span></div>
+          <div><span class="kpi-value" id="kpi_estalvi">&mdash;</span><span class="kpi-unit">&euro;/any</span></div>
         </div>
         <div class="kpi-item">
-          <div><div class="kpi-label">Retorn inversió</div></div>
-          <div><span class="kpi-value" id="kpi_retorn">—</span><span class="kpi-unit">anys</span></div>
+          <div><div class="kpi-label">Retorn inversi&oacute;</div></div>
+          <div><span class="kpi-value" id="kpi_retorn">&mdash;</span><span class="kpi-unit">anys</span></div>
         </div>
         <div class="kpi-item">
           <div><div class="kpi-label">Autoconsum</div></div>
-          <div><span class="kpi-value" id="kpi_autoconsum">—</span><span class="kpi-unit">%</span></div>
+          <div><span class="kpi-value" id="kpi_autoconsum">&mdash;</span><span class="kpi-unit">%</span></div>
         </div>
         <div class="kpi-item">
-          <div><div class="kpi-label">Producció anual</div></div>
-          <div><span class="kpi-value" id="kpi_produccio">—</span><span class="kpi-unit">kWh</span></div>
+          <div><div class="kpi-label">Producci&oacute; anual</div></div>
+          <div><span class="kpi-value" id="kpi_produccio">&mdash;</span><span class="kpi-unit">kWh</span></div>
         </div>
         <div class="kpi-item">
-          <div><div class="kpi-label">CO₂ estalviat</div></div>
-          <div><span class="kpi-value" id="kpi_co2">—</span><span class="kpi-unit">kg/any</span></div>
+          <div><div class="kpi-label">CO&#8322; estalviat</div></div>
+          <div><span class="kpi-value" id="kpi_co2">&mdash;</span><span class="kpi-unit">kg/any</span></div>
         </div>
       </div>
     </div>
-
     <div class="action-buttons">
       <h3>Accions</h3>
-      <button class="btn btn-outline action-btn-full" onclick="previewPDF()">👁  Previsualitzar PDF</button>
-      <button class="btn btn-success action-btn-full" onclick="generarEnviar()">🚀  Generar i Enviar</button>
+      <button class="btn btn-outline action-btn-full" onclick="previewPDF()">&#128065; Previsualitzar PDF</button>
+      <button class="btn btn-success action-btn-full" onclick="generarEnviar()">&#128228; Generar i Enviar</button>
     </div>
   </div>
 
-</div><!-- /layout -->
+</div>
 
 <script>
-// ─── CONSTANTS ─────────────────────────────────────────────────────────────
 const N8N = 'https://geri.app.n8n.cloud/webhook';
-const API = N8N; // tots els endpoints apunten a n8n
-const MESOS = ['Gener','Febrer','Març','Abril','Maig','Juny',
+const API = N8N;
+const MESOS = ['Gener','Febrer','Mar\u00e7','Abril','Maig','Juny',
                'Juliol','Agost','Setembre','Octubre','Novembre','Desembre'];
 
-// ─── STATE ─────────────────────────────────────────────────────────────────
 let state = {
   currentStep: 0,
   instalMode: 'manual',
@@ -703,7 +688,6 @@ let state = {
   kpiTimer: null,
 };
 
-// ─── INIT ───────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
   initConsumsTable();
   await loadCataleg();
@@ -713,12 +697,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function checkHealth() {
   try {
-    // Verifica connexió amb n8n
     const r = await fetch(`${N8N}/solenver/cataleg`);
     const d = await r.json();
     const ok = d.success === true;
     document.getElementById('dotMaps').className = 'dot ' + (ok ? 'ok' : 'no');
-    document.getElementById('dotIA').className = 'dot no'; // s'activa quan hi hagi workflow IA
+    document.getElementById('dotIA').className = 'dot ' + (ok ? 'ok' : 'no');
   } catch(e) {
     document.getElementById('dotMaps').className = 'dot no';
   }
@@ -728,127 +711,90 @@ async function loadCataleg() {
   try {
     const r = await fetch(`${N8N}/solenver/cataleg`);
     const d = await r.json();
-    if (!d.success) throw new Error('Error catàleg');
-
+    if (!d.success) throw new Error('Error cat\u00e0leg');
     state.cataleg.moduls    = d.moduls    || [];
     state.cataleg.mono      = (d.inversors||[]).filter(i => i.trifasic===false || i.trifasic==='FALSE');
     state.cataleg.trifasic  = (d.inversors||[]).filter(i => i.trifasic===true  || i.trifasic==='TRUE');
     state.cataleg.muntatges = d.muntatges || [];
     state.cataleg.comercials= d.comercials|| [];
-
     renderModulGrid();
     renderInversorGrid('mono');
     renderMuntatgeGrid();
     renderComercialsSelect();
-    console.log('✅ Catàleg carregat des de Google Sheets via n8n');
   } catch(e) {
-    console.warn('⚠ Error carregant catàleg n8n:', e);
-    // Fallback hardcoded mentre no hi ha connexió
+    console.warn('Error cat\u00e0leg:', e);
     state.cataleg.moduls = [
       {id:'jinko_510',model:'Tiger Neo 510Wp',potencia_wp:510,preu:66.30,eficiencia:21.3},
       {id:'jinko_540',model:'Tiger Neo 540Wp',potencia_wp:540,preu:70.20,eficiencia:22.0},
-      {id:'jinko_550',model:'Tiger Neo 550Wp',potencia_wp:550,preu:71.50,eficiencia:22.3},
     ];
-    state.cataleg.mono = [
-      {id:'hw_6ktl_l',model:'SUN2000-6KTL-L1',potencia_kw:6,preu:793,trifasic:false},
-    ];
-    state.cataleg.muntatges = [
-      {id:'coplanar_teula',nom:'Coplanar sobre teula',preu:612},
-    ];
-    renderModulGrid();
-    renderInversorGrid('mono');
-    renderMuntatgeGrid();
+    state.cataleg.mono = [{id:'hw_6ktl_l',model:'SUN2000-6KTL-L1',potencia_kw:6,preu:793,trifasic:false}];
+    state.cataleg.muntatges = [{id:'coplanar_teula',nom:'Coplanar sobre teula',preu:612}];
+    renderModulGrid(); renderInversorGrid('mono'); renderMuntatgeGrid();
   }
 }
 
 function renderComercialsSelect() {
   const sel = document.getElementById('comercial_id');
   if (!sel || !state.cataleg.comercials?.length) return;
-  sel.innerHTML = state.cataleg.comercials.map(c =>
-    `<option value="${c.id}">${c.nom}</option>`
-  ).join('');
+  sel.innerHTML = state.cataleg.comercials.map(c => `<option value="${c.id}">${c.nom}</option>`).join('');
 }
 
-// ─── STEP NAVIGATION ────────────────────────────────────────────────────────
 function goTo(n) {
-  document.querySelectorAll('.section').forEach((s,i) => {
-    s.classList.toggle('active', i===n);
-  });
+  document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i===n));
   document.querySelectorAll('.step-tab').forEach((t,i) => {
     t.classList.remove('active','done');
     if(i===n) t.classList.add('active');
     else if(i<n) t.classList.add('done');
   });
   state.currentStep = n;
-  const titles = ['Dades del Client','Ubicació i Coberta','Configuració de la Instal·lació',
-                  'Consums Energètics','Paràmetres Econòmics','Revisió i Enviament'];
-  document.getElementById('sectionTitle').textContent = `Secció ${n+1} — ${titles[n]}`;
+  const titles = ['Dades del Client','Ubicaci\u00f3 i Coberta','Configuraci\u00f3 de la Instal\u00b7laci\u00f3',
+                  'Consums Energ\u00e8tics','Par\u00e0metres Econ\u00f2mics','Revisi\u00f3 i Enviament'];
+  document.getElementById('sectionTitle').textContent = `Secci\u00f3 ${n+1} \u2014 ${titles[n]}`;
   document.getElementById('sectionProgress').textContent = `${n+1} de 6`;
   if(n===5) updateResum();
 }
 
-// ─── CATALOG RENDERS ────────────────────────────────────────────────────────
 function renderModulGrid() {
-  const grid = document.getElementById('modulGrid');
-  grid.innerHTML = state.cataleg.moduls.map(m => `
+  document.getElementById('modulGrid').innerHTML = state.cataleg.moduls.map(m => `
     <div class="cat-card ${m.id===state.selectedModul?'selected':''}" onclick="selectModul('${m.id}')">
-      <div class="cat-icon">☀️</div>
+      <div class="cat-icon">&#9728;&#65039;</div>
       <div class="cat-name">${m.model}</div>
-      <div class="cat-sub">${m.potencia_wp} Wp · ${m.eficiencia||'—'}%</div>
-      <div class="cat-price">${m.preu?.toFixed(2)||'—'} €/u</div>
+      <div class="cat-sub">${m.potencia_wp} Wp &middot; ${m.eficiencia||'?'}%</div>
+      <div class="cat-price">${m.preu?.toFixed(2)||'?'} &euro;/u</div>
     </div>`).join('');
 }
 
 function renderInversorGrid(tipus) {
   const data = tipus==='mono' ? state.cataleg.mono : state.cataleg.trifasic;
-  const grid = document.getElementById('inversorGrid');
   const kwp = (parseInt(document.getElementById('num_moduls')?.value||12) *
     (state.cataleg.moduls.find(m=>m.id===state.selectedModul)?.potencia_wp||510)) / 1000;
-  grid.innerHTML = data.map(inv => {
-    const recomanat = Math.abs(inv.potencia_kw - kwp) < 2;
-    return `
-    <div class="cat-card ${inv.id===state.selectedInversor?'selected':''}" onclick="selectInversor('${inv.id}')">
-      ${recomanat?'<div class="tag tag-green" style="margin-bottom:4px">✓ Recomanat</div>':''}
-      <div class="cat-icon">⚡</div>
+  document.getElementById('inversorGrid').innerHTML = data.map(inv => {
+    const rec = Math.abs(inv.potencia_kw - kwp) < 2;
+    return `<div class="cat-card ${inv.id===state.selectedInversor?'selected':''}" onclick="selectInversor('${inv.id}')">
+      ${rec?'<div class="tag tag-green" style="margin-bottom:4px">&#10003; Recomanat</div>':''}
+      <div class="cat-icon">&#9889;</div>
       <div class="cat-name">${inv.model.replace('Huawei ','')}</div>
-      <div class="cat-sub">${inv.potencia_kw} kW · ${inv.trifasic?'3F':'1F'}</div>
-      <div class="cat-price">${inv.preu?.toFixed(0)||'—'} €</div>
+      <div class="cat-sub">${inv.potencia_kw} kW &middot; ${inv.trifasic?'3F':'1F'}</div>
+      <div class="cat-price">${inv.preu?.toFixed(0)||'?'} &euro;</div>
     </div>`;
   }).join('');
 }
 
 function renderMuntatgeGrid() {
-  const icons = {coplanar_teula:'🏠',coplanar_xapa:'🏭',supraestructura:'📐',
-                 coberta_plana:'🏢',terra:'🌿',pergola:'🌳',aparcament:'🚗'};
-  const grid = document.getElementById('muntGrid');
-  grid.innerHTML = state.cataleg.muntatges.map(m => `
+  const icons = {coplanar_teula:'&#127968;',coplanar_xapa:'&#127981;',supraestructura:'&#127956;',
+                 coberta_plana:'&#127962;',terra:'&#127807;',pergola:'&#127795;',aparcament:'&#128663;'};
+  document.getElementById('muntGrid').innerHTML = state.cataleg.muntatges.map(m => `
     <div class="cat-card ${m.id===state.selectedMuntatge?'selected':''}" onclick="selectMuntatge('${m.id}')">
-      <div class="cat-icon">${icons[m.id]||'🔩'}</div>
+      <div class="cat-icon">${icons[m.id]||'&#128169;'}</div>
       <div class="cat-name">${m.nom}</div>
-      <div class="cat-price">${m.preu?.toFixed(0)||'—'} €</div>
+      <div class="cat-price">${m.preu?.toFixed(0)||'?'} &euro;</div>
     </div>`).join('');
 }
 
-function selectModul(id) {
-  state.selectedModul = id;
-  renderModulGrid();
-  calcPressupost();
-  onFormChange();
-}
-function selectInversor(id) {
-  state.selectedInversor = id;
-  renderInversorGrid(state.invType);
-  calcPressupost();
-  onFormChange();
-}
-function selectMuntatge(id) {
-  state.selectedMuntatge = id;
-  renderMuntatgeGrid();
-  calcPressupost();
-  onFormChange();
-}
+function selectModul(id) { state.selectedModul=id; renderModulGrid(); calcPressupost(); onFormChange(); }
+function selectInversor(id) { state.selectedInversor=id; renderInversorGrid(state.invType); calcPressupost(); onFormChange(); }
+function selectMuntatge(id) { state.selectedMuntatge=id; renderMuntatgeGrid(); calcPressupost(); onFormChange(); }
 
-// ─── INSTALLATION MODE ──────────────────────────────────────────────────────
 function setInstalMode(mode) {
   state.instalMode = mode;
   document.getElementById('modeManual').style.display = mode==='manual' ? 'block' : 'none';
@@ -870,73 +816,6 @@ function setIAObj(obj) {
   document.getElementById('iobj_'+obj)?.classList.add('active');
 }
 
-async function fetchOptimitzar() {
-  const btn = document.getElementById('btnOptimitzar');
-  btn.disabled = true; btn.textContent = '⏳ Analitzant...';
-  try {
-    const payload = buildPayload();
-    payload.cataleg = state.cataleg;
-    payload.consum_anual = MESOS.reduce((s, mes) => {
-      return s + (parseFloat(document.querySelector(`.p1[data-mes="${mes}"]`)?.value||0)
-                + parseFloat(document.querySelector(`.p2[data-mes="${mes}"]`)?.value||0)
-                + parseFloat(document.querySelector(`.p3[data-mes="${mes}"]`)?.value||0));
-    }, 0) || parseFloat(document.getElementById('consum_anual_total')?.value||6792);
-    payload.cost_actual = MESOS.reduce((s, mes) => {
-      const p1 = parseFloat(document.querySelector(`.p1[data-mes="${mes}"]`)?.value||0);
-      const p2 = parseFloat(document.querySelector(`.p2[data-mes="${mes}"]`)?.value||0);
-      const p3 = parseFloat(document.querySelector(`.p3[data-mes="${mes}"]`)?.value||0);
-      return s + p1 * payload.economics.preu_p1
-               + p2 * payload.economics.preu_p2
-               + p3 * payload.economics.preu_p3;
-    }, 0);
-
-    const r = await fetch(`${N8N}/solenver/optimitzar`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(payload)
-    });
-    const d = await r.json();
-
-    if (d.success) {
-      const p = d.proposta_ia;
-      selectModul(p.modul_id);
-      selectInversor(p.inversor_id);
-      if (document.getElementById('num_moduls')) document.getElementById('num_moduls').value = p.num_moduls;
-      if (document.getElementById('inclinacio')) document.getElementById('inclinacio').value = p.inclinacio_optima;
-      showIaProposal(p.justificacio, p.advertencies, p.alternativa, d.kpis);
-      fetchKpis();
-    } else {
-      toast('❌ Error IA: ' + (d.error || 'Resposta inesperada'), 'error');
-    }
-  } catch(e) { toast('❌ Error IA: ' + e.message, 'error'); }
-  finally { btn.disabled = false; btn.textContent = '🤖 Optimitzar amb IA'; }
-}
-
-function showIaProposal(justificacio, advertencies, alternativa, kpis) {
-  state.iaProposal = { justificacio, advertencies, alternativa };
-  const el = document.getElementById('iaResult');
-  const txt = document.getElementById('iaResultText');
-  if (!el || !txt) return;
-  let html = `<p>${justificacio}</p>`;
-  if (advertencies && advertencies !== 'null') {
-    html += `<p style="color:var(--am);margin-top:6px">⚠ ${advertencies}</p>`;
-  }
-  if (kpis) {
-    html += `<p style="margin-top:6px;font-size:11px;color:var(--gm)">
-      Estalvi estimat: <b>${parseFloat(kpis.estalvi_any1||0).toLocaleString('ca',{maximumFractionDigits:0})} €/any</b> ·
-      Retorn: <b>${kpis.retorn_anys ? parseFloat(kpis.retorn_anys).toFixed(1)+' anys' : '—'}</b>
-    </p>`;
-  }
-  if (alternativa) {
-    html += `<details style="margin-top:8px;font-size:11px"><summary style="cursor:pointer;color:var(--gm)">Alternativa disponible</summary>
-      <p style="margin-top:4px">${alternativa.justificacio}</p></details>`;
-  }
-  txt.innerHTML = html;
-  el.classList.add('show');
-  document.getElementById('dotIA').className = 'dot ok';
-}
-
-// ─── CONSUM TABLE ────────────────────────────────────────────────────────────
 function initConsumsTable() {
   const tb = document.getElementById('consumTableBody');
   const defaults = [525,450,490,440,380,340,310,320,390,460,500,540];
@@ -946,7 +825,7 @@ function initConsumsTable() {
       <td><input type="number" class="p1" data-mes="${mes}" value="${defaults[i]}" min="0" oninput="onFormChange()"></td>
       <td><input type="number" class="p2" data-mes="${mes}" value="${Math.round(defaults[i]*0.35)}" min="0" oninput="onFormChange()"></td>
       <td><input type="number" class="p3" data-mes="${mes}" value="${Math.round(defaults[i]*0.2)}" min="0" oninput="onFormChange()"></td>
-      <td class="consum-total" id="tot_${mes}">—</td>
+      <td class="consum-total" id="tot_${mes}">&mdash;</td>
     </tr>`).join('');
   updateConsumTotals();
 }
@@ -970,8 +849,7 @@ function setConsumMode(mode) {
   document.getElementById('modeConsumCups').style.display  = mode==='cups'  ? 'block':'none';
   document.getElementById('modeConsumAnual').style.display = mode==='anual' ? 'block':'none';
   ['A','B','C'].forEach((l,i) => {
-    const modes=['taula','cups','anual'];
-    document.getElementById('btnCons'+l).classList.toggle('active', mode===modes[i]);
+    document.getElementById('btnCons'+l).classList.toggle('active', ['taula','cups','anual'][i]===mode);
   });
 }
 
@@ -982,15 +860,13 @@ function calcFromTotal() {
   MESOS.forEach((mes,i) => {
     const kwh = total * profile[i];
     const p1el = document.querySelector(`.p1[data-mes="${mes}"]`);
-    const p2el = document.querySelector(`.p2[data-mes="${mes}"]`);
-    const p3el = document.querySelector(`.p3[data-mes="${mes}"]`);
-    if(p1el){ p1el.value=Math.round(kwh*0.35); p2el.value=Math.round(kwh*0.4); p3el.value=Math.round(kwh*0.25); }
+    if(p1el){ p1el.value=Math.round(kwh*0.35);
+      document.querySelector(`.p2[data-mes="${mes}"]`).value=Math.round(kwh*0.4);
+      document.querySelector(`.p3[data-mes="${mes}"]`).value=Math.round(kwh*0.25); }
   });
-  updateConsumTotals();
-  onFormChange();
+  updateConsumTotals(); onFormChange();
 }
 
-// ─── DRAG & DROP CUPS ───────────────────────────────────────────────────────
 function onDragOver(e) { e.preventDefault(); document.getElementById('dropZone').classList.add('drag-over'); }
 function onDrop(e) {
   e.preventDefault();
@@ -1001,45 +877,38 @@ function onDrop(e) {
 async function uploadCups(input) { if(input.files[0]) await uploadCupsFile(input.files[0]); }
 async function uploadCupsFile(file) {
   const status = document.getElementById('cupsStatus');
-  status.innerHTML = '⏳ Processant fitxer CUPS...';
+  status.innerHTML = '\u23f3 Processant fitxer CUPS...';
   try {
     const fd = new FormData(); fd.append('file', file);
     const r = await fetch(`${N8N}/solenver/processar-cups`, {method:'POST', body:fd});
     const d = await r.json();
     if(d.success) {
-      const cons = d.consumos;
       MESOS.forEach(mes => {
-        const v = cons[mes]||{};
+        const v = d.consumos[mes]||{};
         const p1el = document.querySelector(`.p1[data-mes="${mes}"]`);
-        if(p1el){ p1el.value=Math.round(v.p1||0); document.querySelector(`.p2[data-mes="${mes}"]`).value=Math.round(v.p2||0); document.querySelector(`.p3[data-mes="${mes}"]`).value=Math.round(v.p3||0); }
+        if(p1el){ p1el.value=Math.round(v.p1||0);
+          document.querySelector(`.p2[data-mes="${mes}"]`).value=Math.round(v.p2||0);
+          document.querySelector(`.p3[data-mes="${mes}"]`).value=Math.round(v.p3||0); }
       });
-      status.innerHTML = `✅ Importat! Total anual: ${d.total_anual?.toFixed(0)} kWh`;
+      status.innerHTML = `\u2705 Importat! Total anual: ${d.total_anual?.toFixed(0)} kWh`;
       updateConsumTotals(); onFormChange();
     } else throw new Error(d.error);
-  } catch(e) { status.innerHTML = `❌ Error: ${e.message}`; }
+  } catch(e) { status.innerHTML = `\u274c Error: ${e.message}`; }
 }
 
-// ─── COMPASS ────────────────────────────────────────────────────────────────
 function updateCompass() {
   const acimut = parseFloat(document.getElementById('acimut')?.value||0);
   const needle = document.getElementById('compassNeedle');
   if(needle) needle.style.transform = `translateX(-50%) rotate(${acimut}deg)`;
 }
 
-// ─── ADDRESS GEOCODING ──────────────────────────────────────────────────────
 let geocodeTimer;
 function onAddressChange(addr) {
   clearTimeout(geocodeTimer);
-  geocodeTimer = setTimeout(() => geocodeAddress(addr), 1000);
+  geocodeTimer = setTimeout(() => {}, 1000);
   onFormChange();
 }
-async function geocodeAddress(addr) {
-  if(!addr || addr.length < 10) return;
-  // Sense Google Geocoding API, suggerim lat/lng de Barcelona com a default
-  // Quan l'usuari tingui la Maps API Key, podem activar el geocoding real
-}
 
-// ─── KPI LIVE UPDATE ─────────────────────────────────────────────────────────
 function onFormChange() {
   updateConsumTotals();
   clearTimeout(state.kpiTimer);
@@ -1051,44 +920,26 @@ async function fetchKpis() {
     const p = buildPayload(true);
     const modul = state.cataleg.moduls.find(m => m.id === state.selectedModul) || {};
     const inv   = (state.cataleg.mono.concat(state.cataleg.trifasic||[])).find(i => i.id === state.selectedInversor) || {};
-    const munt  = state.cataleg.muntatges.find(m => m.id === state.selectedMuntatge) || {};
-
-    // Consums mensuals com a array de 12 valors
     const consumsMensuals = MESOS.map(mes => {
-      const p1 = parseFloat(document.querySelector(`.p1[data-mes="${mes}"]`)?.value||0);
-      const p2 = parseFloat(document.querySelector(`.p2[data-mes="${mes}"]`)?.value||0);
-      const p3 = parseFloat(document.querySelector(`.p3[data-mes="${mes}"]`)?.value||0);
-      return p1 + p2 + p3;
+      return (parseFloat(document.querySelector(`.p1[data-mes="${mes}"]`)?.value||0)
+            + parseFloat(document.querySelector(`.p2[data-mes="${mes}"]`)?.value||0)
+            + parseFloat(document.querySelector(`.p3[data-mes="${mes}"]`)?.value||0));
     });
-    const consumAnual = consumsMensuals.reduce((a,b)=>a+b,0) || 
-                        parseFloat(document.getElementById('consum_total')?.value||6792);
-
+    const consumAnual = consumsMensuals.reduce((a,b)=>a+b,0) ||
+                        parseFloat(document.getElementById('consum_anual_total')?.value||6792);
     const kpiPayload = {
       num_moduls:       p.instalacio.num_moduls,
-      potencia_modul:   modul.potencia_wp || 510,
-      preu_modul:       modul.preu || 66.30,
-      preu_inversor:    inv.preu || 793,
-      trifasic:         inv.trifasic || false,
-      latitud:          p.client.lat || 41,
-      inclinacio:       p.instalacio.inclinacio || 30,
-      acimut:           p.instalacio.acimut || 0,
+      potencia_wp:      modul.potencia_wp || 510,
+      potencia_inversor_kw: inv.potencia_kw || 6,
       perfil_client:    document.getElementById('perfil_client')?.value || 'industria_general',
-      tarifa:           p.economics.tipus_tarifa || '2.0TD',
       preu_p1:          p.economics.preu_p1,
       preu_p2:          p.economics.preu_p2,
       preu_p3:          p.economics.preu_p3,
       preu_excedent:    p.economics.preu_compensacio,
       consum_anual:     consumAnual,
-      consums_mensuals: consumsMensuals.some(v=>v>0) ? consumsMensuals : null,
       cost_instalacio:  p.economics.cost_instalacio || null,
-      metres_cable_cc:  p.instalacio.metres_cablejat || 15,
-      metres_cable_ca:  p.instalacio.metres_cablejat || 15,
-      ma_obra_modul:    parseFloat(document.getElementById('ma_obra_modul')?.value||100),
-      projecte_tecnic:  parseFloat(document.getElementById('projecte_tecnic')?.value||550),
       manteniment_anual:p.economics.manteniment_anual,
-      tipus_estructura: state.selectedMuntatge || 'coplanar_teula',
     };
-
     const r = await fetch(`${N8N}/solenver/calcular-kpis`, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify(kpiPayload)
@@ -1100,22 +951,138 @@ async function fetchKpis() {
 
 function updateKpiDisplay(k) {
   const set = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
-  const fmt = (v, dec=0) => v != null ? parseFloat(v).toLocaleString('ca',{maximumFractionDigits:dec}) : '—';
+  const fmt = (v, dec=0) => v != null ? parseFloat(v).toLocaleString('ca',{maximumFractionDigits:dec}) : '\u2014';
   set('kpi_kwp',        fmt(k.kwp, 2));
-  set('kpi_sub_kwp',    `${document.getElementById('num_moduls')?.value||12} mòduls · ${fmt(k.hsp_anual)} HSP`);
+  set('kpi_sub_kwp',    `${document.getElementById('num_moduls')?.value||12} m\u00f2duls \u00b7 ${fmt(k.hsp_equivalent||k.hsp_anual)} HSP`);
   set('kpi_estalvi',    fmt(k.estalvi_any1, 0));
-  set('kpi_retorn',     k.retorn_anys ? fmt(k.retorn_anys, 1) : '—');
+  set('kpi_retorn',     k.retorn_anys ? fmt(k.retorn_anys, 1) : '\u2014');
   set('kpi_autoconsum', fmt(k.pct_autoconsum, 1));
   set('kpi_produccio',  fmt(k.produccio_anual, 0));
-  set('kpi_co2',        fmt(k.co2_estalviat_kg, 0));
-  // Extra KPIs si existeixen els elements
-  set('kpi_cost',       fmt(k.cost_instalacio, 0));
-  set('kpi_van',        fmt(k.van_25anys, 0));
-  set('kpi_tir',        k.tir_pct != null ? fmt(k.tir_pct,1)+'%' : '—');
-  set('kpi_benefici',   fmt(k.benefici_net_25, 0));
+  set('kpi_co2',        fmt(k.co2_anual_kg||k.co2_estalviat_kg, 0));
 }
 
-// ─── PRESSUPOST AUTO ─────────────────────────────────────────────────────────
+// IA OPTIMITZAR
+async function fetchOptimitzar() {
+  const btn     = document.getElementById('btnRunIA');
+  const loading = document.getElementById('iaLoading');
+  const result  = document.getElementById('iaResult');
+  const resText = document.getElementById('iaResultText');
+  const errBox  = document.getElementById('iaError');
+
+  btn.disabled = true;
+  btn.textContent = '\u23f3 Processant...';
+  loading.style.display = 'block';
+  result.classList.remove('show');
+  errBox.style.display = 'none';
+
+  try {
+    const p = buildPayload();
+    const consumos = {};
+    let consumAnual = 0;
+    MESOS.forEach(mes => {
+      const p1=parseFloat(document.querySelector(`.p1[data-mes="${mes}"]`)?.value||0);
+      const p2=parseFloat(document.querySelector(`.p2[data-mes="${mes}"]`)?.value||0);
+      const p3=parseFloat(document.querySelector(`.p3[data-mes="${mes}"]`)?.value||0);
+      consumos[mes]={p1,p2,p3}; consumAnual+=p1+p2+p3;
+    });
+    const e=p.economics;
+    let costActual=0;
+    MESOS.forEach(mes=>{const c=consumos[mes];costActual+=c.p1*e.preu_p1+c.p2*e.preu_p2+c.p3*e.preu_p3;});
+
+    const payload={
+      client: p.client,
+      instalacio:{
+        perfil_client: document.getElementById('perfil_client')?.value||'industria_general',
+        tipus_coberta: document.getElementById('tipus_coberta')?.value||'teula',
+        trifasic: state.invType==='tri',
+        potencia_wp: state.cataleg.moduls.find(m=>m.id===state.selectedModul)?.potencia_wp||510,
+        potencia_inversor_kw: (state.cataleg.mono.concat(state.cataleg.trifasic||[])).find(i=>i.id===state.selectedInversor)?.potencia_kw||6,
+      },
+      economics: p.economics,
+      consumos,
+      consum_anual: Math.round(consumAnual),
+      cost_actual: Math.round(costActual*100)/100,
+      pressupost_max: parseFloat(document.getElementById('pressupost_max')?.value||0)||null,
+      meta:{
+        comercial_id: p.meta.comercial_id,
+        objectiu_ia: state.iaObj||'roi_max',
+        notes_internes: p.meta.notes_internes,
+      }
+    };
+
+    const r=await fetch(`${N8N}/solenver/optimitzar`,{
+      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)
+    });
+    if(!r.ok) throw new Error(`Error ${r.status}: ${await r.text()}`);
+    const d=await r.json();
+    if(!d.success) throw new Error(d.error||'Error desconegut');
+
+    const prop=typeof d.proposta==='string'?JSON.parse(d.proposta):d.proposta;
+    state.iaProposal=prop;
+
+    if(prop.configuracio){
+      const cfg=prop.configuracio;
+      const slider=document.getElementById('num_moduls');
+      if(slider&&cfg.num_moduls){ slider.value=cfg.num_moduls;
+        document.getElementById('numModulsVal').textContent=cfg.num_moduls+' m\u00f2duls'; }
+      if(cfg.modul_id) selectModul(cfg.modul_id);
+      if(cfg.inversor_id) selectInversor(cfg.inversor_id);
+      if(cfg.muntatge_id) selectMuntatge(cfg.muntatge_id);
+      const incEl=document.getElementById('inclinacio');
+      if(incEl&&cfg.inclinacio_optima){ incEl.value=cfg.inclinacio_optima;
+        document.getElementById('inclVal').textContent=cfg.inclinacio_optima+'\u00b0'; }
+    }
+
+    const kpis=prop.kpis||{};
+    const inf=prop.informe||{};
+    const cfg=prop.configuracio||{};
+    resText.innerHTML=`
+      <div style="margin-bottom:10px"><strong>Configuraci\u00f3 proposada:</strong><br>
+      ${cfg.num_moduls||'?'} m\u00f2duls &middot; ${cfg.kwp_resultant||'?'} kWp</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">
+        <div style="background:#e8f5e9;padding:8px;border-radius:6px;text-align:center">
+          <div style="font-size:16px;font-weight:700;color:#2E7D32">${kpis.estalvi_any1?kpis.estalvi_any1.toLocaleString('ca')+' \u20ac':'\u2014'}</div>
+          <div style="font-size:10px;color:#757575">Estalvi any 1</div>
+        </div>
+        <div style="background:#e8f5e9;padding:8px;border-radius:6px;text-align:center">
+          <div style="font-size:16px;font-weight:700;color:#2E7D32">${kpis.retorn_anys?kpis.retorn_anys+' anys':'\u2014'}</div>
+          <div style="font-size:10px;color:#757575">Retorn inversi\u00f3</div>
+        </div>
+        <div style="background:#e8f5e9;padding:8px;border-radius:6px;text-align:center">
+          <div style="font-size:16px;font-weight:700;color:#2E7D32">${kpis.autoconsum_pct?kpis.autoconsum_pct+'%':'\u2014'}</div>
+          <div style="font-size:10px;color:#757575">Autoconsum</div>
+        </div>
+        <div style="background:#e8f5e9;padding:8px;border-radius:6px;text-align:center">
+          <div style="font-size:16px;font-weight:700;color:#2E7D32">${kpis.van_25anys?kpis.van_25anys.toLocaleString('ca')+' \u20ac':'\u2014'}</div>
+          <div style="font-size:10px;color:#757575">VAN 25 anys</div>
+        </div>
+      </div>
+      ${inf.seccio_objecte?`<div style="font-size:11px;color:#616161;font-style:italic;padding:8px;background:#f5f5f5;border-radius:6px;margin-bottom:6px">"${inf.seccio_objecte}"</div>`:''}
+      ${prop.alternativa?.justificacio?`<div style="font-size:11px;color:#616161;margin-top:6px">&#128161; ${prop.alternativa.justificacio}</div>`:''}
+      ${inf.recomanacio_bateria?`<div style="font-size:11px;color:#F57C00;margin-top:6px">&#128267; ${inf.recomanacio_bateria}</div>`:''}
+    `;
+    result.classList.add('show');
+    document.getElementById('dotIA').className = 'dot ok';
+
+    if(kpis.produccio_anual) updateKpiDisplay({
+      kwp:cfg.kwp_resultant, produccio_anual:kpis.produccio_anual,
+      pct_autoconsum:kpis.autoconsum_pct, estalvi_any1:kpis.estalvi_any1,
+      retorn_anys:kpis.retorn_anys, van_25anys:kpis.van_25anys,
+      tir_pct:kpis.tir_pct, benefici_net_25:kpis.benefici_net_25,
+      co2_anual_kg:kpis.co2_25anys_kg,
+    });
+    onFormChange();
+
+  } catch(err) {
+    errBox.textContent='\u274c Error: '+err.message;
+    errBox.style.display='block';
+  } finally {
+    btn.disabled=false;
+    btn.textContent='&#129302; Generar proposta IA';
+    loading.style.display='none';
+  }
+}
+
 async function calcPressupost() {
   try {
     const r = await fetch(`${N8N}/solenver/calcular-pressupost`, {
@@ -1131,13 +1098,12 @@ async function calcPressupost() {
     const d = await r.json();
     if(d.success) {
       document.getElementById('cost_instalacio').value = d.total?.toFixed(0)||5900;
-      document.getElementById('costHint').textContent = `Calculat automàticament: ${d.subtotal?.toFixed(0)}€ + IVA = ${d.total?.toFixed(0)}€`;
+      document.getElementById('costHint').textContent = `Calculat autom\u00e0ticament: ${d.subtotal?.toFixed(0)}\u20ac + IVA = ${d.total?.toFixed(0)}\u20ac`;
       onFormChange();
     }
   } catch(e) {}
 }
 
-// ─── BUILD PAYLOAD ───────────────────────────────────────────────────────────
 function buildPayload(kpisOnly = false) {
   const consumos = {};
   MESOS.forEach(mes => {
@@ -1147,7 +1113,6 @@ function buildPayload(kpisOnly = false) {
     consumos[mes] = {p1,p2,p3};
   });
   const totalAnual = Object.values(consumos).reduce((s,v)=>s+v.p1+v.p2+v.p3,0);
-
   return {
     client: {
       nom:    document.getElementById('client_nom')?.value||'',
@@ -1187,72 +1152,64 @@ function buildPayload(kpisOnly = false) {
       notes_internes: document.getElementById('notes_internes')?.value||'',
       mode_ia:        state.instalMode === 'ia',
       objectiu_ia:    state.iaObj,
-      ia_justificacio: state.iaProposal?.justificacio||'',
-      ia_advertencies: state.iaProposal?.advertencies||'',
+      ia_justificacio: state.iaProposal?.configuracio ? JSON.stringify(state.iaProposal.configuracio) : '',
       preview_only:   false,
     }
   };
 }
 
-// ─── RESUM FINAL ─────────────────────────────────────────────────────────────
 function updateResum() {
   const p = buildPayload();
   const n = p.client.nom || '(client no especificat)';
   const kwp = (p.instalacio.num_moduls * 510 / 1000).toFixed(2);
   const cons = Object.values(p.consumos).reduce ? Object.values(p.consumos).reduce((s,v)=>s+(v.p1||0)+(v.p2||0)+(v.p3||0),0) : 0;
   document.getElementById('resumContent').innerHTML = `
-    <b>Client:</b> ${n} · ${p.client.adreca||'—'}<br>
-    <b>Instal·lació:</b> ${p.instalacio.num_moduls} mòduls → ${kwp} kWp<br>
-    <b>Inversor:</b> ${p.instalacio.inversor_id} · <b>Muntatge:</b> ${p.instalacio.tipus_muntatge||'—'}<br>
+    <b>Client:</b> ${n} &middot; ${p.client.adreca||'&mdash;'}<br>
+    <b>Instal&middot;laci&oacute;:</b> ${p.instalacio.num_moduls} m&ograve;duls &rarr; ${kwp} kWp<br>
+    <b>Inversor:</b> ${p.instalacio.inversor_id} &middot; <b>Muntatge:</b> ${p.instalacio.tipus_muntatge||'&mdash;'}<br>
     <b>Consum total:</b> ${cons.toLocaleString('ca',{maximumFractionDigits:0})} kWh/any<br>
-    <b>Cost instal·lació:</b> ${parseFloat(document.getElementById('cost_instalacio')?.value||0).toLocaleString('ca')} €<br>
-    <b>Comercial:</b> ${document.getElementById('comercial_id')?.value||'—'}
+    <b>Cost instal&middot;laci&oacute;:</b> ${parseFloat(document.getElementById('cost_instalacio')?.value||0).toLocaleString('ca')} &euro;<br>
+    <b>Comercial:</b> ${document.getElementById('comercial_id')?.value||'&mdash;'}
   `;
 }
 
-// ─── PDF ACTIONS ─────────────────────────────────────────────────────────────
 async function previewPDF() {
-  if(!document.getElementById('client_nom')?.value) { toast('⚠ Omple el nom del client primer', 'error'); return; }
-  showLoading('Generant previsualització PDF...');
+  if(!document.getElementById('client_nom')?.value) { toast('\u26a0 Omple el nom del client primer', 'error'); return; }
+  showLoading('Generant previsualitzaci\u00f3 PDF...');
   try {
     const payload = buildPayload();
     payload.meta.preview_only = true;
     const r = await fetch(`${N8N}/solenver/generar-pdf`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(payload)
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
     });
     if(!r.ok) throw new Error((await r.json()).error || 'Error desconegut');
     const blob = await r.blob();
-    const url = URL.createObjectURL(blob);
-    window.open(url, '_blank');
-    toast('✅ PDF obert en una nova pestanya', 'success');
-  } catch(e) { toast(`❌ ${e.message}`, 'error'); }
+    window.open(URL.createObjectURL(blob), '_blank');
+    toast('\u2705 PDF obert en una nova pestanya', 'success');
+  } catch(e) { toast(`\u274c ${e.message}`, 'error'); }
   finally { hideLoading(); }
 }
 
 async function generarEnviar() {
-  if(!document.getElementById('client_nom')?.value) { toast('⚠ Omple el nom del client primer', 'error'); return; }
+  if(!document.getElementById('client_nom')?.value) { toast('\u26a0 Omple el nom del client primer', 'error'); return; }
   showLoading('Generant PDF i enviant...');
   try {
     const payload = buildPayload();
     payload.meta.preview_only = false;
     const r = await fetch(`${N8N}/solenver/generar-pdf`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(payload)
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
     });
     if(!r.ok) throw new Error((await r.json()).error || 'Error desconegut');
-    // Descarregar
     const blob = await r.blob();
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = `Estudi_FV_${payload.client.nom.replace(/\s/g,'_')}.pdf`;
     a.click();
-    toast('✅ PDF generat i descarregat!', 'success');
-  } catch(e) { toast(`❌ ${e.message}`, 'error'); }
+    toast('\u2705 PDF generat i descarregat!', 'success');
+  } catch(e) { toast(`\u274c ${e.message}`, 'error'); }
   finally { hideLoading(); }
 }
 
-// ─── HELPERS ─────────────────────────────────────────────────────────────────
 function showLoading(msg='Carregant...') {
   document.getElementById('loadingMsg').textContent = msg;
   document.getElementById('loadingOverlay').classList.add('show');
@@ -1262,15 +1219,13 @@ function hideLoading() { document.getElementById('loadingOverlay').classList.rem
 let toastTimer;
 function toast(msg, type='info') {
   const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = `toast ${type} show`;
+  el.textContent = msg; el.className = `toast ${type} show`;
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 4000);
 }
 
 document.getElementById('ombres')?.addEventListener('change', function() {
-  document.getElementById('ombraWarn').style.display =
-    this.value === 'importants' ? 'block' : 'none';
+  document.getElementById('ombraWarn').style.display = this.value==='importants' ? 'block' : 'none';
 });
 </script>
 </body>
