@@ -459,6 +459,7 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
                 <div class="desc">Omple la superfície disponible</div>
               </div>
             </div>
+            <button class="btn btn-primary" style="width:100%;margin-top:12px" onclick="fetchOptimitzar()" id="btnOptimitzar">🤖 Optimitzar amb IA</button>
             <div class="ia-result" id="iaResult">
               <div class="ia-badge">🤖 Proposta IA</div>
               <div class="ia-text" id="iaResultText"></div>
@@ -867,6 +868,72 @@ function setIAObj(obj) {
   state.iaObj = obj;
   document.querySelectorAll('.ia-obj-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('iobj_'+obj)?.classList.add('active');
+}
+
+async function fetchOptimitzar() {
+  const btn = document.getElementById('btnOptimitzar');
+  btn.disabled = true; btn.textContent = '⏳ Analitzant...';
+  try {
+    const payload = buildPayload();
+    payload.cataleg = state.cataleg;
+    payload.consum_anual = MESOS.reduce((s, mes) => {
+      return s + (parseFloat(document.querySelector(`.p1[data-mes="${mes}"]`)?.value||0)
+                + parseFloat(document.querySelector(`.p2[data-mes="${mes}"]`)?.value||0)
+                + parseFloat(document.querySelector(`.p3[data-mes="${mes}"]`)?.value||0));
+    }, 0) || parseFloat(document.getElementById('consum_anual_total')?.value||6792);
+    payload.cost_actual = MESOS.reduce((s, mes) => {
+      const p1 = parseFloat(document.querySelector(`.p1[data-mes="${mes}"]`)?.value||0);
+      const p2 = parseFloat(document.querySelector(`.p2[data-mes="${mes}"]`)?.value||0);
+      const p3 = parseFloat(document.querySelector(`.p3[data-mes="${mes}"]`)?.value||0);
+      return s + p1 * payload.economics.preu_p1
+               + p2 * payload.economics.preu_p2
+               + p3 * payload.economics.preu_p3;
+    }, 0);
+
+    const r = await fetch(`${N8N}/solenver/optimitzar`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+    const d = await r.json();
+
+    if (d.success) {
+      const p = d.proposta_ia;
+      selectModul(p.modul_id);
+      selectInversor(p.inversor_id);
+      if (document.getElementById('num_moduls')) document.getElementById('num_moduls').value = p.num_moduls;
+      if (document.getElementById('inclinacio')) document.getElementById('inclinacio').value = p.inclinacio_optima;
+      showIaProposal(p.justificacio, p.advertencies, p.alternativa, d.kpis);
+      fetchKpis();
+    } else {
+      toast('❌ Error IA: ' + (d.error || 'Resposta inesperada'), 'error');
+    }
+  } catch(e) { toast('❌ Error IA: ' + e.message, 'error'); }
+  finally { btn.disabled = false; btn.textContent = '🤖 Optimitzar amb IA'; }
+}
+
+function showIaProposal(justificacio, advertencies, alternativa, kpis) {
+  state.iaProposal = { justificacio, advertencies, alternativa };
+  const el = document.getElementById('iaResult');
+  const txt = document.getElementById('iaResultText');
+  if (!el || !txt) return;
+  let html = `<p>${justificacio}</p>`;
+  if (advertencies && advertencies !== 'null') {
+    html += `<p style="color:var(--am);margin-top:6px">⚠ ${advertencies}</p>`;
+  }
+  if (kpis) {
+    html += `<p style="margin-top:6px;font-size:11px;color:var(--gm)">
+      Estalvi estimat: <b>${parseFloat(kpis.estalvi_any1||0).toLocaleString('ca',{maximumFractionDigits:0})} €/any</b> ·
+      Retorn: <b>${kpis.retorn_anys ? parseFloat(kpis.retorn_anys).toFixed(1)+' anys' : '—'}</b>
+    </p>`;
+  }
+  if (alternativa) {
+    html += `<details style="margin-top:8px;font-size:11px"><summary style="cursor:pointer;color:var(--gm)">Alternativa disponible</summary>
+      <p style="margin-top:4px">${alternativa.justificacio}</p></details>`;
+  }
+  txt.innerHTML = html;
+  el.classList.add('show');
+  document.getElementById('dotIA').className = 'dot ok';
 }
 
 // ─── CONSUM TABLE ────────────────────────────────────────────────────────────
