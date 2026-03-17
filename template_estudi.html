@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',Arial,sans-serif;font-size:10.5pt;color:#1a1a1a;background:#fff}
+
+/* ── PAGE BREAKS ── */
+.page{page-break-before:always;padding:18mm 16mm 14mm;min-height:257mm;position:relative}
+.page:first-child{page-break-before:avoid}
+
+/* ── SECTION HEADER ── */
+.sh{display:flex;align-items:center;gap:14px;border-bottom:3px solid #2E7D32;padding-bottom:10px;margin-bottom:22px}
+.sh-num{font-size:32pt;font-weight:900;color:#C8E6C9;line-height:1}
+.sh-title{font-size:15pt;font-weight:700;color:#1B5E20}
+
+/* ── PORTADA ── */
+.portada{background:linear-gradient(145deg,#1B5E20 0%,#2E7D32 55%,#43A047 100%);color:#fff;padding:0;min-height:297mm;display:flex;flex-direction:column}
+.portada-top{padding:22mm 18mm 0;flex:1}
+.plogo{font-size:30pt;font-weight:900;letter-spacing:4px;margin-bottom:4px}
+.ptag{font-size:9.5pt;opacity:.8;letter-spacing:1.5px;margin-bottom:48px;text-transform:uppercase}
+.ptitle{font-size:21pt;font-weight:700;line-height:1.35;margin-bottom:14px;max-width:480px}
+.pclient{font-size:13pt;font-weight:600;margin-bottom:4px}
+.padr{font-size:10pt;opacity:.85;margin-bottom:4px}
+.pdata{font-size:9pt;opacity:.65;margin-top:10px;letter-spacing:.5px}
+.portada-kpis{background:rgba(0,0,0,.25);padding:18px 18mm;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:auto}
+.kbox{text-align:center;padding:6px 0}
+.kval{font-size:20pt;font-weight:900;line-height:1}
+.klbl{font-size:7.5pt;opacity:.75;text-transform:uppercase;letter-spacing:.6px;margin-top:4px}
+
+/* ── KPI CARDS ── */
+.kgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
+.kcard{border:2px solid #66BB6A;border-radius:8px;padding:14px 12px;text-align:center;background:#F1F8E9}
+.kcard .v{font-size:17pt;font-weight:800;color:#1B5E20;line-height:1.1}
+.kcard .l{font-size:8pt;color:#555;text-transform:uppercase;letter-spacing:.5px;margin-top:5px}
+
+/* ── INFO GRID ── */
+.igrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.ibox{background:#FAFAFA;border-left:4px solid #4CAF50;border-radius:4px;padding:12px 14px}
+.ibox .il{font-size:7.5pt;text-transform:uppercase;color:#888;letter-spacing:.5px}
+.ibox .iv{font-size:11.5pt;font-weight:700;color:#1B5E20;margin-top:3px}
+
+/* ── TABLES ── */
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:9pt}
+thead th{background:#1B5E20;color:#fff;padding:8px 10px;text-align:left;font-weight:600;font-size:8.5pt;text-transform:uppercase;letter-spacing:.4px}
+tbody tr:nth-child(even){background:#F9FBF9}
+tbody tr:nth-child(odd){background:#fff}
+tbody td{padding:7px 10px;border-bottom:1px solid #E0E0E0}
+tfoot td{background:#E8F5E9;font-weight:700;padding:8px 10px;border-top:2px solid #2E7D32;color:#1B5E20}
+.taula-total{background:#E8F5E9!important;font-weight:700!important;color:#1B5E20!important}
+
+/* ── CHARTS ── */
+.chart{margin:18px 0;text-align:center}
+.chart img{max-width:100%;height:auto;border:1px solid #E8F5E9;border-radius:6px}
+.chart-cap{font-size:8pt;color:#777;margin-top:6px;font-style:italic}
+
+/* ── TEXT ── */
+p{margin-bottom:11px;line-height:1.65;text-align:justify}
+h3{color:#1B5E20;font-size:11pt;font-weight:700;margin:20px 0 8px;padding-bottom:3px;border-bottom:1px solid #C8E6C9}
+ul{margin:10px 0 10px 20px;line-height:1.9}
+li{margin-bottom:2px}
+strong{font-weight:700}
+
+/* ── PRESSUPOST ── */
+.press-total td{background:#1B5E20!important;color:#fff!important;font-size:12pt;font-weight:800!important}
+.press-sub td{background:#E8F5E9;color:#1B5E20;font-weight:600}
+
+/* ── FOOTER ── */
+.pfooter{position:absolute;bottom:8mm;left:16mm;right:16mm;display:flex;justify-content:space-between;font-size:7.5pt;color:#BBB;border-top:1px solid #EEE;padding-top:5px}
+
+/* ── QUI SOM – icones de valors ── */
+.vals{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0}
+.val-item{text-align:center;padding:16px 10px;background:#E8F5E9;border-radius:8px}
+.val-icon{font-size:20pt;margin-bottom:6px}
+.val-title{font-size:9pt;font-weight:700;color:#1B5E20}
+.val-desc{font-size:8pt;color:#555;margin-top:4px;line-height:1.4}
+
+/* ── GARANTIES ── */
+.gar-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:18px 0}
+.gar-box{border-radius:8px;padding:16px;text-align:center}
+.gar-box.green{background:#E8F5E9;border:2px solid #4CAF50}
+.gar-box.dark{background:#1B5E20;color:#fff}
+.gar-years{font-size:28pt;font-weight:900;color:#1B5E20;line-height:1}
+.gar-box.dark .gar-years{color:#A5D6A7}
+.gar-label{font-size:8.5pt;text-transform:uppercase;letter-spacing:.5px;color:#555;margin-top:4px}
+.gar-box.dark .gar-label{color:#C8E6C9}
+
+/* ── PROPERS PASSOS ── */
+.pas{display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid #E8F5E9}
+.pas:last-child{border-bottom:none}
+.pas-num{background:#1B5E20;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:10pt;flex-shrink:0;margin-top:2px}
+.pas-text{flex:1}
+.pas-title{font-weight:700;color:#1B5E20;font-size:10pt}
+.pas-desc{font-size:9pt;color:#555;margin-top:2px}
+.pas-qui{font-size:8pt;color:#888;margin-top:2px;font-style:italic}
+
+/* ── CALLOUT ── */
+.callout{background:#E8F5E9;border-left:5px solid #2E7D32;border-radius:6px;padding:16px 18px;margin:18px 0}
+.callout p{margin:0;text-align:left;color:#1B5E20;font-weight:600}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ PORTADA ═══════════════ -->
+<div class="portada page">
+  <div class="portada-top">
+    <div class="plogo">SOLENVER</div>
+    <div class="ptag">Energia Solar Fotovoltaica · www.solenver.cat</div>
+    <div class="ptitle">{{TITOL_ESTUDI}}</div>
+    <div class="pclient">{{CLIENT_NOM}}</div>
+    <div class="padr">{{CLIENT_ADRECA}}</div>
+    <div class="pdata">{{DATA_ESTUDI}} · Ref. {{ID_ESTUDI}}</div>
+  </div>
+  <div class="portada-kpis">
+    <div class="kbox"><div class="kval">{{KWP}}</div><div class="klbl">Potència instal·lada</div></div>
+    <div class="kbox"><div class="kval">{{ESTALVI_ANY1}}</div><div class="klbl">Estalvi primer any</div></div>
+    <div class="kbox"><div class="kval">{{RETORN_ANYS}}</div><div class="klbl">Retorn inversió</div></div>
+    <div class="kbox"><div class="kval">{{PCT_AUTOCONSUM}}%</div><div class="klbl">% Autoconsum</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════ §01 QUI SOM ═══════════════ -->
+<div class="page">
+  <div class="sh"><div class="sh-num">01</div><div class="sh-title">Qui Som</div></div>
+
+  <p>Solenver és una empresa especialitzada en el disseny, instal·lació i manteniment d'instal·lacions solars fotovoltaiques per a ús industrial, agrícola i residencial. Amb més de 10 anys d'experiència al sector, oferim solucions integrals adaptades a les necessitats energètiques de cada client, des de l'estudi inicial fins a la legalització i el manteniment a llarg termini.</p>
+
+  <div class="vals">
+    <div class="val-item"><div class="val-icon">☀</div><div class="val-title">Experiència</div><div class="val-desc">Més de 10 anys dissenyant instal·lacions FV</div></div>
+    <div class="val-item"><div class="val-icon">⚙</div><div class="val-title">Qualitat</div><div class="val-desc">Materials de primera categoria amb garantia fabricant</div></div>
+    <div class="val-item"><div class="val-icon">📋</div><div class="val-title">Servei integral</div><div class="val-desc">De l'estudi a la legalització i el manteniment</div></div>
+  </div>
+
+  <div class="igrid">
+    <div class="ibox"><div class="il">Especialitat</div><div class="iv">Autoconsum industrial i agrícola</div></div>
+    <div class="ibox"><div class="il">Cobertura</div><div class="iv">Catalunya i Aragó</div></div>
+    <div class="ibox"><div class="il">Certificació</div><div class="iv">Instal·ladors REE Autoritzats</div></div>
+    <div class="ibox"><div class="il">Garantia de servei</div><div class="iv">25 anys de compromís</div></div>
+  </div>
+
+  <h3>Objecte de l'estudi</h3>
+  <p>{{TEXT_OBJECTE}}</p>
+
+  <h3>Dades del client</h3>
+  <table>
+    <tbody>
+      <tr><td style="width:22%;font-weight:600">Nom / Raó social</td><td style="width:28%">{{CLIENT_NOM}}</td><td style="width:22%;font-weight:600">NIF / CIF</td><td>{{CLIENT_NIF}}</td></tr>
+      <tr><td style="font-weight:600">Adreça instal·lació</td><td colspan="3">{{CLIENT_ADRECA}}</td></tr>
+      <tr><td style="font-weight:600">CUPS</td><td colspan="3">{{CLIENT_CUPS}}</td></tr>
+      <tr><td style="font-weight:600">Data informe</td><td colspan="3">{{DATA_ESTUDI}}</td></tr>
+      <tr><td style="font-weight:600">Referència estudi</td><td colspan="3">{{ID_ESTUDI}}</td></tr>
+    </tbody>
+  </table>
+
+  <div class="pfooter"><span>SOLENVER · Estudi Fotovoltaic</span><span>{{CLIENT_NOM}}</span><span>{{ID_ESTUDI}}</span></div>
+</div>
+
+<!-- ═══════════════ §02 SITUACIÓ ENERGÈTICA ═══════════════ -->
+<div class="page">
+  <div class="sh"><div class="sh-num">02</div><div class="sh-title">Situació Energètica Actual</div></div>
+
+  <p>{{TEXT_SITUACIO_ENERGETICA}}</p>
+
+  <div class="kgrid">
+    <div class="kcard"><div class="v">{{CONSUM_ANUAL}}</div><div class="l">Consum anual total</div></div>
+    <div class="kcard"><div class="v">{{COST_ACTUAL}}</div><div class="l">Cost energètic anual estimat</div></div>
+    <div class="kcard"><div class="v">{{PREU_ENERGIA_ACTUAL}}</div><div class="l">Preu mig energia</div></div>
+  </div>
+
+  <h3>Consums mensuals per períodes tarifaris (2.0TD)</h3>
+  {{HTML_TAULA_CONSUMS}}
+
+  <div class="chart">
+    <img src="{{IMG_GRAFIC_CONSUM_MENSUAL}}" alt="Consum mensual">
+    <div class="chart-cap">Figura 1 · Perfil de consum mensual (kWh)</div>
+  </div>
+
+  <div class="pfooter"><span>SOLENVER · Estudi Fotovoltaic</span><span>{{CLIENT_NOM}}</span><span>{{ID_ESTUDI}}</span></div>
+</div>
+
+<!-- ═══════════════ §03 INSTAL·LACIÓ PROPOSADA ═══════════════ -->
+<div class="page">
+  <div class="sh"><div class="sh-num">03</div><div class="sh-title">Instal·lació Proposada</div></div>
+
+  <p>{{TEXT_DESCRIPCIO_INSTALACIO}}</p>
+
+  <div class="igrid">
+    <div class="ibox"><div class="il">Nombre de mòduls</div><div class="iv">{{NUM_MODULS}} unitats</div></div>
+    <div class="ibox"><div class="il">Potència instal·lada</div><div class="iv">{{KWP}}</div></div>
+    <div class="ibox"><div class="il">Model mòdul</div><div class="iv">{{MODUL_MODEL}}</div></div>
+    <div class="ibox"><div class="il">Inversor</div><div class="iv">{{INVERSOR_KW}}</div></div>
+  </div>
+
+  <h3>Especificacions tècniques del mòdul fotovoltaic</h3>
+  {{HTML_TAULA_MODUL}}
+
+  <h3>Especificacions tècniques de l'inversor</h3>
+  {{HTML_TAULA_INVERSOR}}
+
+  <h3>Factors de pèrdues del sistema</h3>
+  <table>
+    <thead><tr><th>Factor de pèrdua</th><th>Valor estimat</th></tr></thead>
+    <tbody>
+      <tr><td>Cablejat CC</td><td>1.5%</td></tr>
+      <tr><td>Rendiment inversor</td><td>1.4% (η=98.6%)</td></tr>
+      <tr><td>Brutícia i pols</td><td>2.0%</td></tr>
+      <tr><td>Temperatura</td><td>2.5%</td></tr>
+      <tr><td>Degradació anual mòduls</td><td>0.4% / any</td></tr>
+    </tbody>
+    <tfoot><tr><td><strong>Performance Ratio (PR) total estimat</strong></td><td><strong>≈ 81%</strong></td></tr></tfoot>
+  </table>
+
+  <div class="pfooter"><span>SOLENVER · Estudi Fotovoltaic</span><span>{{CLIENT_NOM}}</span><span>{{ID_ESTUDI}}</span></div>
+</div>
+
+<!-- ═══════════════ §04 PRODUCCIÓ SOLAR ═══════════════ -->
+<div class="page">
+  <div class="sh"><div class="sh-num">04</div><div class="sh-title">Producció Solar i Autoconsum</div></div>
+
+  <p>{{TEXT_PRODUCCIO}}</p>
+  <p>{{TEXT_EXCEDENTS}}</p>
+
+  <div class="kgrid">
+    <div class="kcard"><div class="v">{{PRODUCCIO_ANUAL}}</div><div class="l">Producció anual</div></div>
+    <div class="kcard"><div class="v">{{AUTOCONSUM_ANUAL}}</div><div class="l">Autoconsum directe</div></div>
+    <div class="kcard"><div class="v">{{PCT_AUTOCONSUM}}%</div><div class="l">% Autoconsum</div></div>
+  </div>
+
+  <div class="chart">
+    <img src="{{IMG_GRAFIC_CONSUM_VS_PRODUCCIO}}" alt="Producció vs Consum mensual">
+    <div class="chart-cap">Figura 2 · Producció FV vs Consum mensual (kWh)</div>
+  </div>
+
+  <h3>Balanç energètic mensual detallat</h3>
+  {{HTML_TAULA_PRODUCCIO}}
+
+  <div class="pfooter"><span>SOLENVER · Estudi Fotovoltaic</span><span>{{CLIENT_NOM}}</span><span>{{ID_ESTUDI}}</span></div>
+</div>
+
+<!-- ═══════════════ §05 ANÀLISI ECONÒMICA ═══════════════ -->
+<div class="page">
+  <div class="sh"><div class="sh-num">05</div><div class="sh-title">Anàlisi Econòmica</div></div>
+
+  <p>{{TEXT_AVALUACIO_ECONOMICA}}</p>
+
+  <div class="kgrid">
+    <div class="kcard"><div class="v">{{ESTALVI_ANY1}}</div><div class="l">Estalvi any 1</div></div>
+    <div class="kcard"><div class="v">{{PCT_REDUCCIO_COST}}</div><div class="l">Reducció cost energètic</div></div>
+    <div class="kcard"><div class="v">{{BENEFICI_25_ANYS}}</div><div class="l">Benefici net 25 anys</div></div>
+    <div class="kcard"><div class="v">{{RETORN_ANYS}}</div><div class="l">Retorn inversió</div></div>
+    <div class="kcard"><div class="v">{{VAN_25_ANYS}}</div><div class="l">VAN a 25 anys</div></div>
+    <div class="kcard"><div class="v">{{TIR_PCT}}%</div><div class="l">Taxa Interna de Retorn</div></div>
+  </div>
+
+  <div class="chart">
+    <img src="{{IMG_GRAFIC_COST_ACTUAL_VS_PV}}" alt="Cashflow acumulat 25 anys">
+    <div class="chart-cap">Figura 3 · Cashflow acumulat a 25 anys (EUR)</div>
+  </div>
+
+  <div class="callout"><p>L'estalvi generat per la instal·lació solar compensa la inversió inicial en {{RETORN_ANYS}}, generant un benefici net de {{BENEFICI_25_ANYS}} al llarg dels 25 anys de vida útil del sistema.</p></div>
+
+  <div class="pfooter"><span>SOLENVER · Estudi Fotovoltaic</span><span>{{CLIENT_NOM}}</span><span>{{ID_ESTUDI}}</span></div>
+</div>
+
+<!-- ═══════════════ §06 RETORN INVERSIÓ ═══════════════ -->
+<div class="page">
+  <div class="sh"><div class="sh-num">06</div><div class="sh-title">Retorn de la Inversió — Cashflow 25 anys</div></div>
+
+  <div class="chart">
+    <img src="{{IMG_GRAFIC_COST_ACTUAL_VS_PV}}" alt="Cashflow 25 anys">
+    <div class="chart-cap">Figura 4 · Evolució del cashflow acumulat</div>
+  </div>
+
+  <h3>Flux de caixa anual detallat</h3>
+  {{HTML_TAULA_CASHFLOW}}
+
+  <div class="pfooter"><span>SOLENVER · Estudi Fotovoltaic</span><span>{{CLIENT_NOM}}</span><span>{{ID_ESTUDI}}</span></div>
+</div>
+
+<!-- ═══════════════ §07 PRESSUPOST ═══════════════ -->
+<div class="page">
+  <div class="sh"><div class="sh-num">07</div><div class="sh-title">Pressupost Detallat</div></div>
+
+  {{HTML_TAULA_PRESSUPOST}}
+
+  <h3>Aquest pressupost inclou</h3>
+  <ul>
+    <li>Materials de primera qualitat (mòduls JINKO Tiger Neo, inversor HUAWEI SUN2000)</li>
+    <li>Muntatge i posta en marxa complets</li>
+    <li>Sistema de monitoratge integrat amb app mòbil</li>
+    <li>Redacció de la memòria tècnica i direcció d'obra</li>
+    <li>Legalització de la instal·lació i alta compensació d'excedents a la xarxa</li>
+    <li>Manteniment preventiu gratuït els dos primers anys</li>
+    <li>Telegestió i control 7/24 gratuïts</li>
+  </ul>
+
+  <div class="callout" style="margin-top:20px"><p>Pressupost vàlid per 30 dies. Preus sense IVA. IVA 21% inclòs a la taula.</p></div>
+
+  <div class="pfooter"><span>SOLENVER · Estudi Fotovoltaic</span><span>{{CLIENT_NOM}}</span><span>{{ID_ESTUDI}}</span></div>
+</div>
+
+<!-- ═══════════════ §08 GARANTIES I PROPERS PASSOS ═══════════════ -->
+<div class="page">
+  <div class="sh"><div class="sh-num">08</div><div class="sh-title">Garanties i Propers Passos</div></div>
+
+  <div class="gar-grid">
+    <div class="gar-box green"><div class="gar-years">{{ANYS_GARANTIA_MODUL_PRODUCTE}}</div><div class="gar-label">Anys garantia mòdul (producte)</div></div>
+    <div class="gar-box green"><div class="gar-years">25</div><div class="gar-label">Anys garantia producció (&gt;80% Pnom)</div></div>
+    <div class="gar-box dark"><div class="gar-years">{{ANYS_GARANTIA_INVERSOR}}</div><div class="gar-label">Anys garantia inversor</div></div>
+    <div class="gar-box dark"><div class="gar-years">2</div><div class="gar-label">Anys manteniment gratuït inclòs</div></div>
+  </div>
+
+  <h3>Propers passos per engegar la instal·lació</h3>
+
+  <div class="pas"><div class="pas-num">1</div><div class="pas-text"><div class="pas-title">Acceptació del pressupost</div><div class="pas-desc">Confirmació i signatura del pressupost acceptat</div><div class="pas-qui">Client</div></div></div>
+  <div class="pas"><div class="pas-num">2</div><div class="pas-text"><div class="pas-title">Pagament senyal (30%)</div><div class="pas-desc">Transferència bancària o xec</div><div class="pas-qui">Client</div></div></div>
+  <div class="pas"><div class="pas-num">3</div><div class="pas-text"><div class="pas-title">Disseny definitiu i comanda materials</div><div class="pas-desc">Enginyeria de detall, selecció final d'equips i comanda als proveïdors</div><div class="pas-qui">Solenver</div></div></div>
+  <div class="pas"><div class="pas-num">4</div><div class="pas-text"><div class="pas-title">Instal·lació i connexió a xarxa</div><div class="pas-desc">Muntatge mecànic, cablejat i posada en marxa</div><div class="pas-qui">Solenver</div></div></div>
+  <div class="pas"><div class="pas-num">5</div><div class="pas-text"><div class="pas-title">Legalització i alta compensació excedents</div><div class="pas-desc">Tràmits administratius amb distribuïdora i REE</div><div class="pas-qui">Solenver</div></div></div>
+  <div class="pas"><div class="pas-num">6</div><div class="pas-text"><div class="pas-title">Formació i entrega documentació</div><div class="pas-desc">Manual d'ús, accés app monitoratge i documentació tècnica</div><div class="pas-qui">Solenver</div></div></div>
+
+  <div style="margin-top:28px;background:#E8F5E9;border-radius:10px;padding:20px 24px;text-align:center">
+    <p style="text-align:center;font-size:12.5pt;font-weight:700;color:#1B5E20;margin:0">Contacteu amb el vostre comercial Solenver per a qualsevol consulta</p>
+    <p style="text-align:center;font-size:10pt;color:#555;margin:6px 0 0">info@solenver.cat · www.solenver.cat</p>
+  </div>
+
+  <div class="pfooter"><span>SOLENVER · Estudi Fotovoltaic</span><span>{{CLIENT_NOM}}</span><span>{{ID_ESTUDI}}</span></div>
+</div>
+
+</body>
+</html>
