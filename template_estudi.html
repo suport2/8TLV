@@ -78,6 +78,12 @@ strong{font-weight:700}
 .val-title{font-size:9pt;font-weight:700;color:#1B5E20}
 .val-desc{font-size:8pt;color:#555;margin-top:4px;line-height:1.4}
 
+/* ── VISTA AÈRIA ── */
+.vista-aeria{margin:16px 0;border-radius:8px;overflow:hidden;border:2px solid #C8E6C9}
+.vista-aeria img{width:100%;height:200px;object-fit:cover;display:block}
+.vista-aeria-cap{background:#E8F5E9;padding:6px 12px;font-size:8pt;color:#555;font-style:italic}
+.portada-aerial{height:140px;background:center/cover no-repeat;opacity:.7;margin:0 -18mm}
+
 /* ── GARANTIES ── */
 .gar-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:18px 0}
 .gar-box{border-radius:8px;padding:16px;text-align:center}
@@ -114,6 +120,7 @@ strong{font-weight:700}
     <div class="padr">{{CLIENT_ADRECA}}</div>
     <div class="pdata">{{DATA_ESTUDI}} · Ref. {{ID_ESTUDI}}</div>
   </div>
+  {{IMG_VISTA_AERIA_PORTADA}}
   <div class="portada-kpis">
     <div class="kbox"><div class="kval">{{KWP}}</div><div class="klbl">Potència instal·lada</div></div>
     <div class="kbox"><div class="kval">{{ESTALVI_ANY1}}</div><div class="klbl">Estalvi primer any</div></div>
@@ -170,7 +177,9 @@ strong{font-weight:700}
     <div class="kcard"><div class="v">{{PREU_ENERGIA_ACTUAL}}</div><div class="l">Preu mig energia</div></div>
   </div>
 
-  <h3>Consums mensuals per períodes tarifaris (2.0TD)</h3>
+  {{HTML_BLOC_VISTA_AERIA}}
+
+  <h3>Consums mensuals per períodes tarifaris ({{TARIFA}})</h3>
   {{HTML_TAULA_CONSUMS}}
 
   <div class="chart">
@@ -270,7 +279,7 @@ strong{font-weight:700}
   <div class="sh"><div class="sh-num">06</div><div class="sh-title">Retorn de la Inversió — Cashflow 25 anys</div></div>
 
   <div class="chart">
-    <img src="{{IMG_GRAFIC_COST_ACTUAL_VS_PV}}" alt="Cashflow 25 anys">
+    <img src="{{IMG_GRAFIC_CASHFLOW}}" alt="Cashflow 25 anys">
     <div class="chart-cap">Figura 4 · Evolució del cashflow acumulat</div>
   </div>
 
