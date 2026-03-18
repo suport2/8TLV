@@ -1,184 +1,188 @@
-# Solenver — Sistema d'Estudis Fotovoltaics v2.0
+# PROJECTE SOLENVER — Automatització Estudis Fotovoltaics v2.0
+> Última actualització: 18 març 2026
 
-## Descripció
-Sistema automatitzat per generar estudis tècnico-econòmics de instal·lacions fotovoltaiques.
-El comercial omple un formulari web → el sistema calcula → genera un PDF professional → l'envia al client per email.
+---
 
-## Arquitectura actual
+## ARQUITECTURA GENERAL
 
 ```
-index.html  (formulari web, 6 seccions, KPIs en temps real)
-    ↓ POST JSON
-n8n cloud (app.n8n.cloud) — tots els fluxos visibles aquí
+Comercial omple formulari web
     ↓
-Google Sheets (base de dades del catàleg i historial)
+GitHub Pages (index.html) → n8n Cloud → Google Sheets / Drive / Gmail
     ↓
-Google Drive (guardar PDFs)  +  Gmail (enviar al client)  +  Slack (notificacions)
+PDF generat → Google Drive + email al client
 ```
 
-## Fitxers del projecte
+### URLs i IDs clau
+| Recurs | Valor |
+|--------|-------|
+| Formulari web | https://suport2.github.io/8TLV |
+| n8n Cloud | https://geri.app.n8n.cloud |
+| GitHub repo | https://github.com/suport2/8TLV |
+| Google Sheets | 1W67iKzO4pJib2BOLrRCILmbuCTiAoWJ-ge-GNayDGpU |
+| Google Doc template | 19Ok6mOYL7ye15VPuD5mzcxQTMbGC-NDh |
+| motor_data.json | https://raw.githubusercontent.com/suport2/8TLV/main/motor_data.json |
 
-| Fitxer | Funció |
-|--------|--------|
-| `index.html` | Formulari web complet — 6 seccions, catàleg dinàmic, KPIs live |
-| `app.py` | Servidor Flask (backend Python, temporal fins migrar tot a n8n) |
-| `calculator.py` | Motor de càlcul fotovoltaic (reprodueix CALCULADORA_v2.xlsx) |
-| `cataleg.py` | Catàleg de mòduls, inversors, muntatges i preus |
-| `pdf_generator.py` | Generador PDF ReportLab (9 seccions, gràfics vectorials) |
-| `optimizer.py` | Agent IA optimitzador (crida Claude Sonnet) |
-| `maps_client.py` | Google Maps Static API (foto aèria per al PDF) |
-| `cups_parser.py` | Parser fitxers XLS del CUPS (Red Eléctrica) |
+---
 
-## Google Sheets
-**ID:** `1W67iKzO4pJib2BOLrRCILmbuCTiAoWJ-ge-GNayDGpU`
-**URL:** https://docs.google.com/spreadsheets/d/1W67iKzO4pJib2BOLrRCILmbuCTiAoWJ-ge-GNayDGpU
+## WORKFLOW n8n — "Solenver - API Principal" (44 nodes)
 
-### Fulles:
-- `moduls` — catàleg mòduls FV (JINKO Tiger Neo)
-- `inversors` — catàleg inversors (Huawei SUN2000)
-- `muntatges` — tipus de muntatge i preus
-- `comercials` — equip comercial
-- `estudis` — historial de tots els estudis generats
+### Endpoints actius
+- GET  /solenver/cataleg        ✅ Retorna mòduls, inversors, muntatges, comercials
+- POST /solenver/calcular-kpis  ✅ Motor v5 hora×hora verificat vs Excel
+- POST /solenver/generar-estudi ✅ Genera PDF via PDFShift + HTML template
+- POST /solenver/optimitzar     ✅ AI Agent GPT-4o (optimitza + redacta informe)
 
-### Columnes fulla `estudis`:
-data | id_estudi | client_nom | client_nif | adreca | kwp | consum_kwh | estalvi_eur | retorn_anys | cost_eur | comercial | url_pdf | estat
+### Flux generar-estudi (nodes en ordre)
+```
+POST /solenver/generar-estudi
+  → [paral·lel] Preparar input KPIs
+                Llegir paràmetres PDF  (Sheets: parametres)
+                Llegir perfils PDF     (Sheets: perfils)
+                Llegir costos PDF      (Sheets: costos_instalacio)
+  → Merge estudi
+  → Llegir dades motor PDF  (GET motor_data.json GitHub)
+  → Calcular KPIs estudi    (Motor v5 JS)
+  → [paral·lel] Llegir catàleg PDF    (Sheets: moduls)
+                Llegir inversors PDF  (Sheets: inversors)
+                Llegir muntatges PDF  (Sheets: muntatges)
+  → Llegir comercials PDF   (Sheets: comercials)
+  → Llegir configuració     (Sheets: configuracio)
+  → Preparar dades document (JS - genera replacements + QuickChart URLs)
+  → Llegir template HTML    (GET GitHub raw html)
+  → Generar HTML final      (substitueix {{PLACEHOLDERS}})
+  → PDFShift - Generar PDF
+  → Pujar PDF a Drive
+  → [paral·lel] Registrar a Sheets / Enviar email / Retornar resultat
+```
 
-## n8n Cloud
-**URL:** https://geri.app.n8n.cloud
-**MCP:** https://geri.app.n8n.cloud/mcp-server/http
+---
 
-### Workflows actuals:
-- `Solenver - Catàleg API` — GET /solenver/cataleg → llegeix les 4 fulles del Sheets i retorna JSON
+## GOOGLE SHEETS — Fulles actives
 
-### Workflows pendents de crear:
-- `Solenver - Calcular KPIs` — rep dades formulari, calcula i retorna KPIs ràpids
-- `Solenver - Generar Estudi` — flux complet: calcular → IA → PDF → Drive → Gmail → Sheets
-- `Solenver - Guardar Estudi` — registra a la fulla `estudis` del Sheets
+| Fulla | Contingut clau |
+|-------|----------------|
+| moduls | id, model, potencia_wp, preu, foto_url, eficiencia, fabricant |
+| inversors | id, model, potencia_kw, preu, foto_url, fabricant, sistema_monitoritzacio, trifasic |
+| muntatges | id, nom, preu_modul, foto_url |
+| comercials | id, nom, email, telefon |
+| parametres | inflacio_energia=0.015, degradacio=0.004, iva=0.21, marge_comercial=0.35, taxa_descont=0.05, vida_util=25 |
+| perfils | 24h × 8 sectors de consum |
+| costos_instalacio | estructura per tipus (€/mòdul), materials |
+| estudis | Historial PDFs generats |
+| configuracio | IMG_LOGO, IMG_EMPRESA, GOOGLE_MAPS_KEY, EMAIL_EMPRESA, TELEFON_EMPRESA, WEB_EMPRESA, IMG_MONITORING_HUAWEI, IMG_MONITORING_FRONIUS, IMG_MONITORING_SMA, IMG_MONITORING_SOLAREDGE |
 
-## Formulari web (index.html)
+---
 
-### 6 seccions:
-1. **Client** — nom, NIF, adreça, CUPS, email, telèfon
-2. **Ubicació** — lat/lng, orientació (acimut), inclinació, tipus coberta, ombres
-3. **Instal·lació** — mode Manual o mode IA; selecció mòdul/inversor/muntatge des de Sheets
-4. **Consums** — taula 12 mesos (P1/P2/P3), upload XLS CUPS, o total anual
-5. **Econòmics** — cost instal·lació, increment energia %, manteniment, anys anàlisi
-6. **Enviar** — resum, comercial, toggle email client, notes internes, botons PDF
+## MOTOR DE CÀLCUL v5
 
-### Catàleg dinàmic:
-El formulari carrega mòduls/inversors/muntatges/comercials des de n8n → Google Sheets.
-Endpoint: `GET https://geri.app.n8n.cloud/webhook/solenver/cataleg`
+### Verificació (cas ILERLASER 12 mòduls 510Wp, lat 41)
+- Producció: 8.000 kWh ✅ (Excel: 8.000)
+- % Autoconsum: 41.8% ❌ (Excel: 34.0%) — pendent corregir
+- Estalvi any 1: ~810€ ❌ (Excel: 669€) — conseqüència autoconsum erroni
+- Retorn: 8.28 anys ≈ ✅ (Excel: 8.23)
 
-### KPIs en temps real:
-Cada canvi al formulari fa un POST a n8n per calcular i mostrar:
-- Potència kWp
-- Estalvi €/any
-- Retorn inversió (anys)
-- % Autoconsum
-- Producció kWh/any
-- CO₂ estalviat kg/any
+### Lògica correcta (pendent implementar)
+L'Excel usa columna DOMÈSTICA com a forma horària base per TOTS els clients.
+El motor actual usa el shape del sector directament → autoconsum sobreestimat.
+Solució: usar dom_shape per la forma horària + shape sector per estimar P1/P2/P3 sense factura.
 
-## Motor de càlcul fotovoltaic
+### Cashflow (correcte)
+estalvi_n = estalvi_1 × 1.015^(n-1)  [inflació 1.5%, SIN degradació a l'estalvi]
 
-### Passos del càlcul:
-1. Irradiació solar (PVGIS o taula interna per lat/lng/inclinació/acimut)
-2. Producció bruta FV (kWp × HSP × dies × factor pèrdues)
-3. Autoconsum/excedents (perfil horari de coincidència solar)
-4. Anàlisi econòmica mensual (cost actual vs cost amb FV)
-5. Cashflow 25 anys (degradació 0.4%/any, increment energia 2.5%/any)
-6. KPIs: TIR, VAN, retorn inversió, CO₂ estalviat
+---
 
-### Factors de pèrdues del sistema:
-- Cable: 1.5%
-- Inversor: 8%
-- Brutícia: 2%
-- Temperatura: 2.5%
-- Degradació anual: 0.4%
+## PDF GENERAT — Estat actual
 
-## PDF (9 seccions)
-§0 Portada — KPIs destacats, dades client
-§1 Qui som — presentació Solenver
-§2 Situació energètica — foto aèria, taula consums
-§3 Instal·lació proposada — specs tècniques
-§3.5 Proposta IA (opcional) — justificació agent IA
-§4 Producció solar — gràfics barres + donut
-§5 Anàlisi econòmica — costos actual vs FV
-§6 Retorn inversió — cashflow 25 anys
-§7 Pressupost detallat — taula components + IVA
-§8 Garanties i propers passos
+### Estructura (12 pàgines) i estat
+- ✅ Portada (títol dinàmic, KPIs, foto aèria Google Maps)
+- ✅ Qui som (text fix Solenver + foto empresa)
+- ✅ Objecte + Dades client
+- ✅ Situació energètica (taula P1/P2/P3 × 12 mesos)
+- ❌ Gràfic consum mensual — falta línia acumulada taronja
+- ✅ Instal·lació proposada (taula mòdul + taula inversor)
+- ❌ Foto mòdul — foto_url al Sheets buit
+- ❌ Foto estructura — foto_url al Sheets buit
+- ❌ Captura sistema monitorització — pendent configurar
+- ❌ Gràfic PV Production — bug: apuntava a urlGraficConsum (corregit, pendent verificar)
+- ✅ Gràfic producció vs consum
+- ✅ Anàlisi econòmica (KPIs + gràfic cost actual vs PV)
+- ✅ Cashflow 25 anys (gràfic + taula)
+- ✅ Pressupost detallat
+- ✅ Garanties + propers passos
+- ✅ Portfolio fotos projectes anteriors
 
-## Agent IA Optimitzador
-- Model: Claude Sonnet (claude-sonnet-4-6)
-- Objectius: ROI màxim / Autoconsum màxim / Cost mínim / Potència màxima
-- Flux: itera 4-50 mòduls → selecciona top 5 → Claude tria i justifica en català
-- Output: configuració recomanada + justificació 3 frases per al client
+### Problemes actius
+1. **Gràfics sense línia acumulada** — verificar si URL QuickChart es renderitza correctament
+2. **Bug IMG_GRAFIC_PV_PRODUCTION** — corregit al node però pendent verificar
+3. **foto_url buit** — cal afegir URLs Drive al Sheets per moduls/inversors/muntatges
+4. **Sistema monitorització** — afegir URL a fulla configuracio Sheets + placeholder {{IMG_MONITORING}} al template
+5. **% Autoconsum incorrecte** — motor usa shape sector, hauria d'usar dom_shape
 
-## Catàleg de materials
+---
 
-### Mòduls (JINKO Tiger Neo N-type):
-- 510Wp — 66.30€/u
-- 540Wp — 70.20€/u
-- 550Wp — 71.50€/u
-- 580Wp — 75.40€/u
-- 600Wp — 78.00€/u
+## FORMULARI WEB
 
-### Inversors Huawei (monofàsic):
-- SUN2000-2KTL-L1 (2kW) — 437€
-- SUN2000-3KTL-L1 (3kW) — 512€
-- SUN2000-4KTL-L1 (4kW) — 629€
-- SUN2000-5KTL-L1 (5kW) — 682€
-- SUN2000-6KTL-L1 (6kW) — 793€
+### Mode Manual vs Mode IA
+- **Manual**: comercial configura num_moduls, mòdul, inversor, muntatge manualment
+- **IA**: clica "Generar proposta IA" → crida /solenver/optimitzar → agent GPT-4o consulta catàleg, calcula KPIs, omple formulari automàticament + redacta textos informe
 
-### Inversors Huawei (trifàsic):
-- SUN2000-6KTL-M1 (6kW) — 903€
-- SUN2000-10KTL-M1 (10kW) — 1121€
-- SUN2000-15KTL-M2 (15kW) — 1424€
-- SUN2000-20KTL-M2 (20kW) — 1533€
+### Sidebar KPIs (temps real)
+Actualització automàtica mentre s'omple el formulari via POST /solenver/calcular-kpis
 
-### Muntatges:
-- Coplanar teula — 612€
-- Coplanar xapa — 550€
-- Supraestructura inclinada — 780€
-- Coberta plana lastrada — 720€
-- Terra — 850€
-- Pèrgola solar — 1200€
+---
 
-## Costos fixes instal·lació
-- Mà d'obra base: 1.200€
-- Projecte tècnic + legalització: 550€
-- Cable CC: 2.50€/m
-- Cable CA: 1.80€/m
-- IVA: 21%
+## AI AGENT SOLENVER (GPT-4o)
 
-## Paleta corporativa Solenver
-- Verd fosc: #1B5E20
-- Verd: #2E7D32
-- Verd clar: #4CAF50
-- Fons verd: #E8F5E9
+### Eines disponibles
+- consultar_cataleg → GET /solenver/cataleg
+- calcular_kpis → POST /solenver/calcular-kpis
 
-## Estat actual del projecte
-- ✅ Formulari web complet (index.html)
-- ✅ Backend Python funcional (app.py + mòduls)
-- ✅ Google Sheets creat amb les 5 fulles
-- ✅ Workflow n8n "Catàleg API" importat
-- ✅ Claude Code connectat a n8n via MCP
-- ⏳ Assignar credencials Google als nodes del workflow
-- ⏳ Activar workflow Catàleg API i provar endpoint
-- ⏳ Crear workflow "Calcular KPIs"
-- ⏳ Crear workflow "Generar Estudi" (flux complet)
-- ⏳ Migrar càlculs de Python a Function nodes de n8n
-- ⏳ Integrar generació PDF a n8n
-- ⏳ Connectar index.html amb endpoints n8n
+### Output JSON esperat
+```json
+{
+  "configuracio": { "num_moduls", "modul_id", "inversor_id", "muntatge_id", "inclinacio_optima", "kwp_resultant" },
+  "kpis": { "produccio_anual", "autoconsum_pct", "estalvi_any1", "retorn_anys", "van_25anys", "benefici_net_25", "co2_25anys_kg" },
+  "alternativa": { "num_moduls", "modul_id", "inversor_id", "justificacio" },
+  "informe": {
+    "titol", "seccio_objecte", "seccio_situacio_energetica",
+    "seccio_instalacio", "seccio_produccio", "seccio_economia",
+    "recomanacio_bateria", "recomanacio_subvencions"
+  }
+}
+```
 
-## Pròxims passos
-1. Activar workflow Catàleg API i verificar URL webhook
-2. Actualitzar index.html perquè carregui catàleg des de n8n
-3. Crear workflow de càlcul de KPIs en temps real
-4. Crear workflow complet de generació d'estudi
-5. Substituir backend Python per workflows n8n
+---
 
-## Notes importants
-- Tot el codi de càlcul ha de poder viure dins Function nodes de n8n (JavaScript)
-- Els preus del catàleg es gestionen des de Google Sheets — NO al codi
-- El formulari (index.html) és un fitxer HTML estàtic sense dependències
-- L'agent IA usa l'API d'Anthropic directament des de n8n via HTTP node
+## PRÒXIMS PASSOS (per ordre)
+
+### Avui (pendent)
+1. Verificar gràfic consum mensual al navegador amb la URL QuickChart
+2. Afegir URLs Drive a columna foto_url al Sheets (moduls, inversors, muntatges)
+3. Afegir claus IMG_MONITORING_X a fulla configuracio Sheets
+4. Verificar placeholder {{IMG_MONITORING}} al Google Doc template
+5. Verificar correcció IMG_GRAFIC_PV_PRODUCTION al node
+
+### Pròxima sessió
+6. Corregir % autoconsum — usar dom_shape com a forma base al motor
+7. Connectar textos de l'agent IA al generar-estudi (seccio_objecte, etc.)
+8. Upload factura + API CUPS (Datadis) per omplir consums automàticament
+
+### A llarg termini
+9. Validació ratio inversor (alerta si kWp/kW > 1.3)
+10. 3 templates PDF per tipus client (domèstic/PYME/corporatiu)
+11. Lectura automàtica factura per IA
+
+---
+
+## DECISIONS CLAU PRESES
+
+| Decisió | Motiu |
+|---------|-------|
+| n8n cloud (no Python/Flask) | Zero infraestructura, tot visual |
+| PDFShift (no Google Docs) | Layout fix, gràfics inline estables |
+| QuickChart.io | URLs simples, no requereix navegador |
+| motor_data.json al GitHub | 126KB, evita sobrecarregar n8n |
+| GPT-4o (no Claude) | API key OpenAI disponible |
+| Inflació 1.5% | Verificat contra Excel CALCULADORA_v2.xlsx |
+| Cashflow sense degradació | Igual que Excel: estalvi_n = estalvi_1 × 1.015^(n-1) |
