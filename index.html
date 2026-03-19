@@ -1154,7 +1154,8 @@ function buildPayload(kpisOnly = false) {
       objectiu_ia:    state.iaObj,
       ia_justificacio: state.iaProposal?.configuracio ? JSON.stringify(state.iaProposal.configuracio) : '',
       preview_only:   false,
-    }
+    },
+    informe: state.iaProposal?.informe || null,
   };
 }
 
