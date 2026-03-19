@@ -202,6 +202,38 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
 .required-note{font-size:11px;color:var(--gm);margin-top:16px}
 .sep{display:flex;align-items:center;gap:10px;color:var(--gm);font-size:11px;margin:12px 0}
 .sep::before,.sep::after{content:'';flex:1;height:1px;background:var(--gl)}
+
+/* ── Upload factura ───────────────────────────────── */
+.upload-factura-card{border:2px dashed #4ade80;background:#f0fdf4;border-radius:var(--radius);padding:16px;margin-bottom:20px}
+.upload-hint{color:#475569;font-size:0.88rem;margin:0 0 14px}
+.badge-optional{font-size:0.72rem;background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:999px;font-weight:600;margin-left:8px}
+.upload-drop-zone{border:2px dashed var(--gl);border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:#fff}
+.upload-drop-zone:hover,.upload-drop-zone.drag-over{border-color:var(--vc);background:var(--vbg)}
+.upload-drop-zone .upload-icon{font-size:2.2rem;margin-bottom:6px}
+.upload-drop-zone p{margin:3px 0;color:#475569;font-size:13px}
+.upload-drop-zone a{color:var(--v2)}
+.upload-formats{font-size:0.78rem;color:#94a3b8}
+.upload-status{display:flex;align-items:center;gap:12px;padding:14px;background:#f8fafc;border-radius:8px;margin-top:10px}
+.upload-spinner{width:18px;height:18px;border:3px solid #bbf7d0;border-top-color:#16a34a;border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.upload-result{margin-top:10px;border:1px solid #86efac;border-radius:10px;overflow:hidden}
+.upload-result-header{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0fdf4;border-bottom:1px solid #bbf7d0}
+.upload-result-icon{font-size:1.1rem;color:#16a34a}
+.upload-confidence{margin-left:auto;font-size:0.75rem;padding:2px 8px;border-radius:999px;font-weight:600}
+.upload-confidence.alta{background:#dcfce7;color:#15803d}
+.upload-confidence.mitja{background:#fef9c3;color:#854d0e}
+.upload-confidence.baixa{background:#fee2e2;color:#991b1b}
+.upload-result-fields{padding:10px 14px;display:grid;grid-template-columns:1fr 1fr;gap:5px 14px;font-size:0.82rem}
+.upload-field-label{color:#64748b}
+.upload-field-value{color:#1e293b;font-weight:500}
+.upload-field-null{color:#94a3b8;font-style:italic}
+.upload-result-actions{display:flex;gap:8px;padding:10px 14px;background:#f8fafc;border-top:1px solid #e2e8f0}
+.btn-apply{flex:1;background:#16a34a;color:#fff;border:none;border-radius:8px;padding:9px 14px;font-weight:600;cursor:pointer;font-size:13px;transition:background .2s}
+.btn-apply:hover{background:#15803d}
+.btn-cancel-upload{background:#fff;color:#475569;border:1px solid #cbd5e1;border-radius:8px;padding:9px 14px;cursor:pointer;font-size:13px}
+.upload-card-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.upload-card-header h3{font-size:13px;font-weight:600;color:var(--v2);margin:0}
+.upload-section-icon{font-size:1.1rem}
 </style>
 </head>
 <body>
@@ -247,6 +279,39 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
 
       <!-- SECCI&Oacute; 1: CLIENT -->
       <div class="section active" id="sec0">
+
+        <!-- ─── UPLOAD FACTURA ─── -->
+        <div class="upload-factura-card" id="uploadFacturaCard">
+          <div class="upload-card-header">
+            <span class="upload-section-icon">⚡</span>
+            <h3>Importar des de factura</h3>
+            <span class="badge-optional">Opcional</span>
+          </div>
+          <p class="upload-hint">Puja la factura elèctrica del client i omplirem automàticament les dades de contacte, CUPS i preus de l'energia.</p>
+          <div class="upload-drop-zone" id="uploadDropZone">
+            <input type="file" id="facturaFileInput" accept=".pdf" hidden>
+            <div class="upload-icon">📄</div>
+            <p><strong>Arrossega la factura aquí</strong><br>o <a href="#" id="uploadBrowseLink">cerca al teu ordinador</a></p>
+            <p class="upload-formats">Format: PDF · Màx. 10 MB</p>
+          </div>
+          <div class="upload-status" id="uploadStatus" style="display:none">
+            <div class="upload-spinner"></div>
+            <span id="uploadStatusText">Analitzant factura...</span>
+          </div>
+          <div class="upload-result" id="uploadResult" style="display:none">
+            <div class="upload-result-header">
+              <span class="upload-result-icon" id="uploadResultIcon">✓</span>
+              <strong id="uploadResultTitle">Dades extretes</strong>
+              <span class="upload-confidence" id="uploadConfidence"></span>
+            </div>
+            <div class="upload-result-fields" id="uploadResultFields"></div>
+            <div class="upload-result-actions">
+              <button type="button" class="btn-apply" id="btnApplyExtraction">✓ Aplicar dades al formulari</button>
+              <button type="button" class="btn-cancel-upload" id="btnCancelUpload">Descartar</button>
+            </div>
+          </div>
+        </div>
+
         <div class="section-title">Dades del Client</div>
         <div class="field-grid field-grid-2">
           <div class="field">
@@ -1228,6 +1293,174 @@ function toast(msg, type='info') {
 document.getElementById('ombres')?.addEventListener('change', function() {
   document.getElementById('ombraWarn').style.display = this.value==='importants' ? 'block' : 'none';
 });
+
+// ─────────────────────────────────────────────────────────────────
+// UPLOAD FACTURA – Extracció automàtica via n8n + GPT-4o
+// ─────────────────────────────────────────────────────────────────
+
+const ENDPOINT_FACTURA = 'https://geri.app.n8n.cloud/webhook/solenver/extreure-factura';
+const MAX_PDF_MB = 10;
+
+const FIELD_LABELS = {
+  client_nom:              'Nom / Raó social',
+  client_nif:              'NIF / CIF',
+  client_email:            'Email',
+  client_telefon:          'Telèfon',
+  adreca_subministrament:  'Adreça subministrament',
+  cups:                    'CUPS',
+  tarifa:                  'Tarifa',
+  potencia_contractada_kw: 'Potència contractada (kW)',
+  preu_p1_kwh:             'Preu P1 (€/kWh)',
+  preu_p2_kwh:             'Preu P2 (€/kWh)',
+  preu_p3_kwh:             'Preu P3 (€/kWh)',
+  preu_excedent_kwh:       'Preu excedents (€/kWh)',
+  comercialitzadora:       'Comercialitzadora',
+};
+
+const FIELD_MAP = {
+  client_nom:              '#client_nom',
+  client_nif:              '#client_nif',
+  client_email:            '#client_email',
+  client_telefon:          '#client_telefon',
+  adreca_subministrament:  '#client_adreca',
+  cups:                    '#client_cups',
+  tarifa:                  '#tarifa',
+  preu_p1_kwh:             '#preu_p1',
+  preu_p2_kwh:             '#preu_p2',
+  preu_p3_kwh:             '#preu_p3',
+  preu_excedent_kwh:       '#preu_comp',
+};
+
+let lastExtraction = null;
+
+function initUploadFactura() {
+  const dropZone   = document.getElementById('uploadDropZone');
+  const fileInput  = document.getElementById('facturaFileInput');
+  const browseLink = document.getElementById('uploadBrowseLink');
+  if (!dropZone) return;
+
+  browseLink.addEventListener('click', (e) => { e.preventDefault(); fileInput.click(); });
+  dropZone.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', (e) => { if (e.target.files[0]) processFacturaFile(e.target.files[0]); });
+
+  dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type === 'application/pdf') processFacturaFile(file);
+    else showUploadError('Només s\'accepten fitxers PDF.');
+  });
+
+  document.getElementById('btnApplyExtraction')?.addEventListener('click', applyExtraction);
+  document.getElementById('btnCancelUpload')?.addEventListener('click', cancelUpload);
+}
+
+async function processFacturaFile(file) {
+  if (file.type !== 'application/pdf') { showUploadError('Només s\'accepten fitxers PDF.'); return; }
+  if (file.size > MAX_PDF_MB * 1024 * 1024) { showUploadError('El fitxer supera els ' + MAX_PDF_MB + ' MB màxims.'); return; }
+
+  showUploadStatus('Analitzant "' + file.name + '"...');
+
+  let base64;
+  try { base64 = await fileToBase64(file); }
+  catch(e) { showUploadError('Error llegint el fitxer: ' + e.message); return; }
+
+  try {
+    const res = await fetch(ENDPOINT_FACTURA, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pdf_base64: base64, filename: file.name }),
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || 'Error desconegut');
+    lastExtraction = data;
+    showExtractionResult(data);
+  } catch(e) {
+    showUploadError('Error analitzant la factura: ' + e.message);
+  }
+}
+
+function showExtractionResult(data) {
+  hideUploadStatus();
+  const conf = data.confianca || 'mitja';
+  const confLabels = { alta: '✓ Confiança alta', mitja: '~ Confiança mitja', baixa: '⚠ Confiança baixa' };
+  const confEl = document.getElementById('uploadConfidence');
+  confEl.textContent = confLabels[conf] || conf;
+  confEl.className = 'upload-confidence ' + conf;
+
+  const foundFields = Object.entries(FIELD_LABELS).filter(([key]) => data[key] !== null && data[key] !== undefined);
+  document.getElementById('uploadResultTitle').textContent = foundFields.length + ' camps extrets de la factura';
+  document.getElementById('uploadResultFields').innerHTML = foundFields.map(([key, label]) => {
+    const val = data[key];
+    const display = val !== null
+      ? '<span class="upload-field-value">' + val + '</span>'
+      : '<span class="upload-field-null">No trobat</span>';
+    return '<span class="upload-field-label">' + label + '</span>' + display;
+  }).join('');
+
+  document.getElementById('uploadResult').style.display = 'block';
+}
+
+function applyExtraction() {
+  if (!lastExtraction) return;
+  let applied = 0;
+  Object.entries(FIELD_MAP).forEach(([key, selector]) => {
+    const val = lastExtraction[key];
+    if (val === null || val === undefined) return;
+    const el = document.querySelector(selector);
+    if (!el) return;
+    el.value = val;
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+    applied++;
+  });
+  const btn = document.getElementById('btnApplyExtraction');
+  btn.textContent = '✓ ' + applied + ' camps aplicats';
+  btn.style.background = '#15803d';
+  setTimeout(() => { btn.textContent = '✓ Aplicar dades al formulari'; btn.style.background = ''; }, 2500);
+}
+
+function fileToBase64(file) {
+  return new Promise((res, rej) => {
+    const reader = new FileReader();
+    reader.onload  = () => res(reader.result.split(',')[1]);
+    reader.onerror = () => rej(new Error('Error llegint fitxer'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function showUploadStatus(msg) {
+  document.getElementById('uploadDropZone').style.display = 'none';
+  document.getElementById('uploadResult').style.display   = 'none';
+  document.getElementById('uploadStatusText').textContent = msg;
+  document.getElementById('uploadStatus').style.display   = 'flex';
+}
+
+function hideUploadStatus() {
+  document.getElementById('uploadStatus').style.display = 'none';
+}
+
+function showUploadError(msg) {
+  hideUploadStatus();
+  const zone = document.getElementById('uploadDropZone');
+  zone.style.display = 'block';
+  const orig = zone.innerHTML;
+  zone.innerHTML = '<div style="color:#dc2626;padding:8px"><strong>⚠ ' + msg + '</strong></div>';
+  setTimeout(() => { zone.innerHTML = orig; initUploadFactura(); }, 3000);
+}
+
+function cancelUpload() {
+  lastExtraction = null;
+  document.getElementById('uploadResult').style.display   = 'none';
+  document.getElementById('uploadStatus').style.display   = 'none';
+  document.getElementById('uploadDropZone').style.display = 'block';
+  document.getElementById('facturaFileInput').value = '';
+}
+
+document.addEventListener('DOMContentLoaded', initUploadFactura);
 </script>
 </body>
 </html>
