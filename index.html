@@ -1374,7 +1374,9 @@ async function processFacturaFile(file) {
       body: JSON.stringify({ pdf_base64: base64, filename: file.name }),
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
+    const text = await res.text();
+    if (!text || !text.trim()) throw new Error('El servidor no ha retornat resposta (timeout o error intern)');
+    const data = JSON.parse(text);
     if (!data.success) throw new Error(data.error || 'Error desconegut');
     lastExtraction = data;
     showExtractionResult(data);
