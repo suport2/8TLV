@@ -217,7 +217,7 @@ const prodAcum       = prodTotal.reduce((acc,v,i) => { acc.push((acc[i-1]||0)+v)
 const cfVals         = kpis.cashflow ? kpis.cashflow.map(c => c.flux_acumulat||0) : [];
 const cfLabels       = kpis.cashflow ? kpis.cashflow.map(c => 'Any '+c.any) : [];
 
-const urlGraficConsum = 'https://quickchart.io/chart?w=600&h=300&c=' + encodeURIComponent(JSON.stringify({
+const urlGraficConsum = 'https://quickchart.io/chart?w=420&h=210&c=' + encodeURIComponent(JSON.stringify({
   type: 'bar',
   data: {
     labels: labelsM,
@@ -267,7 +267,7 @@ const urlGraficConsum = 'https://quickchart.io/chart?w=600&h=300&c=' + encodeURI
   }
 }));
 
-const urlGraficPVProd = 'https://quickchart.io/chart?w=550&h=280&c=' + encodeURIComponent(JSON.stringify({
+const urlGraficPVProd = 'https://quickchart.io/chart?w=420&h=210&c=' + encodeURIComponent(JSON.stringify({
   type: 'bar',
   data: {
     labels: labelsM,
@@ -290,7 +290,7 @@ const urlGraficPVProd = 'https://quickchart.io/chart?w=550&h=280&c=' + encodeURI
   }
 }));
 
-const urlGraficProdVsConsum = 'https://quickchart.io/chart?w=550&h=280&c=' + encodeURIComponent(JSON.stringify({
+const urlGraficProdVsConsum = 'https://quickchart.io/chart?w=420&h=210&c=' + encodeURIComponent(JSON.stringify({
   type: 'bar',
   data: { labels: labelsM, datasets: [
     { label:'Produccio PV', data: prodTotal,   backgroundColor:'rgba(76,175,80,0.85)' },
@@ -302,7 +302,7 @@ const urlGraficProdVsConsum = 'https://quickchart.io/chart?w=550&h=280&c=' + enc
   }
 }));
 
-const urlGraficCostVsPV = 'https://quickchart.io/chart?w=550&h=280&c=' + encodeURIComponent(JSON.stringify({
+const urlGraficCostVsPV = 'https://quickchart.io/chart?w=420&h=210&c=' + encodeURIComponent(JSON.stringify({
   type: 'bar',
   data: { labels: labelsM, datasets: [
     { label:'Cost actual', data: costActualMens, backgroundColor:'rgba(198,40,40,0.8)' },
@@ -314,7 +314,7 @@ const urlGraficCostVsPV = 'https://quickchart.io/chart?w=550&h=280&c=' + encodeU
   }
 }));
 
-const urlGraficCashflow = 'https://quickchart.io/chart?w=550&h=280&c=' + encodeURIComponent(JSON.stringify({
+const urlGraficCashflow = 'https://quickchart.io/chart?w=420&h=210&c=' + encodeURIComponent(JSON.stringify({
   type: 'line',
   data: { labels: cfLabels, datasets: [{
     label:'Flux acumulat (EUR)', data: cfVals,
@@ -368,7 +368,7 @@ let htmlBlocVistaAeria = '';
 let imgVistaAeriaPortada = '';
 
 if (MAPS_API_KEY) {
-  const mapsUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=17&size=600x300&maptype=satellite&markers=color:red%7C${lat},${lng}&key=${MAPS_API_KEY}`;
+  const mapsUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=17&size=420x210&maptype=satellite&markers=color:red%7C${lat},${lng}&key=${MAPS_API_KEY}`;
   imgVistaAeria = mapsUrl;
   htmlBlocVistaAeria = `<div class="vista-aeria"><img src="${mapsUrl}" alt="Vista aèria"><div class="vista-aeria-cap">Vista aèria de la ubicació de la instal·lació (lat: ${lat}, lng: ${lng})</div></div>`;
   imgVistaAeriaPortada = `<div class="portada-aerial" style="background-image:url('${mapsUrl}')"></div>`;

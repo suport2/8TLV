@@ -792,6 +792,7 @@ async function loadCataleg() {
     renderMuntatgeGrid();
     renderComercialsSelect();
     renderMantenimentSelect();
+    calcPressupost();
   } catch(e) {
     console.warn('Error cat\u00e0leg:', e);
     state.cataleg.moduls = [
