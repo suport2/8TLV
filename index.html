@@ -617,8 +617,8 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
         <div class="field-grid field-grid-2">
           <div class="field">
             <label>Cost total de la instal&middot;laci&oacute; (&euro;) <span class="req">*</span></label>
-            <input type="number" id="cost_instalacio" value="5900" min="500" oninput="onFormChange()">
-            <div class="hint" id="costHint">Calculat autom&agrave;ticament del cat&agrave;leg. Pots ajustar-lo.</div>
+            <input type="number" id="cost_instalacio" value="5900" readonly style="background:var(--vbg,#f8fafc);cursor:default">
+            <div class="hint" id="costHint">Calculant...</div>
           </div>
           <div class="field">
             <label>Anys d'an&agrave;lisi</label>
@@ -892,12 +892,15 @@ function renderInversorGrid(tipus) {
 function renderMuntatgeGrid() {
   const icons = {coplanar_teula:'&#127968;',coplanar_xapa:'&#127981;',supraestructura:'&#127956;',
                  coberta_plana:'&#127962;',terra:'&#127807;',pergola:'&#127795;',aparcament:'&#128663;'};
-  document.getElementById('muntGrid').innerHTML = state.cataleg.muntatges.map(m => `
-    <div class="cat-card ${m.id===state.selectedMuntatge?'selected':''}" onclick="selectMuntatge('${m.id}')">
-      <div class="cat-icon">${icons[m.id]||'&#128169;'}</div>
+  document.getElementById('muntGrid').innerHTML = state.cataleg.muntatges.map(m => {
+    const p = parseFloat(m.preu_base || m.preu) || 0;
+    const label = p === 0 ? '&mdash;' : p > 200 ? `${p.toFixed(0)} &euro;` : `${p.toFixed(0)} &euro;/m&ograve;dul`;
+    return `<div class="cat-card ${m.id===state.selectedMuntatge?'selected':''}" onclick="selectMuntatge('${m.id}')">
+      <div class="cat-icon">${icons[m.id]||'&#127968;'}</div>
       <div class="cat-name">${m.nom}</div>
-      <div class="cat-price">${m.preu?.toFixed(0)||'?'} &euro;</div>
-    </div>`).join('');
+      <div class="cat-price">${label}</div>
+    </div>`;
+  }).join('');
 }
 
 function selectModul(id) { state.selectedModul=id; renderModulGrid(); calcPressupost(); onMantenimentChange(); }
@@ -1192,25 +1195,34 @@ async function fetchOptimitzar() {
   }
 }
 
-async function calcPressupost() {
-  try {
-    const r = await fetch(`${N8N}/solenver/calcular-pressupost`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ instalacio: {
-        modul_id: state.selectedModul,
-        num_moduls: parseInt(document.getElementById('num_moduls')?.value||12),
-        inversor_id: state.selectedInversor,
-        muntatge_id: state.selectedMuntatge,
-        metres_cablejat: parseInt(document.getElementById('metres_cablejat')?.value||15),
-      }})
-    });
-    const d = await r.json();
-    if(d.success) {
-      document.getElementById('cost_instalacio').value = d.total?.toFixed(0)||5900;
-      document.getElementById('costHint').textContent = `Calculat autom\u00e0ticament: ${d.subtotal?.toFixed(0)}\u20ac + IVA = ${d.total?.toFixed(0)}\u20ac`;
-      onFormChange();
-    }
-  } catch(e) {}
+function calcPressupost() {
+  const numModuls  = parseInt(document.getElementById('num_moduls')?.value || 12);
+  const modul      = state.cataleg.moduls.find(m => m.id === state.selectedModul) || {};
+  const inversors  = (state.cataleg.mono||[]).concat(state.cataleg.trifasic||[]);
+  const inversor   = inversors.find(i => i.id === state.selectedInversor) || {};
+  const muntatge   = state.cataleg.muntatges.find(m => m.id === state.selectedMuntatge) || {};
+
+  const preuModul   = parseFloat(modul.preu)  || 71.50;
+  const preuInv     = parseFloat(inversor.preu)|| 793;
+  const preuMuntRaw = parseFloat(muntatge.preu_base || muntatge.preu) || 50;
+  const costMuntatge= preuMuntRaw > 200 ? preuMuntRaw : preuMuntRaw * numModuls;
+  const costMaObra  = 600 + (80 * numModuls);
+  const MARGE       = 0.35;
+
+  const costDirecte = Math.round((numModuls * preuModul) + costMuntatge + preuInv + costMaObra + 550 + 75);
+  const costSubtotal= costDirecte + Math.round(costDirecte * MARGE);
+  const costTotal   = costSubtotal + Math.round(costSubtotal * 0.21);
+
+  const el = document.getElementById('cost_instalacio');
+  if (el) el.value = costTotal;
+  const hint = document.getElementById('costHint');
+  if (hint) hint.textContent =
+    `M\u00f2duls ${Math.round(numModuls*preuModul).toLocaleString('ca')}\u20ac`
+    + ` + Inv. ${Math.round(preuInv).toLocaleString('ca')}\u20ac`
+    + ` + Muntatge ${Math.round(costMuntatge).toLocaleString('ca')}\u20ac`
+    + ` + MO ${Math.round(costMaObra).toLocaleString('ca')}\u20ac`
+    + ` + Marge 35% + IVA 21%`;
+  onFormChange();
 }
 
 function buildPayload(kpisOnly = false) {
