@@ -457,7 +457,7 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
               <label>Nombre de m&ograve;duls <span class="req">*</span></label>
               <div class="slider-wrap">
                 <input type="range" id="num_moduls" min="2" max="60" value="12"
-                  oninput="document.getElementById('numModulsVal').textContent=this.value+' m&ograve;duls';calcPressupost();onFormChange()">
+                  oninput="document.getElementById('numModulsVal').textContent=this.value+' m&ograve;duls';calcPressupost();onMantenimentChange()">
                 <span class="slider-val" id="numModulsVal">12 m&ograve;duls</span>
               </div>
             </div>
@@ -637,9 +637,12 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
             </div>
           </div>
           <div class="field">
-            <label>Manteniment anual (&euro;/any)</label>
-            <input type="number" id="manteniment" value="0" min="0" oninput="onFormChange()">
-            <div class="hint">0&euro; = sense contracte de manteniment</div>
+            <label>Pla de manteniment</label>
+            <select id="manteniment_pla" onchange="onMantenimentChange()">
+              <option value="sense" data-kwp="0">Sense manteniment</option>
+            </select>
+            <div class="hint" id="mantenimentHint">0 &euro;/any</div>
+            <input type="hidden" id="manteniment" value="0">
           </div>
         </div>
         <div class="nav-buttons">
@@ -682,7 +685,7 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
           <button class="btn btn-secondary" onclick="goTo(4)">&larr; Econ&ograve;mics</button>
           <div style="display:flex;gap:10px">
             <button class="btn btn-outline" onclick="previewPDF()">&#128065; Previsualitzar PDF</button>
-            <button class="btn btn-success" onclick="generarEnviar()">&#128228; Generar i Enviar</button>
+            <button class="btn btn-success" onclick="generarEnviar()">&#128228; Generar PDF</button>
           </div>
         </div>
       </div>
@@ -727,7 +730,7 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
     <div class="action-buttons">
       <h3>Accions</h3>
       <button class="btn btn-outline action-btn-full" onclick="previewPDF()">&#128065; Previsualitzar PDF</button>
-      <button class="btn btn-success action-btn-full" onclick="generarEnviar()">&#128228; Generar i Enviar</button>
+      <button class="btn btn-success action-btn-full" onclick="generarEnviar()">&#128228; Generar PDF</button>
     </div>
   </div>
 
@@ -780,12 +783,14 @@ async function loadCataleg() {
     state.cataleg.moduls    = d.moduls    || [];
     state.cataleg.mono      = (d.inversors||[]).filter(i => i.trifasic===false || i.trifasic==='FALSE');
     state.cataleg.trifasic  = (d.inversors||[]).filter(i => i.trifasic===true  || i.trifasic==='TRUE');
-    state.cataleg.muntatges = d.muntatges || [];
-    state.cataleg.comercials= d.comercials|| [];
+    state.cataleg.muntatges   = d.muntatges   || [];
+    state.cataleg.comercials  = d.comercials  || [];
+    state.cataleg.manteniments= d.manteniments|| DEFAULT_MANTENIMENTS;
     renderModulGrid();
     renderInversorGrid('mono');
     renderMuntatgeGrid();
     renderComercialsSelect();
+    renderMantenimentSelect();
   } catch(e) {
     console.warn('Error cat\u00e0leg:', e);
     state.cataleg.moduls = [
@@ -794,8 +799,47 @@ async function loadCataleg() {
     ];
     state.cataleg.mono = [{id:'hw_6ktl_l',model:'SUN2000-6KTL-L1',potencia_kw:6,preu:793,trifasic:false}];
     state.cataleg.muntatges = [{id:'coplanar_teula',nom:'Coplanar sobre teula',preu:612}];
-    renderModulGrid(); renderInversorGrid('mono'); renderMuntatgeGrid();
+    state.cataleg.manteniments = DEFAULT_MANTENIMENTS;
+    renderModulGrid(); renderInversorGrid('mono'); renderMuntatgeGrid(); renderMantenimentSelect();
   }
+}
+
+const DEFAULT_MANTENIMENTS = [
+  {id:'sense',     nom:'Sense manteniment',               preu_kwp_any: 0},
+  {id:'basic',     nom:'B\u00e0sic \u2013 revisi\u00f3 anual',       preu_kwp_any: 12},
+  {id:'estandard', nom:'Est\u00e0ndard \u2013 revisi\u00f3 + neteja', preu_kwp_any: 20},
+  {id:'premium',   nom:'Premium \u2013 trimestral + peces',preu_kwp_any: 30},
+];
+
+function getKwpInstalat() {
+  const numModuls = parseInt(document.getElementById('num_moduls')?.value || 12);
+  const modPotencia = state.cataleg.moduls.find(m => m.id === state.selectedModul)?.potencia_wp || 510;
+  return (numModuls * modPotencia) / 1000;
+}
+
+function renderMantenimentSelect() {
+  const sel = document.getElementById('manteniment_pla');
+  if (!sel) return;
+  const opts = state.cataleg.manteniments || DEFAULT_MANTENIMENTS;
+  sel.innerHTML = opts.map(m =>
+    `<option value="${m.id}" data-kwp="${m.preu_kwp_any}">${m.nom} ${m.preu_kwp_any > 0 ? '('+m.preu_kwp_any+' \u20ac/kWp)' : ''}</option>`
+  ).join('');
+  onMantenimentChange();
+}
+
+function onMantenimentChange() {
+  const sel = document.getElementById('manteniment_pla');
+  if (!sel) return;
+  const opt = sel.options[sel.selectedIndex];
+  const preuKwp = parseFloat(opt?.dataset.kwp || 0);
+  const kwp = getKwpInstalat();
+  const costAnual = Math.round(preuKwp * kwp);
+  document.getElementById('manteniment').value = costAnual;
+  const hint = document.getElementById('mantenimentHint');
+  if (hint) hint.textContent = preuKwp === 0
+    ? '0 \u20ac/any \u2013 sense contracte'
+    : `${preuKwp} \u20ac/kWp \u00d7 ${kwp.toFixed(2)} kWp = ${costAnual} \u20ac/any`;
+  onFormChange();
 }
 
 function renderComercialsSelect() {
@@ -856,8 +900,8 @@ function renderMuntatgeGrid() {
     </div>`).join('');
 }
 
-function selectModul(id) { state.selectedModul=id; renderModulGrid(); calcPressupost(); onFormChange(); }
-function selectInversor(id) { state.selectedInversor=id; renderInversorGrid(state.invType); calcPressupost(); onFormChange(); }
+function selectModul(id) { state.selectedModul=id; renderModulGrid(); calcPressupost(); onMantenimentChange(); }
+function selectInversor(id) { state.selectedInversor=id; renderInversorGrid(state.invType); calcPressupost(); onMantenimentChange(); }
 function selectMuntatge(id) { state.selectedMuntatge=id; renderMuntatgeGrid(); calcPressupost(); onFormChange(); }
 
 function setInstalMode(mode) {
