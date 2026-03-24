@@ -5,6 +5,15 @@ const input = raw.body || raw;
 const informeIA = input.informe || {};
 const kpis = $('Calcular KPIs estudi').first().json;
 
+// ─── COSTOS DES DEL SHEET ───
+const costosRaw = $('Llegir costos PDF').all().map(i => i.json);
+const C = Object.fromEntries(costosRaw.map(r => [r.clau, parseFloat(r.valor) || 0]));
+const C_MO_BASE     = C.ma_obra_base      || 600;
+const C_MO_MOD      = C.ma_obra_per_modul || 80;
+const C_PROJECTE    = C.projecte_tecnic   || 550;
+const C_CABLES      = C.cables            || 75;
+const C_MARGE       = C.marge             || 0.35;
+
 // BUG 1: Decodifica escape literals \uXXXX en textos IA (doble encoding UTF-8)
 const decodeStr = (s) => {
   if (!s || typeof s !== 'string') return s;
@@ -169,12 +178,11 @@ const preuInv          = parseFloat(inversor.preu || 793);
 const preuMuntRaw      = parseFloat(muntatge.preu_base || 612);
 const preuMuntPerPlaca = preuMuntRaw > 200 ? preuMuntRaw / numModuls : preuMuntRaw;
 const costMuntatge     = preuMuntRaw > 200 ? preuMuntRaw : preuMuntRaw * numModuls;
-const costMaObra       = 600 + (80 * numModuls);
-const projecte         = 550;
-const cables           = 75;
-// BUG 3: Incloure marge 35% igual al que usa kpis_estudi.js en cost_instalacio
+const costMaObra       = C_MO_BASE + (C_MO_MOD * numModuls);
+const projecte         = C_PROJECTE;
+const cables           = C_CABLES;
 const costDirecte      = Math.round((numModuls * preuModul) + costMuntatge + preuInv + costMaObra + projecte + cables);
-const MARGE            = 0.35;
+const MARGE            = C_MARGE;
 const costGestio       = Math.round(costDirecte * MARGE);
 const costSubtotal     = costDirecte + costGestio;
 const ivaEur           = Math.round(costSubtotal * 0.21);

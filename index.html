@@ -786,6 +786,7 @@ async function loadCataleg() {
     state.cataleg.muntatges   = d.muntatges   || [];
     state.cataleg.comercials  = d.comercials  || [];
     state.cataleg.manteniments= d.manteniments|| DEFAULT_MANTENIMENTS;
+    state.cataleg.costos      = d.costos      || {};
     renderModulGrid();
     renderInversorGrid('mono');
     renderMuntatgeGrid();
@@ -800,6 +801,7 @@ async function loadCataleg() {
     state.cataleg.mono = [{id:'hw_6ktl_l',model:'SUN2000-6KTL-L1',potencia_kw:6,preu:793,trifasic:false}];
     state.cataleg.muntatges = [{id:'coplanar_teula',nom:'Coplanar sobre teula',preu:612}];
     state.cataleg.manteniments = DEFAULT_MANTENIMENTS;
+    state.cataleg.costos       = {};
     renderModulGrid(); renderInversorGrid('mono'); renderMuntatgeGrid(); renderMantenimentSelect();
   }
 }
@@ -1202,14 +1204,19 @@ function calcPressupost() {
   const inversor   = inversors.find(i => i.id === state.selectedInversor) || {};
   const muntatge   = state.cataleg.muntatges.find(m => m.id === state.selectedMuntatge) || {};
 
-  const preuModul   = parseFloat(modul.preu)  || 71.50;
-  const preuInv     = parseFloat(inversor.preu)|| 793;
+  const c = state.cataleg.costos || {};
+  const preuModul   = parseFloat(modul.preu)   || 71.50;
+  const preuInv     = parseFloat(inversor.preu) || 793;
   const preuMuntRaw = parseFloat(muntatge.preu_base || muntatge.preu) || 50;
   const costMuntatge= preuMuntRaw > 200 ? preuMuntRaw : preuMuntRaw * numModuls;
-  const costMaObra  = 600 + (80 * numModuls);
-  const MARGE       = 0.35;
+  const moBase      = parseFloat(c.ma_obra_base)       || 600;
+  const moPerMod    = parseFloat(c.ma_obra_per_modul)  || 80;
+  const costMaObra  = moBase + moPerMod * numModuls;
+  const projecte    = parseFloat(c.projecte_tecnic)    || 550;
+  const cables      = parseFloat(c.cables)             || 75;
+  const MARGE       = parseFloat(c.marge)              || 0.35;
 
-  const costDirecte = Math.round((numModuls * preuModul) + costMuntatge + preuInv + costMaObra + 550 + 75);
+  const costDirecte = Math.round((numModuls * preuModul) + costMuntatge + preuInv + costMaObra + projecte + cables);
   const costSubtotal= costDirecte + Math.round(costDirecte * MARGE);
   const costTotal   = costSubtotal + Math.round(costSubtotal * 0.21);
 
