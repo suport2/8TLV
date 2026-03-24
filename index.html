@@ -347,7 +347,7 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
               <option value="granja_porcina">&#128055; Granja porcina</option>
               <option value="granja_avicola">&#128020; Granja av&iacute;cola</option>
               <option value="comercial_oficines">&#127970; Comer&ccedil; / Oficines</option>
-              <option value="domestica_residencial">&#127968; Dom&egrave;stica / Residencial</option>
+              <option value="domestica_residencial" selected>&#127968; Dom&egrave;stica / Residencial</option>
               <option value="agricola_reg">&#127793; Agr&iacute;cola / Reg</option>
             </select>
           </div>
@@ -1245,12 +1245,12 @@ async function previewPDF() {
   try {
     const payload = buildPayload();
     payload.meta.preview_only = true;
-    const r = await fetch(`${N8N}/solenver/generar-pdf`, {
+    const r = await fetch(`${N8N}/solenver/generar-estudi`, {
       method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
     });
     if(!r.ok) throw new Error((await r.json()).error || 'Error desconegut');
-    const blob = await r.blob();
-    window.open(URL.createObjectURL(blob), '_blank');
+    const data = await r.json();
+    window.open(data.pdf_url, '_blank');
     toast('\u2705 PDF obert en una nova pestanya', 'success');
   } catch(e) { toast(`\u274c ${e.message}`, 'error'); }
   finally { hideLoading(); }
@@ -1262,16 +1262,13 @@ async function generarEnviar() {
   try {
     const payload = buildPayload();
     payload.meta.preview_only = false;
-    const r = await fetch(`${N8N}/solenver/generar-pdf`, {
+    const r = await fetch(`${N8N}/solenver/generar-estudi`, {
       method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
     });
     if(!r.ok) throw new Error((await r.json()).error || 'Error desconegut');
-    const blob = await r.blob();
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `Estudi_FV_${payload.client.nom.replace(/\s/g,'_')}.pdf`;
-    a.click();
-    toast('\u2705 PDF generat i descarregat!', 'success');
+    const data = await r.json();
+    window.open(data.pdf_url, '_blank');
+    toast('\u2705 PDF generat correctament!', 'success');
   } catch(e) { toast(`\u274c ${e.message}`, 'error'); }
   finally { hideLoading(); }
 }
