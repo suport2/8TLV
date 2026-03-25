@@ -310,7 +310,7 @@ const urlGraficCostVsPV = 'https://quickchart.io/chart?w=420&h=210&c=' + encodeU
   ]},
   options: {
     legend: { position:'top' },
-    scales: { yAxes: [{ ticks:{ beginAtZero:true }, scaleLabel:{ display:true, labelString:'Cost [EUR]' } }] }
+    scales: { yAxes: [{ scaleLabel:{ display:true, labelString:'Cost [EUR]' } }] }
   }
 }));
 
