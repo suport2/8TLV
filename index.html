@@ -1404,9 +1404,13 @@ function buildPdfPayload(previewOnly) {
     manteniment_anual:    p.economics.manteniment_anual,
     anys_analisi:         p.economics.anys_analisi,
     tarifa:               p.economics.tipus_tarifa,
-    // Consums
+    // Consums — format pla per al motor (arrays 12 mesos) + objecte per preparar_current.js
     consumos:             p.consumos,
     consum_anual:         Math.round(consumAnual),
+    consum_p1:            MES_CLAUS.map(k => (p.consumos[k]||{}).p1||0),
+    consum_p2:            MES_CLAUS.map(k => (p.consumos[k]||{}).p2||0),
+    consum_p3:            MES_CLAUS.map(k => (p.consumos[k]||{}).p3||0),
+    potencia_wp:          modul.potencia_wp || 510,
     // Meta
     comercial_id:         p.meta.comercial_id,
     enviar_email:         p.meta.enviar_email,

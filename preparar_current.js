@@ -35,6 +35,10 @@ const injectKpisText = (text) => {
     t = t.replace(/(estalvi[^0-9]{0,20})(\d[\d.,]*)(\s*EUR)/gi, `$1${fmt(kpis.estalvi_any1)}$3`);
   if (kpis.produccio_anual != null)
     t = t.replace(/(produirà\s+)(\d[\d.,]*)(\s*kWh)/gi, `$1${fmt(kpis.produccio_anual)}$3`);
+  if (kpis.pct_autoconsum != null)
+    t = t.replace(/(autoconsum[^0-9]{0,25})(\d+[.,]?\d*)(\s*%)/gi, `$1${fmt(kpis.pct_autoconsum,1)}$3`);
+  if (kpis.cost_actual_anual != null)
+    t = t.replace(/(cost energètic[^0-9]{0,30})(\d[\d.,]*)(\s*EUR)/gi, `$1${fmt(kpis.cost_actual_anual,0)}$3`);
   return t;
 };
 const modulsData    = $('Llegir catàleg PDF').all().map(i => i.json);
@@ -104,7 +108,7 @@ const filesConsum = mesClaus.map((clau, i) => {
 });
 
 const consumAnual = totalConsum > 0 ? totalConsum : (kpis.consum_anual || input.consum_anual || 0);
-const costActual  = totalCost  > 0 ? totalCost  : consumAnual * preuMig;
+const costActual  = kpis.cost_actual_anual || (totalCost > 0 ? totalCost : consumAnual * preuMig);
 
 // ─── HTML TAULA CONSUMS (adaptativa P1/P2/P3 o simple) ───
 const htmlTaulaConsums = tePeriodes
@@ -211,7 +215,7 @@ const labelsM        = ['Gen','Feb','Mar','Abr','Mai','Jun','Jul','Ago','Set','O
 const consumTotal    = mensual.map(m => m.consum || 0);
 const prodTotal      = mensual.map(m => m.produccio || 0);
 const costActualMens = mensual.map(m => m.cost_actual || 0);
-const costPVMens     = mensual.map(m => Math.max(0, m.cost_pv || 0));
+const costPVMens     = mensual.map(m => m.cost_pv != null ? parseFloat(m.cost_pv) : 0);
 const consumAcum     = consumTotal.reduce((acc,v,i) => { acc.push((acc[i-1]||0)+v); return acc; }, []);
 const prodAcum       = prodTotal.reduce((acc,v,i) => { acc.push((acc[i-1]||0)+v); return acc; }, []);
 const cfVals         = kpis.cashflow ? kpis.cashflow.map(c => c.flux_acumulat||0) : [];
@@ -310,7 +314,7 @@ const urlGraficCostVsPV = 'https://quickchart.io/chart?w=420&h=210&c=' + encodeU
   ]},
   options: {
     legend: { position:'top' },
-    scales: { yAxes: [{ scaleLabel:{ display:true, labelString:'Cost [EUR]' } }] }
+    scales: { yAxes: [{ ticks:{ beginAtZero:false }, scaleLabel:{ display:true, labelString:'Cost [EUR]' } }] }
   }
 }));
 
@@ -373,9 +377,11 @@ if (MAPS_API_KEY) {
   htmlBlocVistaAeria = `<div class="vista-aeria"><img src="${mapsUrl}" alt="Vista aèria"><div class="vista-aeria-cap">Vista aèria de la ubicació de la instal·lació (lat: ${lat}, lng: ${lng})</div></div>`;
   imgVistaAeriaPortada = `<div class="portada-aerial" style="background-image:url('${mapsUrl}')"></div>`;
 } else {
-  // Sense Maps API: mostrar bloc buit
-  htmlBlocVistaAeria = ``;
-  imgVistaAeriaPortada = ``;
+  // Fallback: OpenStreetMap static map (sense API key)
+  const osmUrl = `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lng}&zoom=17&size=420x210&maptype=mapnik&markers=${lat},${lng},ol-marker`;
+  imgVistaAeria = osmUrl;
+  htmlBlocVistaAeria = `<div class="vista-aeria"><img src="${osmUrl}" alt="Vista de la ubicació"><div class="vista-aeria-cap">Vista de la ubicació de la instal·lació (lat: ${lat}, lng: ${lng})</div></div>`;
+  imgVistaAeriaPortada = `<div class="portada-aerial" style="background-image:url('${osmUrl}')"></div>`;
 }
 
 // ─── TEXTOS ───
@@ -436,7 +442,7 @@ return [{json: {
     '{{COST_INSTALACIO_SENSE_IVA}}':  fmtE(costSubtotal),
     '{{PCT_REDUCCIO_COST}}':          consumAnual > 0 ? Math.round((kpis.estalvi_any1 / costActual) * 100) + '%' : '-',
     '{{PREU_ENERGIA_ACTUAL}}':        fmt(preuMig,4) + ' EUR/kWh',
-    '{{CO2_ESTALVIAT}}':              fmt(kpis.co2_estalviat_kg,0) + ' kg',
+    '{{CO2_ESTALVIAT}}':              fmt(kpis.co2_anual_kg,0) + ' kg',
     '{{ANYS_GARANTIA_MODUL}}':        String(modul.garantia_anys || 25),
     '{{ANYS_GARANTIA_MODUL_PRODUCTE}}': String(modul.garantia_anys || 25),
     '{{ANYS_GARANTIA_INVERSOR}}':     String(inversor.garantia_anys || 10),
