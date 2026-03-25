@@ -1120,6 +1120,27 @@ function updateKpiDisplay(k) {
 }
 
 // IA OPTIMITZAR
+function applyIAProposal() {
+  const prop = state.iaProposal;
+  if (!prop?.configuracio) return;
+  const cfg = prop.configuracio;
+  const slider = document.getElementById('num_moduls');
+  if (slider && cfg.num_moduls) {
+    slider.value = cfg.num_moduls;
+    document.getElementById('numModulsVal').textContent = cfg.num_moduls + ' mòduls';
+  }
+  if (cfg.modul_id) selectModul(cfg.modul_id);
+  if (cfg.inversor_id) selectInversor(cfg.inversor_id);
+  if (cfg.muntatge_id) selectMuntatge(cfg.muntatge_id);
+  const incEl = document.getElementById('inclinacio');
+  if (incEl && cfg.inclinacio_optima) {
+    incEl.value = cfg.inclinacio_optima;
+    document.getElementById('inclVal').textContent = cfg.inclinacio_optima + '°';
+  }
+  onMantenimentChange();
+  toast('✅ Configuració IA aplicada al formulari', 'success');
+}
+
 async function fetchOptimitzar() {
   const btn     = document.getElementById('btnRunIA');
   const loading = document.getElementById('iaLoading');
@@ -1182,25 +1203,14 @@ async function fetchOptimitzar() {
     const prop=typeof d.proposta==='string'?JSON.parse(d.proposta):d.proposta;
     state.iaProposal=prop;
 
-    if(prop.configuracio){
-      const cfg=prop.configuracio;
-      const slider=document.getElementById('num_moduls');
-      if(slider&&cfg.num_moduls){ slider.value=cfg.num_moduls;
-        document.getElementById('numModulsVal').textContent=cfg.num_moduls+' m\u00f2duls'; }
-      if(cfg.modul_id) selectModul(cfg.modul_id);
-      if(cfg.inversor_id) selectInversor(cfg.inversor_id);
-      if(cfg.muntatge_id) selectMuntatge(cfg.muntatge_id);
-      const incEl=document.getElementById('inclinacio');
-      if(incEl&&cfg.inclinacio_optima){ incEl.value=cfg.inclinacio_optima;
-        document.getElementById('inclVal').textContent=cfg.inclinacio_optima+'\u00b0'; }
-    }
-
     const kpis=prop.kpis||{};
     const inf=prop.informe||{};
     const cfg=prop.configuracio||{};
     const nomModul   = state.cataleg.moduls?.find(m=>m.id===cfg.modul_id)?.nom || cfg.modul_id || '?';
     const nomInv     = (state.cataleg.mono||[]).concat(state.cataleg.trifasic||[]).find(i=>i.id===cfg.inversor_id)?.nom || cfg.inversor_id || '?';
     const nomMuntatge= state.cataleg.muntatges?.find(m=>m.id===cfg.muntatge_id)?.nom || cfg.muntatge_id || '?';
+    // retorn: usar el del motor si la IA no el té (camp del motor pot tenir nom diferent)
+    const retornVal = kpis.retorn_anys || kpis.retorn_inversio || kpis.payback_anys;
     resText.innerHTML=`
       <div style="margin-bottom:10px"><strong>Configuraci\u00f3 proposada:</strong><br>
       ${cfg.num_moduls||'?'} m\u00f2duls &middot; ${cfg.kwp_resultant||'?'} kWp</div>
@@ -1211,36 +1221,31 @@ async function fetchOptimitzar() {
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">
         <div style="background:#e8f5e9;padding:8px;border-radius:6px;text-align:center">
-          <div style="font-size:16px;font-weight:700;color:#2E7D32">${kpis.estalvi_any1?kpis.estalvi_any1.toLocaleString('ca')+' \u20ac':'\u2014'}</div>
+          <div style="font-size:16px;font-weight:700;color:#2E7D32">${kpis.estalvi_any1?Math.round(kpis.estalvi_any1).toLocaleString('ca')+' \u20ac':'\u2014'}</div>
           <div style="font-size:10px;color:#757575">Estalvi any 1</div>
         </div>
         <div style="background:#e8f5e9;padding:8px;border-radius:6px;text-align:center">
-          <div style="font-size:16px;font-weight:700;color:#2E7D32">${kpis.retorn_anys?kpis.retorn_anys+' anys':'\u2014'}</div>
+          <div style="font-size:16px;font-weight:700;color:#2E7D32">${retornVal?parseFloat(retornVal).toFixed(1)+' anys':'\u2014'}</div>
           <div style="font-size:10px;color:#757575">Retorn inversi\u00f3</div>
         </div>
         <div style="background:#e8f5e9;padding:8px;border-radius:6px;text-align:center">
-          <div style="font-size:16px;font-weight:700;color:#2E7D32">${kpis.autoconsum_pct?kpis.autoconsum_pct+'%':'\u2014'}</div>
+          <div style="font-size:16px;font-weight:700;color:#2E7D32">${kpis.autoconsum_pct?parseFloat(kpis.autoconsum_pct).toFixed(1)+'%':'\u2014'}</div>
           <div style="font-size:10px;color:#757575">Autoconsum</div>
         </div>
         <div style="background:#e8f5e9;padding:8px;border-radius:6px;text-align:center">
-          <div style="font-size:16px;font-weight:700;color:#2E7D32">${kpis.van_25anys?kpis.van_25anys.toLocaleString('ca')+' \u20ac':'\u2014'}</div>
+          <div style="font-size:16px;font-weight:700;color:#2E7D32">${kpis.van_25anys?Math.round(kpis.van_25anys).toLocaleString('ca')+' \u20ac':'\u2014'}</div>
           <div style="font-size:10px;color:#757575">VAN 25 anys</div>
         </div>
       </div>
       ${inf.seccio_objecte?`<div style="font-size:11px;color:#616161;font-style:italic;padding:8px;background:#f5f5f5;border-radius:6px;margin-bottom:6px">"${inf.seccio_objecte}"</div>`:''}
-      ${prop.alternativa?.justificacio?`<div style="font-size:11px;color:#616161;margin-top:6px">&#128161; ${prop.alternativa.justificacio}</div>`:''}
-      ${inf.recomanacio_bateria?`<div style="font-size:11px;color:#F57C00;margin-top:6px">&#128267; ${inf.recomanacio_bateria}</div>`:''}
+      ${prop.alternativa?.justificacio?`<div style="font-size:11px;color:#F57C00;margin-top:6px">&#128161; ${prop.alternativa.justificacio}</div>`:''}
+      ${inf.recomanacio_bateria?`<div style="font-size:11px;color:#22c55e;margin-top:6px">&#128267; ${inf.recomanacio_bateria}</div>`:''}
+      <button onclick="applyIAProposal()" style="width:100%;margin-top:12px;padding:10px;background:#166534;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">
+        \u2193 Aplicar configuraci\u00f3 al formulari
+      </button>
     `;
     result.classList.add('show');
     document.getElementById('dotIA').className = 'dot ok';
-
-    if(kpis.produccio_anual) updateKpiDisplay({
-      kwp:cfg.kwp_resultant, produccio_anual:kpis.produccio_anual,
-      pct_autoconsum:kpis.autoconsum_pct, estalvi_any1:kpis.estalvi_any1,
-      retorn_anys:kpis.retorn_anys, van_25anys:kpis.van_25anys,
-      tir_pct:kpis.tir_pct, benefici_net_25:kpis.benefici_net_25,
-      co2_anual_kg:kpis.co2_25anys_kg,
-    });
     onFormChange();
 
   } catch(err) {
