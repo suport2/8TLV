@@ -1150,11 +1150,15 @@ async function fetchOptimitzar() {
     const payload={
       client: p.client,
       instalacio:{
-        perfil_client: document.getElementById('perfil_client')?.value||'industria_general',
+        perfil_client: document.getElementById('perfil_client')?.value||'domestica_residencial',
         tipus_coberta: document.getElementById('tipus_coberta')?.value||'teula',
         trifasic: state.invType==='tri',
         potencia_wp: state.cataleg.moduls.find(m=>m.id===state.selectedModul)?.potencia_wp||510,
         potencia_inversor_kw: (state.cataleg.mono.concat(state.cataleg.trifasic||[])).find(i=>i.id===state.selectedInversor)?.potencia_kw||6,
+        num_moduls: parseInt(document.getElementById('num_moduls')?.value||12),
+        modul_id: state.selectedModul,
+        inversor_id: state.selectedInversor,
+        muntatge_id: state.selectedMuntatge,
       },
       economics: p.economics,
       consumos,
@@ -1194,9 +1198,17 @@ async function fetchOptimitzar() {
     const kpis=prop.kpis||{};
     const inf=prop.informe||{};
     const cfg=prop.configuracio||{};
+    const nomModul   = state.cataleg.moduls?.find(m=>m.id===cfg.modul_id)?.nom || cfg.modul_id || '?';
+    const nomInv     = (state.cataleg.mono||[]).concat(state.cataleg.trifasic||[]).find(i=>i.id===cfg.inversor_id)?.nom || cfg.inversor_id || '?';
+    const nomMuntatge= state.cataleg.muntatges?.find(m=>m.id===cfg.muntatge_id)?.nom || cfg.muntatge_id || '?';
     resText.innerHTML=`
       <div style="margin-bottom:10px"><strong>Configuraci\u00f3 proposada:</strong><br>
       ${cfg.num_moduls||'?'} m\u00f2duls &middot; ${cfg.kwp_resultant||'?'} kWp</div>
+      <div style="font-size:11px;color:#555;margin-bottom:10px;background:#f5f5f5;padding:8px;border-radius:6px;line-height:1.6">
+        <b>M\u00f2dul:</b> ${nomModul}<br>
+        <b>Inversor:</b> ${nomInv}<br>
+        <b>Muntatge:</b> ${nomMuntatge}
+      </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">
         <div style="background:#e8f5e9;padding:8px;border-radius:6px;text-align:center">
           <div style="font-size:16px;font-weight:700;color:#2E7D32">${kpis.estalvi_any1?kpis.estalvi_any1.toLocaleString('ca')+' \u20ac':'\u2014'}</div>
