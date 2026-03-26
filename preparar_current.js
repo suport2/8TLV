@@ -41,11 +41,12 @@ const injectKpisText = (text) => {
     t = t.replace(/(cost energètic[^0-9]{0,30})(\d[\d.,]*)(\s*EUR)/gi, `$1${fmt(kpis.cost_actual_anual,0)}$3`);
   return t;
 };
-const modulsData    = $('Llegir catàleg PDF').all().map(i => i.json);
-const inversorsData = $('Llegir inversors PDF').all().map(i => i.json);
-const muntAtgesData = $('Llegir muntatges PDF').all().map(i => i.json);
-const comercialsData = $('Llegir comercials PDF').all().map(i => i.json);
-const configData = $('Llegir configuració').all().map(i => i.json);
+const modulsData       = $('Llegir catàleg PDF').all().map(i => i.json);
+const inversorsData    = $('Llegir inversors PDF').all().map(i => i.json);
+const muntAtgesData    = $('Llegir muntatges PDF').all().map(i => i.json);
+const comercialsData   = $('Llegir comercials PDF').all().map(i => i.json);
+const configData       = $('Llegir configuració').all().map(i => i.json);
+const mantenimentsData = $('Llegir manteniments PDF').all().map(i => i.json);
 const config = {};
 configData.forEach(r => { if (r.clau) config[r.clau] = r.valor || ''; });
 const driveUrl = (id) => id ? `https://lh3.googleusercontent.com/d/${id}` : '';
@@ -175,6 +176,41 @@ const htmlTaulaCashflow = `<table>
     }).join('\n    ')}
   </tbody>
 </table>`;
+
+// ─── TARGETES MANTENIMENT ───
+const mantId = input.manteniment_id || 'sense';
+const kwpInstalat = kpis.kwp || (numModuls * (parseFloat(input.potencia_wp || 510) / 1000));
+// Descripció de característiques per pla (fallback si no ve del Sheets)
+const mantFeatures = {
+  sense:     [],
+  basic:     ['Revisió anual de la instal·lació', 'Comprovació de l\'inversor', 'Informe d\'estat anual'],
+  estandard: ['Revisió visual i estructural', 'Comprovació de l\'inversor i proteccions', 'Monitorització remota 24/7', 'Gestió d\'incidències i alarmes'],
+  premium:   ['Tot l\'inclòs en l\'Estàndard', 'Neteja professional de panells', 'Inspecció termogràfica (punts calents)', 'Garantia de producció assegurada'],
+};
+const plansActius = mantenimentsData.length > 0
+  ? mantenimentsData.filter(m => parseFloat(m.preu_kwp_any) > 0)
+  : [];
+const htmlMantCards = plansActius.length === 0 ? '' : `
+<div class="mant-cards" style="display:flex;gap:16px;flex-wrap:wrap;margin:16px 0">
+  ${plansActius.map(m => {
+    const preuKwp = parseFloat(m.preu_kwp_any) || 0;
+    const costAny = Math.round(preuKwp * kwpInstalat);
+    const sel     = m.id === mantId;
+    const feats   = mantFeatures[m.id] || [];
+    return `<div class="mant-card${sel ? ' mant-selected' : ''}" style="flex:1;min-width:200px;border:2px solid ${sel ? '#1b5e20' : '#c8e6c9'};border-radius:10px;padding:20px;background:${sel ? '#f1f8e9' : '#fff'}">
+  <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;color:#1b5e20;margin:0 0 8px">${m.nom}</h3>
+  <div style="font-size:28px;font-weight:700;color:#1b5e20;margin-bottom:12px">${fmt(costAny)} €<span style="font-size:13px;font-weight:400;color:#555"> / any</span></div>
+  <div style="font-size:11px;color:#888;margin-bottom:10px">${preuKwp} €/kWp × ${fmt(kwpInstalat,2)} kWp</div>
+  <ul style="margin:0;padding-left:16px;font-size:12px;color:#333;line-height:1.8">
+    ${feats.map(f => `<li>${f}</li>`).join('')}
+  </ul>
+</div>`;
+  }).join('\n  ')}
+</div>`;
+
+const mantSeleccionat = mantenimentsData.find(m => m.id === mantId) || null;
+const mantCostAnual   = mantSeleccionat ? Math.round(parseFloat(mantSeleccionat.preu_kwp_any) * kwpInstalat) : (parseFloat(input.manteniment_anual) || 0);
+const mantNom         = mantSeleccionat?.nom || (mantId === 'sense' ? 'Sense manteniment' : mantId);
 
 // ─── COSTOS PER PLACA ───
 const preuModul        = parseFloat(modul.preu || 71.50);
@@ -478,5 +514,8 @@ return [{json: {
     '{{IMG_GRAFIC_CONSUM_VS_PRODUCCIO}}': urlGraficProdVsConsum,
     '{{IMG_GRAFIC_COST_ACTUAL_VS_PV}}':   urlGraficCostVsPV,
     '{{IMG_GRAFIC_CASHFLOW}}':            urlGraficCashflow,
+    '{{HTML_MANTENIMENT_CARDS}}':         htmlMantCards,
+    '{{MANTENIMENT_NOM}}':                mantNom,
+    '{{MANTENIMENT_COST_ANY}}':           mantCostAnual > 0 ? fmtE(mantCostAnual) : 'Sense contracte',
   },
 }}];

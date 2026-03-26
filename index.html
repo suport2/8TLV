@@ -1402,6 +1402,7 @@ function buildPdfPayload(previewOnly) {
     cost_instalacio:      p.economics.cost_instalacio,
     increment_energia_pct:p.economics.increment_energia_pct,
     manteniment_anual:    p.economics.manteniment_anual,
+    manteniment_id:       document.getElementById('manteniment_pla')?.value || 'sense',
     anys_analisi:         p.economics.anys_analisi,
     tarifa:               p.economics.tipus_tarifa,
     // Consums — format pla per al motor (arrays 12 mesos) + objecte per preparar_current.js
