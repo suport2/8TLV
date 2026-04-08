@@ -563,6 +563,18 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
           </div>
         </div>
         <div id="modeConsumCups" style="display:none">
+          <!-- Opció A: SIPS automàtic via servidor local -->
+          <div style="background:#f0fdf4;border:2px solid #4ade80;border-radius:8px;padding:14px;margin-bottom:12px">
+            <div style="font-weight:600;font-size:13px;margin-bottom:6px">&#9889; SIPS automàtic (Total Energies)</div>
+            <div style="font-size:12px;color:#555;margin-bottom:10px">Consulta automàticament els consums del CUPS al portal de Total Energies.</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="text" id="sipsInputCups" placeholder="ES0031..." style="flex:1;padding:7px 10px;border:1px solid #ccc;border-radius:6px;font-size:13px;font-family:monospace">
+              <button id="btnSipsFetch" onclick="fetchSips()" style="background:#1b5e20;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;cursor:pointer;white-space:nowrap">&#128269; Consultar SIPS</button>
+            </div>
+            <div id="sipsStatus" style="margin-top:8px;font-size:12px;color:#555;display:none"></div>
+          </div>
+          <!-- Opció B: Upload manual fitxer XLS -->
+          <div style="font-size:11px;color:#888;text-align:center;margin-bottom:8px">── o puja manualment el fitxer XLS ──</div>
           <div class="drop-zone" id="dropZone" onclick="document.getElementById('cupsFile').click()" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="this.classList.remove('drag-over')">
             <div class="icon">&#128196;</div>
             <p><b>Arrossega el fitxer XLS del CUPS aqu&iacute;</b></p>
@@ -970,6 +982,12 @@ function setConsumMode(mode) {
   ['A','B','C'].forEach((l,i) => {
     document.getElementById('btnCons'+l).classList.toggle('active', ['taula','cups','anual'][i]===mode);
   });
+  // Auto-omplir camp CUPS des del formulari
+  if (mode === 'cups') {
+    const cupsFormVal = document.getElementById('client_cups')?.value?.trim();
+    const sipsInput   = document.getElementById('sipsInputCups');
+    if (sipsInput && cupsFormVal && !sipsInput.value) sipsInput.value = cupsFormVal;
+  }
 }
 
 function calcFromTotal() {
@@ -994,6 +1012,64 @@ function onDrop(e) {
   if(file) uploadCupsFile(file);
 }
 async function uploadCups(input) { if(input.files[0]) await uploadCupsFile(input.files[0]); }
+
+// ── SIPS automàtic via servidor local (localhost:3333) ──────────────
+const SIPS_SERVER = 'http://localhost:3333';
+
+async function fetchSips() {
+  const cupsInput = document.getElementById('sipsInputCups');
+  const cups = (cupsInput?.value || document.getElementById('client_cups')?.value || '').trim().toUpperCase();
+  if (!cups || cups.length < 18) {
+    toast('⚠ Introdueix un CUPS vàlid (mínim 18 caràcters)', 'error');
+    return;
+  }
+  const status = document.getElementById('sipsStatus');
+  const btn    = document.getElementById('btnSipsFetch');
+  status.style.display = 'block';
+  status.innerHTML = '⏳ Consultant SIPS... (pot trigar 30-60 seg)';
+  btn.disabled = true;
+  try {
+    const r = await fetch(`${SIPS_SERVER}/sips`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ cups })
+    });
+    if (!r.ok) throw new Error(`Error ${r.status}: ${await r.text()}`);
+    const d = await r.json();
+    if (!d.success) throw new Error(d.error || 'Error desconegut');
+
+    // Omplir taula mensual P1/P2/P3
+    applySipsConsumos(d.consumos);
+    status.innerHTML = `✅ SIPS importat! Total anual: ${d.consum_anual?.toLocaleString('ca')} kWh`;
+    status.style.color = '#15803d';
+    setConsumMode('taula');
+    toast(`✅ Consums SIPS importats: ${d.consum_anual?.toLocaleString('ca')} kWh/any`, 'success');
+  } catch(e) {
+    const isOffline = e.message.includes('fetch') || e.message.includes('Failed');
+    status.innerHTML = isOffline
+      ? '❌ No es pot connectar al servidor local. Executa: <code>node server.js</code> a la carpeta del scraper'
+      : `❌ Error: ${e.message}`;
+    status.style.color = '#b91c1c';
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function applySipsConsumos(consumos) {
+  MESOS.forEach((mes, i) => {
+    const key = MES_CLAUS[i];
+    const v   = consumos[key] || {};
+    const p1el = document.querySelector(`.p1[data-mes="${mes}"]`);
+    if (p1el) {
+      p1el.value = Math.round(v.p1 || 0);
+      document.querySelector(`.p2[data-mes="${mes}"]`).value = Math.round(v.p2 || 0);
+      document.querySelector(`.p3[data-mes="${mes}"]`).value = Math.round(v.p3 || 0);
+    }
+  });
+  state.consumEditat = true;
+  updateConsumTotals();
+  onFormChange();
+}
 async function uploadCupsFile(file) {
   const status = document.getElementById('cupsStatus');
   status.innerHTML = '\u23f3 Processant fitxer CUPS...';
