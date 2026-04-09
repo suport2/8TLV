@@ -33,12 +33,27 @@
     /* PAGE BREAKS */
     .page {
       page-break-before: always;
+      page-break-after: always;
       padding: 20mm 18mm 16mm;
       min-height: 257mm;
       position: relative
     }
 
     .page:first-child { page-break-before: avoid }
+
+    /* Evitar talls dins d'elements importants */
+    .kcard, .kbox, .ibox, .val-item, .gar-box, .pas,
+    .chart, .callout, .vista-aeria, .mant-card {
+      page-break-inside: avoid;
+      break-inside: avoid
+    }
+
+    table { page-break-inside: auto }
+    thead { display: table-header-group }
+    tr    { page-break-inside: avoid; break-inside: avoid }
+
+    h3 { page-break-after: avoid; break-after: avoid }
+    .sh { page-break-after: avoid; break-after: avoid }
 
     /* SECTION HEADER */
     .sh {
@@ -750,39 +765,14 @@
 
     <p>El nostre pla de manteniment està dissenyat per allargar la vida útil del teu sistema fotovoltaic, evitar avaries costoses i assegurar-ne el funcionament òptim durant tot l'any. A Solenver t'acompanyem més enllà de la instal·lació.</p>
 
-    <div class="callout" style="margin-top:16px;margin-bottom:24px">
-      <p>¡Manteniment gratuït el primer any! Inclou totes les revisions preventives per assegurar que la instal·lació arrenqui amb el millor rendiment.</p>
-    </div>
-
-    <div class="kgrid" style="grid-template-columns:repeat(2,1fr)">
-      <div class="kcard" style="border-top:4px solid var(--slate-200)">
-        <div class="l" style="color:var(--slate-900);font-size:12pt;margin-bottom:10px">Manteniment Estàndard</div>
-        <div class="v">149 € <span style="font-size:10pt;color:var(--slate-500);font-weight:500">/ any</span></div>
-        <ul style="margin-top:16px;font-size:9pt;color:var(--slate-600);line-height:1.6;margin-left:20px">
-          <li>Revisió visual i estructural</li>
-          <li>Comprovació de l'inversor i proteccions</li>
-          <li>Monitorització remota 24/7</li>
-          <li>Gestió d'incidències i alarmes</li>
-        </ul>
-      </div>
-      <div class="kcard" style="border-top:4px solid var(--green-500);background:var(--green-50)">
-        <div class="l" style="color:var(--green-900);font-size:12pt;margin-bottom:10px">Manteniment Complet</div>
-        <div class="v">199 € <span style="font-size:10pt;color:var(--green-700);font-weight:500">/ any</span></div>
-        <ul style="margin-top:16px;font-size:9pt;color:var(--green-900);line-height:1.6;margin-left:20px">
-          <li><strong>Tot l'inclòs en l'Estàndard</strong></li>
-          <li>Neteja professional de panells</li>
-          <li>Inspecció termogràfica (punts calents)</li>
-          <li>Garantia de producció assegurada</li>
-        </ul>
-      </div>
-    </div>
+    {{HTML_MANTENIMENT_CARDS}}
 
     <h3>Què inclou la revisió tècnica anual?</h3>
     <ul>
       <li>Revisió visual de panells: trencaments, brutícia, ombres o altres danys.</li>
       <li>Inspecció de l'estructura de suport i cablejat (corrosió, connexions soltes).</li>
       <li>Verificació de proteccions elèctriques i sistema de posada a terra.</li>
-      <li>Inspecció termogràfica: detecció de punts calents o fallades invisibles (Pla Complet).</li>
+      <li>Inspecció termogràfica: detecció de punts calents o fallades invisibles (Pla Premium).</li>
       <li>Actualització de programari de l'inversor i sistema de monitoratge.</li>
       <li>Informe tècnic complet després de cada visita presencial.</li>
     </ul>
