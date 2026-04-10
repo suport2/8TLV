@@ -428,6 +428,7 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
           <div class="field">
             <label>Superf&iacute;cie disponible (m&sup2;) <span class="text-muted">(opcional)</span></label>
             <input type="number" id="superficie" placeholder="50" min="1" oninput="onFormChange()">
+            <div id="superficieWarn" style="display:none;margin-top:6px;padding:8px 10px;background:#fff3cd;border:1px solid #ffc107;border-radius:6px;font-size:12px;color:#856404"></div>
           </div>
           <div class="field">
             <label>Al&ccedil;ada de l'edifici (m)</label>
@@ -744,6 +745,7 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
           <div><span class="kpi-value" id="kpi_co2">&mdash;</span><span class="kpi-unit">kg/any</span></div>
         </div>
       </div>
+      <div id="kpiWarnings" style="padding:0 12px 10px"></div>
     </div>
     <div class="action-buttons">
       <h3>Accions</h3>
@@ -1148,8 +1150,45 @@ async function geocodeAddress(addr) {
 
 function onFormChange() {
   updateConsumTotals();
+  checkWarnings();
   clearTimeout(state.kpiTimer);
   state.kpiTimer = setTimeout(fetchKpis, 600);
+}
+
+function checkWarnings() {
+  const numMod  = parseInt(document.getElementById('num_moduls')?.value || 0);
+  const potMod  = parseFloat((state.cataleg.moduls.find(m => m.id === state.selectedModul) || {}).potencia_wp || 510);
+  const kwp     = (numMod * potMod) / 1000;
+  const inv     = (state.cataleg.mono.concat(state.cataleg.trifasic||[])).find(i => i.id === state.selectedInversor) || {};
+  const potInv  = parseFloat(inv.potencia_kw || 6);
+  const sup     = parseFloat(document.getElementById('superficie')?.value || 0);
+
+  // Avís kWp vs inversor (>10% sobredimensionat)
+  const ratio = kwp / potInv;
+  const warnEl = document.getElementById('kpiWarnings');
+  if (warnEl) {
+    if (ratio > 1.1) {
+      warnEl.innerHTML = `<div style="padding:8px 10px;background:#fff3cd;border:1px solid #ffc107;border-radius:6px;font-size:12px;color:#856404">
+        ⚠ ${kwp.toFixed(2)} kWp instal·lats amb inversor de ${potInv} kW (ratio ${ratio.toFixed(2)}×). Considera un inversor més gran o reduir mòduls.
+      </div>`;
+    } else {
+      warnEl.innerHTML = '';
+    }
+  }
+
+  // Avís superfície (1 mòdul ≈ 2.1 m²)
+  const supWarn = document.getElementById('superficieWarn');
+  if (supWarn && sup > 0) {
+    const maxMod = Math.floor(sup / 2.1);
+    if (numMod > maxMod) {
+      supWarn.style.display = 'block';
+      supWarn.textContent = `⚠ ${numMod} mòduls necessiten ~${Math.ceil(numMod * 2.1)} m² però tens ${sup} m² disponibles (màx. ${maxMod} mòduls).`;
+    } else {
+      supWarn.style.display = 'none';
+    }
+  } else if (supWarn) {
+    supWarn.style.display = 'none';
+  }
 }
 
 async function fetchKpis() {
@@ -1194,6 +1233,7 @@ async function fetchKpis() {
       manteniment_anual:p.economics.manteniment_anual,
       lat, lng, inclinacio: incl, acimut: azim,
       pvgis_monthly,
+      ombres: document.getElementById('ombres')?.value || 'cap',
     };
     const r = await fetch(`${N8N}/solenver/calcular-kpis`, {
       method:'POST', headers:{'Content-Type':'application/json'},

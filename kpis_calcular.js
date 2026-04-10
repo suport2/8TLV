@@ -65,6 +65,7 @@ const {
   potencia_inversor_kw = 6,
   perdues_cable    = 0.015,
   perdues_inversor = 0.08,
+  ombres           = 'cap',
   // Consum — CAS A: factura completa
   consum_p1        = null,   // array 12 mesos kWh o null
   consum_p2        = null,
@@ -94,6 +95,7 @@ const TAXA_DESC   = parseFloat(PARAMS.taxa_descont)      || 0.05;
 // ── kWp i factor pèrdues ─────────────────────────────────────────
 const kwp = (num_moduls * potencia_wp) / 1000;
 const factorPerdues = (1 - perdues_cable) * (1 - perdues_inversor);
+const factorOmbres = {'cap': 1, 'parcials': 0.95, 'importants': 0.85}[ombres] ?? 1;
 
 // ── Dies per mes ─────────────────────────────────────────────────
 const DIES_MES = [31,28,31,30,31,30,31,31,30,31,30,31];
@@ -196,8 +198,8 @@ for (let m = 0; m < 12; m++) {
       // kW produïts: PVGIS escala el perfil horari (ja inclou pèrdues al 14%)
       // Si no hi ha PVGIS, apliquem factorPerdues manualment
       const pv_brut = pvgisMonthly
-        ? SOLAR[idx] * kwp * scalePvgis
-        : SOLAR[idx] * kwp * factorPerdues;
+        ? SOLAR[idx] * kwp * scalePvgis * factorOmbres
+        : SOLAR[idx] * kwp * factorPerdues * factorOmbres;
 
       // Clipping inversor
       const pv_real = Math.min(pv_brut, potencia_inversor_kw);

@@ -64,6 +64,7 @@ const perfil   = input.perfil_client || 'industria_general';
 const perdues_cable    = parseFloat(input.perdues_cable    || 0.015);
 const perdues_inversor = parseFloat(input.perdues_inversor || 0.08);
 const factorPerdues    = (1 - perdues_cable) * (1 - perdues_inversor);
+const factorOmbres     = {'cap': 1, 'parcials': 0.95, 'importants': 0.85}[input.ombres || input.instalacio?.ombres] ?? 1;
 
 const preu_p1  = parseFloat(input.preu_p1 || 0.2267);
 const preu_p2  = parseFloat(input.preu_p2 || 0.1384);
@@ -162,8 +163,8 @@ for (let m = 0; m < 12; m++) {
       if(idx>=SOLAR.length) break;
       // Producció real: SOLAR escalar per PVGIS (o factorPerdues si no hi ha PVGIS)
       const pv_brut = pvgisMonthly
-        ? SOLAR[idx] * kwp * scalePvgis          // PVGIS ja inclou pèrdues
-        : SOLAR[idx] * kwp * factorPerdues;       // fallback: pèrdues manuals
+        ? SOLAR[idx] * kwp * scalePvgis * factorOmbres
+        : SOLAR[idx] * kwp * factorPerdues * factorOmbres;
       const pv_h  = Math.min(pv_brut, potInv);   // clipping inversor
       const t     = TARIFES[idx]||'P3';
       const tn    = t==='P1'?'P1':(t==='P2'?'P2':'P3');
