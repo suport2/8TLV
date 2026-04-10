@@ -33,7 +33,7 @@
     /* PAGE BREAKS */
     .page {
       page-break-before: always;
-      padding: 16mm 16mm 6mm;
+      padding: 16mm 16mm 12mm;
       min-height: 257mm;
       position: relative
     }
@@ -54,8 +54,29 @@
     h3    { page-break-after: avoid; break-after: avoid }
     .sh   { page-break-after: avoid; break-after: avoid }
 
-    /* Peu de pàgina (Playwright l'afegeix automàticament a totes les pàgines físiques) */
+    /* Peu de pàgina inline (ocult en impressió - substituït pel fixed-footer) */
     @media print { .pfooter { display: none !important } }
+
+    /* Footer fix: apareix a totes les pàgines físiques en impressió */
+    .fixed-footer { display: none }
+    @media print {
+      .fixed-footer {
+        display: flex !important;
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        height: 10mm;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 16mm;
+        font-size: 8pt;
+        color: var(--slate-500);
+        border-top: 1px solid var(--slate-200);
+        background: #fff;
+        font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+        font-weight: 500;
+        z-index: 9999;
+      }
+    }
 
     /* SECTION HEADER */
     .sh {
@@ -892,6 +913,13 @@
       <span>{{CLIENT_NOM}}</span>
       <span>{{ID_ESTUDI}}</span>
     </div>
+  </div>
+
+  <!-- Footer fix: apareix a totes les pàgines físiques en impressió -->
+  <div class="fixed-footer">
+    <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
+    <span style="font-weight:700">{{CLIENT_NOM}}</span>
+    <span>{{ID_ESTUDI}}</span>
   </div>
 
 </body>
