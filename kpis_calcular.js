@@ -184,7 +184,7 @@ for (let m = 0; m < 12; m++) {
   // Factor d'escala PVGIS per aquest mes
   let scalePvgis = 1;
   if (pvgisMonthly && pvgisMonthly[m] > 0 && solarMesTotals[m] > 0) {
-    scalePvgis = (pvgisMonthly[m] * 1000) / solarMesTotals[m];
+    scalePvgis = pvgisMonthly[m] / solarMesTotals[m];
   }
 
   let ac=0, exc=0, xarxa=0, pv=0, cost=0, comp=0;

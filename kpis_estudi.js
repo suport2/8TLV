@@ -141,7 +141,7 @@ for (let m = 0; m < 12; m++) {
   let scalePvgis = 1;
   if (pvgisMonthly && pvgisMonthly[m] > 0 && solarMesTotals[m] > 0) {
     // PVGIS ja inclou pèrdues (loss=14%), per tant NO apliquem factorPerdues a sobre
-    scalePvgis = (pvgisMonthly[m] * 1000) / solarMesTotals[m];
+    scalePvgis = pvgisMonthly[m] / solarMesTotals[m];
   }
 
   const sP = {P1:0, P2:0, P3:0};
