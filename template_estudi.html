@@ -40,6 +40,9 @@
 
     .page:first-child { page-break-before: avoid }
 
+    /* Pàgines interiors: reduir padding top (el header de Playwright ja ocupa 14mm) */
+    .page:not(.portada) { padding-top: 8mm }
+
     /* Evitar talls dins d'elements importants */
     .kcard, .kbox, .ibox, .val-item, .gar-box, .pas,
     .chart, .callout, .vista-aeria, .mant-card, .igrid, .vals {
@@ -54,29 +57,12 @@
     h3    { page-break-after: avoid; break-after: avoid }
     .sh   { page-break-after: avoid; break-after: avoid }
 
-    /* Peu de pàgina inline (ocult en impressió - substituït pel fixed-footer) */
+    /* Peu de pàgina inline (ocult en impressió - Playwright gestiona header/footer) */
     @media print { .pfooter { display: none !important } }
 
-    /* Footer fix: apareix a totes les pàgines físiques en impressió */
-    .fixed-footer { display: none }
-    @media print {
-      .fixed-footer {
-        display: flex !important;
-        position: fixed;
-        bottom: 0; left: 0; right: 0;
-        height: 10mm;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 16mm;
-        font-size: 8pt;
-        color: var(--slate-500);
-        border-top: 1px solid var(--slate-200);
-        background: #fff;
-        font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
-        font-weight: 500;
-        z-index: 9999;
-      }
-    }
+    /* Marges de pàgina: header 14mm dalt, footer 10mm baix. Portada sense marges. */
+    @page { margin-top: 14mm; margin-bottom: 10mm; }
+    @page :first { margin-top: 0; margin-bottom: 0; }
 
     /* SECTION HEADER */
     .sh {
@@ -506,10 +492,6 @@
           <td style="font-weight:700;color:var(--slate-900)">Data informe</td>
           <td colspan="3">{{DATA_ESTUDI}}</td>
         </tr>
-        <tr>
-          <td style="font-weight:700;color:var(--slate-900)">Referència estudi</td>
-          <td colspan="3">{{ID_ESTUDI}}</td>
-        </tr>
       </tbody>
     </table>
 
@@ -915,12 +897,6 @@
     </div>
   </div>
 
-  <!-- Footer fix: apareix a totes les pàgines físiques en impressió -->
-  <div class="fixed-footer">
-    <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
-    <span style="font-weight:700">{{CLIENT_NOM}}</span>
-    <span>{{ID_ESTUDI}}</span>
-  </div>
 
 </body>
 </html>

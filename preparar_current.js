@@ -492,7 +492,7 @@ const titolEstudi = decodeStr(informeIA.titol) ||
 
 // ─── FOOTER PER PLAYWRIGHT (apareix a totes les pàgines físiques) ───
 const footerHtml = `<div style="font-size:8px;color:#64748b;font-family:'Segoe UI',Arial,Helvetica,sans-serif;width:100%;display:flex;justify-content:space-between;align-items:center;padding:4px 18mm 0;box-sizing:border-box;border-top:1px solid #e2e8f0"><span>${emailEmpresa} | ${telefonEmpresa}</span><span style="font-weight:600">${input.client_nom||'-'}</span><span>${idEstudi}</span></div>`;
-const headerHtml = `<div style="width:100%;height:2px;background:transparent;margin:0;padding:0;font-size:1px"> </div>`;
+const headerHtml = `<div style="font-family:'Segoe UI',Arial,Helvetica,sans-serif;width:100%;display:flex;justify-content:space-between;align-items:center;padding:0 18mm;box-sizing:border-box;border-bottom:2px solid #3b9c3f;font-size:8px;"><span style="font-weight:800;letter-spacing:1.5px;color:#2c7d2e;font-size:9px">SOLENVER</span><span style="color:#64748b">Energia Solar Fotovoltaica</span></div>`;
 
 return [{json: {
   id_estudi:   idEstudi,
