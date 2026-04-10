@@ -33,8 +33,7 @@
     /* PAGE BREAKS */
     .page {
       page-break-before: always;
-      page-break-after: always;
-      padding: 20mm 18mm 16mm;
+      padding: 20mm 18mm 8mm;
       min-height: 257mm;
       position: relative
     }
@@ -43,17 +42,20 @@
 
     /* Evitar talls dins d'elements importants */
     .kcard, .kbox, .ibox, .val-item, .gar-box, .pas,
-    .chart, .callout, .vista-aeria, .mant-card {
+    .chart, .callout, .vista-aeria, .mant-card, .igrid {
       page-break-inside: avoid;
       break-inside: avoid
     }
 
-    table { page-break-inside: auto }
+    /* Taules: capçalera repetida + no tallar files */
+    table { page-break-inside: auto; width: 100% }
     thead { display: table-header-group }
     tr    { page-break-inside: avoid; break-inside: avoid }
+    h3    { page-break-after: avoid; break-after: avoid }
+    .sh   { page-break-after: avoid; break-after: avoid }
 
-    h3 { page-break-after: avoid; break-after: avoid }
-    .sh { page-break-after: avoid; break-after: avoid }
+    /* Peu de pàgina (Playwright l'afegeix automàticament a totes les pàgines) */
+    @media print { .pfooter { display: none !important } }
 
     /* SECTION HEADER */
     .sh {
@@ -577,9 +579,10 @@
     <h3>Especificacions tècniques de l'inversor</h3>
     {{HTML_TAULA_INVERSOR}}
 
-    <p style="margin:12px 0 8px;color:var(--slate-700)">{{TEXT_MUNTATGE_DESC}}</p>
+    <h3>Tipus de muntatge: {{MUNTATGE_NOM}}</h3>
+    <p style="margin:8px 0 12px;color:var(--slate-700)">{{TEXT_MUNTATGE_DESC}}</p>
     <img src="{{IMG_ESTRUCTURA}}"
-      style="width:100%;height:260px;object-fit:cover;border-radius:12px;margin:8px 0 20px;display:block;box-shadow:0 4px 12px rgba(0,0,0,0.05);border:1px solid var(--slate-200)"
+      style="width:100%;height:240px;object-fit:cover;border-radius:12px;margin:0 0 20px;display:block;box-shadow:0 4px 12px rgba(0,0,0,0.05);border:1px solid var(--slate-200)"
       alt="Estructura de muntatge">
 
     <h3>Sistema de monitorització</h3>
