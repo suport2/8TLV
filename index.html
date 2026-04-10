@@ -719,6 +719,10 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
           <div><div class="kpi-label">Pot&egrave;ncia FV</div><div class="kpi-subvalue" id="kpi_sub_kwp">&mdash;</div></div>
           <div><span class="kpi-value" id="kpi_kwp">&mdash;</span><span class="kpi-unit">kWp</span></div>
         </div>
+        <div class="kpi-item">
+          <div><div class="kpi-label">Preu instal·laci&oacute; (IVA incl.)</div></div>
+          <div><span class="kpi-value" id="kpi_capex">&mdash;</span><span class="kpi-unit">&euro;</span></div>
+        </div>
         <div class="kpi-item positive">
           <div><div class="kpi-label">Estalvi any 1</div></div>
           <div><span class="kpi-value" id="kpi_estalvi">&mdash;</span><span class="kpi-unit">&euro;/any</span></div>
@@ -1187,6 +1191,7 @@ function updateKpiDisplay(k) {
   const fmt = (v, dec=0) => v != null ? parseFloat(v).toLocaleString('ca',{maximumFractionDigits:dec}) : '\u2014';
   set('kpi_kwp',        fmt(k.kwp, 2));
   set('kpi_sub_kwp',    `${document.getElementById('num_moduls')?.value||12} m\u00f2duls \u00b7 ${fmt(k.hsp_equivalent||k.hsp_anual)} HSP`);
+  set('kpi_capex',      k.cost_instalacio ? fmt(k.cost_instalacio, 0) : '\u2014');
   set('kpi_estalvi',    fmt(k.estalvi_any1, 0));
   set('kpi_retorn',     k.retorn_anys ? fmt(k.retorn_anys, 1) : '\u2014');
   set('kpi_autoconsum', fmt(k.pct_autoconsum, 1));
