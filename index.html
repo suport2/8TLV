@@ -1016,18 +1016,17 @@ async function uploadCups(input) { if(input.files[0]) await uploadCupsFile(input
 // ── SIPS automàtic via servidor local (localhost:3333) ──────────────
 const SIPS_SERVER = 'http://localhost:3333';
 
-async function fetchSips() {
+async function fetchSips(cupsOverride) {
   const cupsInput = document.getElementById('sipsInputCups');
-  const cups = (cupsInput?.value || document.getElementById('client_cups')?.value || '').trim().toUpperCase();
+  const cups = (cupsOverride || cupsInput?.value || document.getElementById('client_cups')?.value || '').trim().toUpperCase();
   if (!cups || cups.length < 18) {
     toast('⚠ Introdueix un CUPS vàlid (mínim 18 caràcters)', 'error');
     return;
   }
   const status = document.getElementById('sipsStatus');
   const btn    = document.getElementById('btnSipsFetch');
-  status.style.display = 'block';
-  status.innerHTML = '⏳ Consultant SIPS... (pot trigar 30-60 seg)';
-  btn.disabled = true;
+  if (status) { status.style.display = 'block'; status.innerHTML = '⏳ Consultant SIPS... (pot trigar 30-60 seg)'; status.style.color = '#555'; }
+  if (btn) btn.disabled = true;
   try {
     const r = await fetch(`${SIPS_SERVER}/sips`, {
       method: 'POST',
@@ -1038,20 +1037,20 @@ async function fetchSips() {
     const d = await r.json();
     if (!d.success) throw new Error(d.error || 'Error desconegut');
 
-    // Omplir taula mensual P1/P2/P3
+    // Omplir taula mensual P1/P2/P3 i canviar a mode taula
     applySipsConsumos(d.consumos);
-    status.innerHTML = `✅ SIPS importat! Total anual: ${d.consum_anual?.toLocaleString('ca')} kWh`;
-    status.style.color = '#15803d';
     setConsumMode('taula');
+    if (status) { status.style.display = 'block'; status.innerHTML = `✅ Dades de consum extretes a través del SIPS (${d.consum_anual?.toLocaleString('ca')} kWh/any)`; status.style.color = '#15803d'; }
     toast(`✅ Consums SIPS importats: ${d.consum_anual?.toLocaleString('ca')} kWh/any`, 'success');
   } catch(e) {
-    const isOffline = e.message.includes('fetch') || e.message.includes('Failed');
-    status.innerHTML = isOffline
+    const isOffline = e.message.includes('fetch') || e.message.includes('Failed') || e.message.includes('NetworkError');
+    const msg = isOffline
       ? '❌ No es pot connectar al servidor local. Executa: <code>node server.js</code> a la carpeta del scraper'
-      : `❌ Error: ${e.message}`;
-    status.style.color = '#b91c1c';
+      : `❌ Error SIPS: ${e.message}`;
+    if (status) { status.style.display = 'block'; status.innerHTML = msg; status.style.color = '#b91c1c'; }
+    toast('❌ Error SIPS: ' + e.message, 'error');
   } finally {
-    btn.disabled = false;
+    if (btn) btn.disabled = false;
   }
 }
 
@@ -1513,17 +1512,42 @@ function openPdfUrl(url) {
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
 
+// Obté l'HTML de n8n i el converteix a PDF via servidor local
+async function _generarPdf(previewOnly) {
+  const payload = buildPdfPayload(previewOnly);
+
+  // 1. n8n genera l'HTML
+  showLoading('Preparant document...');
+  const r = await fetchWithTimeout(`${N8N}/solenver/generar-estudi`, {
+    method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
+  });
+  if (!r.ok) throw new Error((await r.json()).error || 'Error n8n');
+  const data = await r.json();
+  if (!data.html) throw new Error('n8n no ha retornat HTML');
+
+  // 2. Servidor local (Playwright) converteix HTML → PDF
+  showLoading('Generant PDF...');
+  const rPdf = await fetch('http://localhost:3333/pdf', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ html: data.html })
+  });
+  if (!rPdf.ok) {
+    const err = await rPdf.json().catch(() => ({}));
+    throw new Error(err.error || 'Error generant PDF');
+  }
+
+  // 3. Obrir PDF en nova pestanya
+  const blob = await rPdf.blob();
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+
 async function previewPDF() {
   if(!document.getElementById('client_nom')?.value) { toast('\u26a0 Omple el nom del client primer', 'error'); return; }
   showLoading('Generant previsualitzaci\u00f3 PDF...');
   try {
-    const payload = buildPdfPayload(true);
-    const r = await fetchWithTimeout(`${N8N}/solenver/generar-estudi`, {
-      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
-    });
-    if(!r.ok) throw new Error((await r.json()).error || 'Error desconegut');
-    const data = await r.json();
-    openPdfUrl(data.pdf_url);
+    await _generarPdf(true);
     toast('\u2705 PDF obert en una nova pestanya', 'success');
   } catch(e) { toast(`\u274c ${e.message === 'The user aborted a request.' ? 'Temps exhaurit (90s). Torna a intentar-ho.' : e.message}`, 'error'); }
   finally { hideLoading(); }
@@ -1531,15 +1555,9 @@ async function previewPDF() {
 
 async function generarEnviar() {
   if(!document.getElementById('client_nom')?.value) { toast('\u26a0 Omple el nom del client primer', 'error'); return; }
-  showLoading('Generant PDF i enviant...');
+  showLoading('Generant PDF...');
   try {
-    const payload = buildPdfPayload(false);
-    const r = await fetchWithTimeout(`${N8N}/solenver/generar-estudi`, {
-      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
-    });
-    if(!r.ok) throw new Error((await r.json()).error || 'Error desconegut');
-    const data = await r.json();
-    openPdfUrl(data.pdf_url);
+    await _generarPdf(false);
     toast('\u2705 PDF generat correctament!', 'success');
   } catch(e) { toast(`\u274c ${e.message === 'The user aborted a request.' ? 'Temps exhaurit (90s). Torna a intentar-ho.' : e.message}`, 'error'); }
   finally { hideLoading(); }
@@ -1700,10 +1718,21 @@ function applyExtraction() {
     geocodeAddress(d.adreca_subministrament);
   }
 
-  // 2. Consum: només omplir si l'usuari no ha editat manualment
+  // Auto-trigger SIPS si hi ha CUPS vàlid
+  const sipsTriggered = !!(d.cups && d.cups.length >= 18);
+  if (sipsTriggered) {
+    const sipsInput = document.getElementById('sipsInputCups');
+    if (sipsInput) sipsInput.value = d.cups;
+    const sipsStatus = document.getElementById('sipsStatus');
+    if (sipsStatus) { sipsStatus.style.display = 'block'; sipsStatus.innerHTML = '⏳ Obtenint consums via SIPS...'; sipsStatus.style.color = '#555'; }
+    setConsumMode('cups'); // mostrar panell SIPS perquè l'usuari vegi l'estat
+    fetchSips(d.cups).catch(() => {});
+  }
+
+  // 2. Consum: només omplir si l'usuari no ha editat manualment I no s'ha activat el SIPS
   const dies = parseFloat(d.dies_factura) || 0;
   const consumPeriode = parseFloat(d.consum_total_kwh) || 0;
-  if (!state.consumEditat && consumPeriode > 0 && dies > 0) {
+  if (!sipsTriggered && !state.consumEditat && consumPeriode > 0 && dies > 0) {
     const consumAnualEst = Math.round(consumPeriode / dies * 365);
     const el = document.getElementById('consum_anual_total');
     if (el) {

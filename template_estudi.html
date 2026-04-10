@@ -447,11 +447,11 @@
       </div>
       <div class="ibox">
         <div class="il">Cobertura</div>
-        <div class="iv">Catalunya i Aragó</div>
+        <div class="iv">{{COBERTURA_EMPRESA}}</div>
       </div>
       <div class="ibox">
         <div class="il">Certificació</div>
-        <div class="iv">Instal·ladors REE Autoritzats</div>
+        <div class="iv">{{CERTIFICACIO_EMPRESA}}</div>
       </div>
       <div class="ibox">
         <div class="il">Garantia de servei</div>
@@ -491,7 +491,7 @@
     </table>
 
     <div class="pfooter">
-      <span>info@solenver.com | {{COMERCIAL_TEL}}</span>
+      <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
       <span>{{CLIENT_NOM}}</span>
       <span>{{ID_ESTUDI}}</span>
     </div>
@@ -537,7 +537,7 @@
     </div>
 
     <div class="pfooter">
-      <span>info@solenver.com | {{COMERCIAL_TEL}}</span>
+      <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
       <span>{{CLIENT_NOM}}</span>
       <span>{{ID_ESTUDI}}</span>
     </div>
@@ -604,7 +604,7 @@
     </table>
 
     <div class="pfooter">
-      <span>info@solenver.com | {{COMERCIAL_TEL}}</span>
+      <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
       <span>{{CLIENT_NOM}}</span>
       <span>{{ID_ESTUDI}}</span>
     </div>
@@ -644,7 +644,7 @@
     {{HTML_TAULA_PRODUCCIO}}
 
     <div class="pfooter">
-      <span>info@solenver.com | {{COMERCIAL_TEL}}</span>
+      <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
       <span>{{CLIENT_NOM}}</span>
       <span>{{ID_ESTUDI}}</span>
     </div>
@@ -696,7 +696,7 @@
     </div>
 
     <div class="pfooter">
-      <span>info@solenver.com | {{COMERCIAL_TEL}}</span>
+      <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
       <span>{{CLIENT_NOM}}</span>
       <span>{{ID_ESTUDI}}</span>
     </div>
@@ -718,7 +718,7 @@
     {{HTML_TAULA_CASHFLOW}}
 
     <div class="pfooter">
-      <span>info@solenver.com | {{COMERCIAL_TEL}}</span>
+      <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
       <span>{{CLIENT_NOM}}</span>
       <span>{{ID_ESTUDI}}</span>
     </div>
@@ -735,22 +735,22 @@
 
     <h3>Aquest pressupost inclou</h3>
     <ul>
-      <li>Materials de primera qualitat (mòduls JINKO Tiger Neo, inversor HUAWEI SUN2000)</li>
+      <li>Materials de primera qualitat (mòduls {{MODUL_MODEL}}, inversor {{INVERSOR_MODEL}})</li>
       <li>Muntatge i posta en marxa complets realitzats per instal·ladors certificats</li>
       <li>Sistema de monitoratge integrat amb app mòbil</li>
       <li>Redacció de la memòria tècnica i direcció d'obra per part dels nostres enginyers</li>
       <li>Legalització administrativa de la instal·lació al departament corresponent</li>
       <li>Gestió de l'alta als sistemes de compensació d'excedents energètics a la xarxa</li>
-      <li>Manteniment preventiu gratuït els dos primers anys (revisió anual)</li>
+      <li>Manteniment preventiu gratuït els {{ANYS_MANT_GRATUIT}} primers anys (revisió anual)</li>
       <li>Telegestió i control d'alarmes en remot les 24h, amb servei d'assistència</li>
     </ul>
 
     <div class="callout" style="margin-top:28px">
-      <p>Pressupost vàlid per 30 dies. Preus sense IVA. IVA 21% inclòs en el còmput final de la taula de pressupost.</p>
+      <p>Pressupost vàlid per {{VALIDESA_PRESSUPOST}} dies. Preus sense IVA. IVA 21% inclòs en el còmput final de la taula de pressupost.</p>
     </div>
 
     <div class="pfooter">
-      <span>info@solenver.com | {{COMERCIAL_TEL}}</span>
+      <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
       <span>{{CLIENT_NOM}}</span>
       <span>{{ID_ESTUDI}}</span>
     </div>
@@ -796,7 +796,7 @@
     </div>
 
     <div class="pfooter">
-      <span>info@solenver.com | {{COMERCIAL_TEL}}</span>
+      <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
       <span>{{CLIENT_NOM}}</span>
       <span>{{ID_ESTUDI}}</span>
     </div>
@@ -823,7 +823,7 @@
         <div class="gar-label">Anys garantia inversor</div>
       </div>
       <div class="gar-box dark">
-        <div class="gar-years">2</div>
+        <div class="gar-years">{{ANYS_MANT_GRATUIT}}</div>
         <div class="gar-label">Anys de manteniment gratuït</div>
       </div>
     </div>
@@ -881,11 +881,11 @@
 
     <div style="margin-top:40px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:12px;padding:30px 24px;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,0.03)">
       <p style="text-align:center;font-size:14pt;font-weight:800;color:var(--green-900);margin:0;letter-spacing:-0.5px">Contacteu amb el vostre assessor energètic per a qualsevol consulta</p>
-      <p style="text-align:center;font-size:11pt;color:var(--slate-500);margin:10px 0 0;font-weight:500">info@solenver.cat · www.solenver.cat</p>
+      <p style="text-align:center;font-size:11pt;color:var(--slate-500);margin:10px 0 0;font-weight:500">{{EMAIL_EMPRESA}} · {{WEB_EMPRESA}}</p>
     </div>
 
     <div class="pfooter">
-      <span>info@solenver.com | {{COMERCIAL_TEL}}</span>
+      <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
       <span>{{CLIENT_NOM}}</span>
       <span>{{ID_ESTUDI}}</span>
     </div>

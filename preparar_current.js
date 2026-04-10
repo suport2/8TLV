@@ -378,9 +378,13 @@ const htmlLogo = logoId
   ? `<img src="https://lh3.googleusercontent.com/d/${logoId}" style="max-height:65px;width:auto;display:block" alt="Solenver">`
   : `<span style="font-weight:700;font-size:20px;color:inherit;letter-spacing:2px">SOLENVER</span>`;
 
-const emailEmpresa    = config['EMAIL_EMPRESA']    || 'info@solenver.cat';
-const telefonEmpresa  = config['TELEFON_EMPRESA']  || '';
-const webEmpresa      = config['WEB_EMPRESA']      || 'Energia Solar Fotovoltaica · www.solenver.cat';
+const emailEmpresa       = config['EMAIL_EMPRESA']       || 'info@solenver.cat';
+const telefonEmpresa     = config['TELEFON_EMPRESA']     || '';
+const webEmpresa         = config['WEB_EMPRESA']         || 'www.solenver.cat';
+const coberturaEmpresa   = config['COBERTURA_EMPRESA']   || 'Catalunya i Aragó';
+const certificacioEmpresa= config['CERTIFICACIO_EMPRESA']|| 'Instal·ladors REE Autoritzats';
+const anysMantGratuit    = config['ANYS_MANT_GRATUIT']   || '2';
+const validesaPressupost = config['VALIDESA_PRESSUPOST'] || '30';
 
 const imgEmpresaId = config['IMG_EMPRESA'] || '';
 const htmlImgEmpresa = imgEmpresaId
@@ -490,6 +494,10 @@ return [{json: {
     '{{EMAIL_EMPRESA}}':              emailEmpresa,
     '{{TELEFON_EMPRESA}}':            telefonEmpresa,
     '{{WEB_EMPRESA}}':                webEmpresa,
+    '{{COBERTURA_EMPRESA}}':          coberturaEmpresa,
+    '{{CERTIFICACIO_EMPRESA}}':       certificacioEmpresa,
+    '{{ANYS_MANT_GRATUIT}}':          anysMantGratuit,
+    '{{VALIDESA_PRESSUPOST}}':        validesaPressupost,
     '{{IMG_MODUL}}':                  driveUrl(modul.foto_url),
     '{{IMG_INVERSOR}}':               driveUrl(inversor.foto_url),
     '{{IMG_ESTRUCTURA}}':             driveUrl(muntatge.foto_url),
