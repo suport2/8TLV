@@ -54,8 +54,7 @@
     h3    { page-break-after: avoid; break-after: avoid }
     .sh   { page-break-after: avoid; break-after: avoid }
 
-    /* Peu de pàgina (Playwright l'afegeix automàticament a totes les pàgines) */
-    @media print { .pfooter { display: none !important } }
+    /* Peu de pàgina visible en totes les pàgines */
 
     /* SECTION HEADER */
     .sh {
@@ -218,8 +217,8 @@
       width: 100%;
       border-collapse: separate;
       border-spacing: 0;
-      margin: 20px 0;
-      font-size: 9.5pt;
+      margin: 12px 0;
+      font-size: 8.5pt;
       border: 1px solid var(--slate-200);
       border-radius: 10px;
       overflow: hidden;
@@ -346,24 +345,24 @@
     .vista-aeria-cap { background: var(--bg-card); padding: 10px 16px; font-size: 8.5pt; color: var(--slate-500); font-weight: 500; border-top: 1px solid var(--slate-100) }
 
     /* GARANTIES */
-    .gar-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 24px 0 }
+    .gar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 14px 0 }
 
-    .gar-box { border-radius: 12px; padding: 24px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05) }
+    .gar-box { border-radius: 10px; padding: 14px 10px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.05) }
     .gar-box.green { background: var(--green-50); border: 1px solid #a5d6a7 }
     .gar-box.dark { background: var(--slate-900); color: #fff; border: 1px solid #1e293b }
 
-    .gar-years { font-size: 36pt; font-weight: 900; color: var(--green-700); line-height: 1; letter-spacing: -1px }
+    .gar-years { font-size: 26pt; font-weight: 900; color: var(--green-700); line-height: 1; letter-spacing: -1px }
     .gar-box.dark .gar-years { color: #69f0ae }
-    .gar-label { font-size: 9pt; text-transform: uppercase; letter-spacing: 1px; color: var(--slate-600); margin-top: 8px; font-weight: 700 }
+    .gar-label { font-size: 7.5pt; text-transform: uppercase; letter-spacing: 0.5px; color: var(--slate-600); margin-top: 6px; font-weight: 700 }
     .gar-box.dark .gar-label { color: #cbd5e1 }
 
     /* PROPERS PASSOS */
-    .pas { display: flex; align-items: flex-start; gap: 16px; padding: 16px; background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 10px; margin-bottom: 12px }
-    .pas-num { background: var(--green-600); color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11pt; flex-shrink: 0; box-shadow: 0 2px 6px rgba(22,163,74,0.3) }
+    .pas { display: flex; align-items: flex-start; gap: 12px; padding: 10px 14px; background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 8px; margin-bottom: 7px }
+    .pas-num { background: var(--green-600); color: #fff; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 9pt; flex-shrink: 0; box-shadow: 0 2px 4px rgba(22,163,74,0.3) }
     .pas-text { flex: 1 }
-    .pas-title { font-weight: 800; color: var(--slate-900); font-size: 11pt; margin-bottom: 4px }
-    .pas-desc { font-size: 9.5pt; color: var(--slate-600) }
-    .pas-qui { font-size: 8.5pt; color: var(--green-700); margin-top: 6px; font-weight: 600; display: inline-block; padding: 2px 8px; background: var(--green-50); border-radius: 4px }
+    .pas-title { font-weight: 800; color: var(--slate-900); font-size: 9.5pt; margin-bottom: 2px }
+    .pas-desc { font-size: 8.5pt; color: var(--slate-600) }
+    .pas-qui { font-size: 7.5pt; color: var(--green-700); margin-top: 4px; font-weight: 600; display: inline-block; padding: 1px 6px; background: var(--green-50); border-radius: 4px }
 
     /* CALLOUT */
     .callout {
@@ -825,7 +824,7 @@
     </div>
   </div>
 
-  <!-- §09 GARANTIES -->
+  <!-- §09 GARANTIES + PROPERS PASSOS -->
   <div class="page">
     <div class="sh">
       <div class="sh-num">09</div>
@@ -847,22 +846,8 @@
       </div>
       <div class="gar-box dark">
         <div class="gar-years">{{ANYS_MANT_GRATUIT}}</div>
-        <div class="gar-label">Anys de manteniment gratuït</div>
+        <div class="gar-label">Anys manteniment gratuït</div>
       </div>
-    </div>
-
-    <div class="pfooter">
-      <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
-      <span>{{CLIENT_NOM}}</span>
-      <span>{{ID_ESTUDI}}</span>
-    </div>
-  </div>
-
-  <!-- §09b PROPERS PASSOS -->
-  <div class="page">
-    <div class="sh">
-      <div class="sh-num">09</div>
-      <div class="sh-title">Propers Passos</div>
     </div>
 
     <div class="pas">
@@ -885,7 +870,7 @@
       <div class="pas-num">3</div>
       <div class="pas-text">
         <div class="pas-title">Disseny tècnic definitiu</div>
-        <div class="pas-desc">Inspecció en detall (si s'escau), validació final d'opcions i tramitació de permisos. Sol·licitud ferma de materials.</div>
+        <div class="pas-desc">Inspecció en detall, validació final d'opcions i tramitació de permisos.</div>
         <div class="pas-qui">Responsabilitat: Solenver</div>
       </div>
     </div>
@@ -893,7 +878,7 @@
       <div class="pas-num">4</div>
       <div class="pas-text">
         <div class="pas-title">Arribada d'equips i Muntatge</div>
-        <div class="pas-desc">Entrega del material al lloc, instal·lació de l'estructura mecànica, col·locació de plaques, tram elèctric i posada en marxa (1-2 o 3-4 dies estimats).</div>
+        <div class="pas-desc">Instal·lació de l'estructura mecànica, col·locació de plaques, tram elèctric i posada en marxa.</div>
         <div class="pas-qui">Responsabilitat: Solenver</div>
       </div>
     </div>
@@ -901,7 +886,7 @@
       <div class="pas-num">5</div>
       <div class="pas-text">
         <div class="pas-title">Certificació i legalització</div>
-        <div class="pas-desc">Emissió del certificat de finalització (Butlletí / CIE) a nom del titular i tramitació davant distribuïdora.</div>
+        <div class="pas-desc">Emissió del certificat de finalització (Butlletí / CIE) i tramitació davant distribuïdora.</div>
         <div class="pas-qui">Responsabilitat: Solenver</div>
       </div>
     </div>
@@ -909,14 +894,14 @@
       <div class="pas-num">6</div>
       <div class="pas-text">
         <div class="pas-title">Formació d'ús</div>
-        <div class="pas-desc">Configuració a mida de l'App d'usuari i sessió on-boarding pràctica sobre el manteniment i seguiment.</div>
+        <div class="pas-desc">Configuració de l'App d'usuari i sessió on-boarding sobre manteniment i seguiment.</div>
         <div class="pas-qui">Responsabilitat: Solenver</div>
       </div>
     </div>
 
-    <div style="margin-top:32px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:12px;padding:28px 24px;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,0.03)">
-      <p style="text-align:center;font-size:14pt;font-weight:800;color:var(--green-900);margin:0;letter-spacing:-0.5px">Contacteu amb el vostre assessor energètic per a qualsevol consulta</p>
-      <p style="text-align:center;font-size:11pt;color:var(--slate-500);margin:10px 0 0;font-weight:500">{{EMAIL_EMPRESA}} · {{WEB_EMPRESA}}</p>
+    <div style="margin-top:18px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:10px;padding:16px 20px;text-align:center">
+      <p style="text-align:center;font-size:12pt;font-weight:800;color:var(--green-900);margin:0;letter-spacing:-0.3px">Contacteu amb el vostre assessor energètic per a qualsevol consulta</p>
+      <p style="text-align:center;font-size:10pt;color:var(--slate-500);margin:6px 0 0;font-weight:500">{{EMAIL_EMPRESA}} · {{WEB_EMPRESA}}</p>
     </div>
 
     <div class="pfooter">
