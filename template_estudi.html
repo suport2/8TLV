@@ -33,7 +33,7 @@
     /* PAGE BREAKS */
     .page {
       page-break-before: always;
-      padding: 20mm 18mm 8mm;
+      padding: 16mm 16mm 6mm;
       min-height: 257mm;
       position: relative
     }
@@ -42,7 +42,7 @@
 
     /* Evitar talls dins d'elements importants */
     .kcard, .kbox, .ibox, .val-item, .gar-box, .pas,
-    .chart, .callout, .vista-aeria, .mant-card, .igrid {
+    .chart, .callout, .vista-aeria, .mant-card, .igrid, .vals {
       page-break-inside: avoid;
       break-inside: avoid
     }
@@ -174,13 +174,13 @@
     }
 
     /* KPI CARDS */
-    .kgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 24px 0 }
+    .kgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0 }
 
     .kcard {
       background: var(--bg-card);
       border: 1px solid var(--slate-200);
       border-radius: 12px;
-      padding: 20px 16px;
+      padding: 14px 14px;
       box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
       position: relative;
       overflow: hidden
@@ -194,11 +194,11 @@
       background: var(--green-500)
     }
 
-    .kcard .v { font-size: 20pt; font-weight: 900; color: var(--green-900); line-height: 1.1 }
-    .kcard .l { font-size: 8pt; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 8px; font-weight: 600 }
+    .kcard .v { font-size: 17pt; font-weight: 900; color: var(--green-900); line-height: 1.1 }
+    .kcard .l { font-size: 7.5pt; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 6px; font-weight: 600 }
 
     /* INFO GRID */
-    .igrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0 }
+    .igrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0 }
 
     .ibox {
       background: var(--slate-50);
@@ -229,7 +229,7 @@
     thead th {
       background: var(--slate-50);
       color: var(--slate-500);
-      padding: 12px 14px;
+      padding: 9px 12px;
       text-align: left;
       font-weight: 700;
       font-size: 8pt;
@@ -241,7 +241,7 @@
     tbody tr:nth-child(even) { background: var(--slate-50) }
 
     tbody td {
-      padding: 10px 14px;
+      padding: 7px 12px;
       border-bottom: 1px solid var(--slate-200);
       color: var(--slate-700)
     }
@@ -260,10 +260,10 @@
 
     /* CHARTS */
     .chart {
-      margin: 24px 0;
+      margin: 16px 0;
       text-align: center;
       background: var(--bg-card);
-      padding: 16px;
+      padding: 12px;
       border-radius: 12px;
       border: 1px solid var(--slate-200);
       box-shadow: 0 4px 12px rgba(0,0,0,0.04)
@@ -281,13 +281,13 @@
     }
 
     /* TEXT */
-    p { margin-bottom: 14px; line-height: 1.7; text-align: justify; color: var(--slate-700) }
+    p { margin-bottom: 10px; line-height: 1.6; text-align: justify; color: var(--slate-700) }
 
     h3 {
       color: var(--slate-900);
       font-size: 12pt;
       font-weight: 800;
-      margin: 28px 0 12px;
+      margin: 18px 0 8px;
       letter-spacing: -0.3px;
       display: flex;
       align-items: center;
@@ -376,7 +376,7 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.03)
     }
 
-    .callout p { margin: 0; color: var(--green-900); font-weight: 600; font-size: 11pt }
+    .callout p { margin: 0; color: var(--green-900); font-weight: 600; font-size: 11pt; white-space: normal; word-spacing: normal; letter-spacing: normal }
   </style>
 </head>
 
@@ -528,6 +528,15 @@
     <h3>Consums mensuals per períodes tarifaris ({{TARIFA}})</h3>
     {{HTML_TAULA_CONSUMS}}
 
+    <div class="pfooter">
+      <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
+      <span>{{CLIENT_NOM}}</span>
+      <span>{{ID_ESTUDI}}</span>
+    </div>
+  </div>
+
+  <!-- §02b GRÀFICS CONSUM / PRODUCCIÓ -->
+  <div class="page">
     <div class="chart">
       <img src="{{IMG_GRAFIC_CONSUM_MENSUAL}}" alt="Consum mensual">
       <div class="chart-cap">Figura 1 · Perfil de consum mensual (kWh)</div>
@@ -579,16 +588,25 @@
     <h3>Especificacions tècniques de l'inversor</h3>
     {{HTML_TAULA_INVERSOR}}
 
+    <div class="pfooter">
+      <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
+      <span>{{CLIENT_NOM}}</span>
+      <span>{{ID_ESTUDI}}</span>
+    </div>
+  </div>
+
+  <!-- §03b MUNTATGE + MONITORITZACIÓ -->
+  <div class="page">
     <h3>Tipus de muntatge: {{MUNTATGE_NOM}}</h3>
     <p style="margin:8px 0 12px;color:var(--slate-700)">{{TEXT_MUNTATGE_DESC}}</p>
     <img src="{{IMG_ESTRUCTURA}}"
-      style="width:100%;height:240px;object-fit:cover;border-radius:12px;margin:0 0 20px;display:block;box-shadow:0 4px 12px rgba(0,0,0,0.05);border:1px solid var(--slate-200)"
+      style="width:100%;height:200px;object-fit:cover;border-radius:12px;margin:0 0 20px;display:block;box-shadow:0 4px 12px rgba(0,0,0,0.05);border:1px solid var(--slate-200)"
       alt="Estructura de muntatge">
 
     <h3>Sistema de monitorització</h3>
     <p style="margin:8px 0 12px;color:var(--slate-700)">{{TEXT_MONITORITZACIO_DESC}}</p>
     <img src="{{IMG_MONITORING}}"
-      style="width:100%;height:240px;object-fit:contain;border-radius:12px;margin:0 0 20px;display:block;box-shadow:0 4px 12px rgba(0,0,0,0.05);border:1px solid var(--slate-200);background:#fff;padding:12px"
+      style="width:100%;height:200px;object-fit:contain;border-radius:12px;margin:0 0 20px;display:block;box-shadow:0 4px 12px rgba(0,0,0,0.05);border:1px solid var(--slate-200);background:#fff;padding:12px"
       alt="Sistema de monitorització">
 
     <h3>Factors de pèrdues del sistema</h3>

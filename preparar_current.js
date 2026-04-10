@@ -204,7 +204,7 @@ const htmlMantCards = plansActius.length === 0 ? '' : `
     const perKwp   = parseFloat(m.preu_per_kwp) || parseFloat(m.preu_kwp_any) || 0;
     const preuBase = parseFloat(m.preu_base) || 0;
     const sel      = m.id === mantId;
-    const serveis  = (m.serveis || '').split('\n').map(s => s.trim()).filter(Boolean);
+    const serveis  = (m.serveis || '').split(/[;\n]/).map(s => s.trim()).filter(Boolean);
     const labelPreu = kwpInstalat <= 10
       ? `${preuBase} € + IVA / any`
       : `${perKwp} €/kWp × ${fmt(kwpInstalat,2)} kWp`;
@@ -423,17 +423,45 @@ let imgVistaAeria = '';
 let htmlBlocVistaAeria = '';
 let imgVistaAeriaPortada = '';
 
+// Descarrega la imatge del mapa i la converteix a base64 per evitar bloquejos de referrer a Playwright
+async function fetchMapBase64(url) {
+  try {
+    const resp = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' }, signal: AbortSignal.timeout(8000) });
+    if (!resp.ok) return null;
+    const buf = await resp.arrayBuffer();
+    if (!buf.byteLength) return null;
+    return 'data:image/png;base64,' + Buffer.from(buf).toString('base64');
+  } catch(e) { return null; }
+}
+
+// Placeholder si no es pot carregar el mapa
+const mapPlaceholder = `<div style="width:100%;height:220px;background:linear-gradient(135deg,#e8f5e9,#f1f8e9);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#558b2f;font-size:10pt;font-weight:600;gap:8px">
+  <div style="font-size:28pt">🗺️</div>
+  <div>Lat: ${lat} · Lng: ${lng}</div>
+  <div style="font-size:8.5pt;color:#8bc34a;font-weight:400">Vista aèria de la instal·lació</div>
+</div>`;
+
+// Intentar primer Google Maps, després OSM
+let mapB64 = null;
 if (MAPS_API_KEY) {
-  const mapsUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=17&size=420x210&maptype=satellite&markers=color:red%7C${lat},${lng}&key=${MAPS_API_KEY}`;
-  imgVistaAeria = mapsUrl;
-  htmlBlocVistaAeria = `<div class="vista-aeria"><img src="${mapsUrl}" alt="Vista aèria"><div class="vista-aeria-cap">Vista aèria de la ubicació de la instal·lació (lat: ${lat}, lng: ${lng})</div></div>`;
-  imgVistaAeriaPortada = `<div class="portada-aerial" style="background-image:url('${mapsUrl}')"></div>`;
+  const mapsUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=17&size=600x300&maptype=satellite&markers=color:red%7C${lat},${lng}&key=${MAPS_API_KEY}`;
+  mapB64 = await fetchMapBase64(mapsUrl);
+}
+if (!mapB64) {
+  // OSM fallback
+  const osmUrl = `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lng}&zoom=17&size=600x300&maptype=mapnik&markers=${lat},${lng},ol-marker`;
+  mapB64 = await fetchMapBase64(osmUrl);
+}
+
+if (mapB64) {
+  imgVistaAeria = mapB64;
+  htmlBlocVistaAeria = `<div class="vista-aeria"><img src="${mapB64}" alt="Vista aèria" style="width:100%;height:220px;object-fit:cover;display:block"><div class="vista-aeria-cap">Vista aèria de la ubicació de la instal·lació (lat: ${lat}, lng: ${lng})</div></div>`;
+  imgVistaAeriaPortada = `<div class="portada-aerial" style="background-image:url('${mapB64}')"></div>`;
 } else {
-  // Fallback: OpenStreetMap static map (sense API key)
-  const osmUrl = `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lng}&zoom=17&size=420x210&maptype=mapnik&markers=${lat},${lng},ol-marker`;
-  imgVistaAeria = osmUrl;
-  htmlBlocVistaAeria = `<div class="vista-aeria"><img src="${osmUrl}" alt="Vista de la ubicació"><div class="vista-aeria-cap">Vista de la ubicació de la instal·lació (lat: ${lat}, lng: ${lng})</div></div>`;
-  imgVistaAeriaPortada = `<div class="portada-aerial" style="background-image:url('${osmUrl}')"></div>`;
+  // Placeholder estilitzat si no es pot carregar cap mapa
+  imgVistaAeria = '';
+  htmlBlocVistaAeria = `<div class="vista-aeria">${mapPlaceholder}<div class="vista-aeria-cap">Vista aèria de la ubicació de la instal·lació (lat: ${lat}, lng: ${lng})</div></div>`;
+  imgVistaAeriaPortada = `<div class="portada-aerial" style="background:linear-gradient(135deg,#1b5b1f,#2c7d2e)"></div>`;
 }
 
 // ─── TEXTOS ───
@@ -462,10 +490,16 @@ const textExcedents = injectKpisText(decodeStr(informeIA.recomanacio_bateria)) |
 const titolEstudi = decodeStr(informeIA.titol) ||
   `Memòria de la Valoració d'un Sistema d'Autoconsum Fotovoltaic ${perfilNom}`;
 
+// ─── FOOTER PER PLAYWRIGHT (apareix a totes les pàgines físiques) ───
+const footerHtml = `<div style="font-size:8px;color:#64748b;font-family:'Segoe UI',Arial,Helvetica,sans-serif;width:100%;display:flex;justify-content:space-between;align-items:center;padding:4px 18mm 0;box-sizing:border-box;border-top:1px solid #e2e8f0"><span>${emailEmpresa} | ${telefonEmpresa}</span><span style="font-weight:600">${input.client_nom||'-'}</span><span>${idEstudi}</span></div>`;
+const headerHtml = `<div style="width:100%;height:2px;background:transparent;margin:0;padding:0;font-size:1px"> </div>`;
+
 return [{json: {
-  id_estudi:  idEstudi,
-  data:       dataStr,
-  client_nom: input.client_nom || 'Client',
+  id_estudi:   idEstudi,
+  data:        dataStr,
+  client_nom:  input.client_nom || 'Client',
+  footer_html: footerHtml,
+  header_html: headerHtml,
   replacements: {
     '{{ID_ESTUDI}}':                  idEstudi,
     '{{TITOL_ESTUDI}}':               titolEstudi,
@@ -480,6 +514,7 @@ return [{json: {
     '{{COST_ACTUAL}}':                fmtE(costActual),
     '{{NUM_MODULS}}':                 String(numModuls),
     '{{MODUL_MODEL}}':                (modul.marca||'JINKO') + ' ' + (modul.model||'Tiger Neo'),
+    '{{INVERSOR_MODEL}}':             (inversor.marca||'HUAWEI') + ' ' + (inversor.model||'SUN2000'),
     '{{KWP}}':                        fmt(kpis.kwp,2) + ' kWp',
     '{{INVERSOR_KW}}':                `${inversor.marca||'HUAWEI'} ${inversor.model||'SUN2000'} ${inversor.potencia_kw||6} kW`,
     '{{PRODUCCIO_ANUAL}}':            fmtK(kpis.produccio_anual),
@@ -512,8 +547,11 @@ return [{json: {
     '{{VALIDESA_PRESSUPOST}}':        validesaPressupost,
     '{{IMG_MODUL}}':                  driveUrl(modul.foto_url),
     '{{IMG_INVERSOR}}':               driveUrl(inversor.foto_url),
+    '{{MUNTATGE_NOM}}':               muntatge.nom || 'Estructura de muntatge',
     '{{IMG_ESTRUCTURA}}':             driveUrl(muntatge.foto_url),
+    '{{TEXT_MUNTATGE_DESC}}':         muntatge.descripcio || '',
     '{{IMG_MONITORING}}':             driveUrl(inversor.sistema_monitoritzacio),
+    '{{TEXT_MONITORITZACIO_DESC}}':   inversor.desc_monitoritzacio || 'Sistema de monitorització integrat amb app mòbil per seguiment en temps real de la producció, consum i exportació a la xarxa.',
     '{{IMG_VISTA_AERIA}}':            imgVistaAeria,
     '{{HTML_BLOC_VISTA_AERIA}}':      htmlBlocVistaAeria,
     '{{IMG_VISTA_AERIA_PORTADA}}':    imgVistaAeriaPortada,
