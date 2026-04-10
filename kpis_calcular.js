@@ -95,9 +95,12 @@ const TAXA_DESC   = parseFloat(PARAMS.taxa_descont)      || 0.05;
 const kwp = (num_moduls * potencia_wp) / 1000;
 const factorPerdues = (1 - perdues_cable) * (1 - perdues_inversor);
 
+// ── Dies per mes ─────────────────────────────────────────────────
+const DIES_MES = [31,28,31,30,31,30,31,31,30,31,30,31];
+const NOMS_MES = ['Gener','Febrer','Març','Abril','Maig','Juny',
+                  'Juliol','Agost','Setembre','Octubre','Novembre','Desembre'];
+
 // ── PVGIS: producció mensual real (kWh/kWp) per lat/inclinació/acimut ──
-// Si el formulari envia pvgis_monthly (obtingut via proxy local), s'usa per
-// escalar el perfil horari SOLAR al valor real de la ubicació del client.
 const pvgisMonthly = (input.pvgis_monthly && Array.isArray(input.pvgis_monthly) && input.pvgis_monthly.length === 12)
   ? input.pvgis_monthly
   : null;
@@ -112,11 +115,6 @@ for (let m = 0; m < 12; m++) {
     }
   }
 }
-
-// ── Dies per mes ─────────────────────────────────────────────────
-const DIES_MES = [31,28,31,30,31,30,31,31,30,31,30,31];
-const NOMS_MES = ['Gener','Febrer','Març','Abril','Maig','Juny',
-                  'Juliol','Agost','Setembre','Octubre','Novembre','Desembre'];
 
 // ── Perfil de consum (forma horaria del sector) ──────────────────
 const shape = SHAPES[perfil_client] || SHAPES['industria_general'];
