@@ -180,36 +180,48 @@ const htmlTaulaCashflow = `<table>
 // ─── TARGETES MANTENIMENT ───
 const mantId = input.manteniment_id || 'sense';
 const kwpInstalat = kpis.kwp || (numModuls * (parseFloat(input.potencia_wp || 510) / 1000));
-// Descripció de característiques per pla (fallback si no ve del Sheets)
-const mantFeatures = {
-  sense:     [],
-  basic:     ['Revisió anual de la instal·lació', 'Comprovació de l\'inversor', 'Informe d\'estat anual'],
-  estandard: ['Revisió visual i estructural', 'Comprovació de l\'inversor i proteccions', 'Monitorització remota 24/7', 'Gestió d\'incidències i alarmes'],
-  premium:   ['Tot l\'inclòs en l\'Estàndard', 'Neteja professional de panells', 'Inspecció termogràfica (punts calents)', 'Garantia de producció assegurada'],
+// ─── CÀLCUL PREU MANTENIMENT ──────────────────────────────────────────────────
+// Sheets "manteniments" ha de tenir:
+//   preu_base     → preu fix anual per instal·lacions ≤10 kWp (ex: 50, 150, 250)
+//   preu_per_kwp  → preu per kWp si la instal·lació és >10 kWp (ex: 5, 15, 25)
+// Fórmula: max(preu_base, preu_per_kwp × kWp)
+//   Exemples: 6kWp bàsic → max(50, 5×6=30) = 50€
+//             20kWp bàsic → max(50, 5×20=100) = 100€
+const calcPreuMant = (m) => {
+  const base   = parseFloat(m.preu_base)    || parseFloat(m.preu_kwp_any) * 10 || 0;
+  const perKwp = parseFloat(m.preu_per_kwp) || parseFloat(m.preu_kwp_any)      || 0;
+  return Math.round(Math.max(base, perKwp * kwpInstalat));
 };
+
 const plansActius = mantenimentsData.length > 0
-  ? mantenimentsData.filter(m => parseFloat(m.preu_kwp_any) > 0)
+  ? mantenimentsData.filter(m => (parseFloat(m.preu_base) || parseFloat(m.preu_kwp_any)) > 0)
   : [];
+
 const htmlMantCards = plansActius.length === 0 ? '' : `
-<div class="mant-cards" style="display:flex;gap:16px;flex-wrap:wrap;margin:16px 0">
+<div class="mant-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:16px 0">
   ${plansActius.map(m => {
-    const preuKwp = parseFloat(m.preu_kwp_any) || 0;
-    const costAny = Math.round(preuKwp * kwpInstalat);
-    const sel     = m.id === mantId;
-    const feats   = mantFeatures[m.id] || [];
-    return `<div class="mant-card${sel ? ' mant-selected' : ''}" style="flex:1;min-width:200px;border:2px solid ${sel ? '#1b5e20' : '#c8e6c9'};border-radius:10px;padding:20px;background:${sel ? '#f1f8e9' : '#fff'}">
-  <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;color:#1b5e20;margin:0 0 8px">${m.nom}</h3>
-  <div style="font-size:28px;font-weight:700;color:#1b5e20;margin-bottom:12px">${fmt(costAny)} €<span style="font-size:13px;font-weight:400;color:#555"> / any</span></div>
-  <div style="font-size:11px;color:#888;margin-bottom:10px">${preuKwp} €/kWp × ${fmt(kwpInstalat,2)} kWp</div>
-  <ul style="margin:0;padding-left:16px;font-size:12px;color:#333;line-height:1.8">
-    ${feats.map(f => `<li>${f}</li>`).join('')}
+    const costAny  = calcPreuMant(m);
+    const perKwp   = parseFloat(m.preu_per_kwp) || parseFloat(m.preu_kwp_any) || 0;
+    const preuBase = parseFloat(m.preu_base) || 0;
+    const sel      = m.id === mantId;
+    const serveis  = (m.serveis || '').split('\n').map(s => s.trim()).filter(Boolean);
+    const labelPreu = kwpInstalat <= 10
+      ? `${preuBase} € + IVA / any`
+      : `${perKwp} €/kWp × ${fmt(kwpInstalat,2)} kWp`;
+    return `<div class="mant-card${sel ? ' mant-selected' : ''}" style="border:2px solid ${sel ? '#1b5e20' : '#c8e6c9'};border-radius:12px;padding:20px;background:${sel ? '#f1f8e9' : '#fff'};display:flex;flex-direction:column">
+  <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#4caf50;margin-bottom:6px">${m.nom}</div>
+  <div style="font-size:30px;font-weight:800;color:#1b5e20;line-height:1">${fmt(costAny)}<span style="font-size:14px;font-weight:400;color:#555"> €</span></div>
+  <div style="font-size:11px;color:#888;margin:4px 0 14px">${labelPreu}</div>
+  <ul style="margin:0;padding-left:16px;font-size:12px;color:#333;line-height:2;flex:1">
+    ${serveis.map(s => `<li>${s}</li>`).join('')}
   </ul>
+  ${sel ? '<div style="margin-top:12px;font-size:11px;font-weight:700;color:#1b5e20;text-transform:uppercase">✓ Pla seleccionat</div>' : ''}
 </div>`;
   }).join('\n  ')}
 </div>`;
 
 const mantSeleccionat = mantenimentsData.find(m => m.id === mantId) || null;
-const mantCostAnual   = mantSeleccionat ? Math.round(parseFloat(mantSeleccionat.preu_kwp_any) * kwpInstalat) : (parseFloat(input.manteniment_anual) || 0);
+const mantCostAnual   = mantSeleccionat ? calcPreuMant(mantSeleccionat) : (parseFloat(input.manteniment_anual) || 0);
 const mantNom         = mantSeleccionat?.nom || (mantId === 'sense' ? 'Sense manteniment' : mantId);
 
 // ─── COSTOS PER PLACA ───
