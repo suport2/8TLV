@@ -1170,11 +1170,15 @@ async function fetchKpis() {
     const azim = parseFloat(document.getElementById('acimut')?.value || 0);
 
     // Obtenir producció PVGIS real (lat/inclinació/acimut) via proxy local
+    // Timeout 3s: si PVGIS és lent, el motor segueix amb el perfil genèric
     let pvgis_monthly = null;
     try {
-      const rp = await fetch(`http://localhost:3333/pvgis?lat=${lat}&lng=${lng}&angle=${incl}&aspect=${azim}`);
+      const ctrl = new AbortController();
+      const pvgisTimer = setTimeout(() => ctrl.abort(), 3000);
+      const rp = await fetch(`http://localhost:3333/pvgis?lat=${lat}&lng=${lng}&angle=${incl}&aspect=${azim}`, { signal: ctrl.signal });
+      clearTimeout(pvgisTimer);
       if (rp.ok) { const dp = await rp.json(); pvgis_monthly = dp.monthly || null; }
-    } catch(e) { /* servidor local no disponible, el motor usarà fallback */ }
+    } catch(e) { /* servidor local no disponible o timeout, el motor usarà fallback */ }
 
     const kpiPayload = {
       num_moduls:       p.instalacio.num_moduls,
