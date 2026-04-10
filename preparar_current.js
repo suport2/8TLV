@@ -400,7 +400,7 @@ const validesaPressupost = config['VALIDESA_PRESSUPOST'] || '30';
 
 const imgEmpresaId = config['IMG_EMPRESA'] || '';
 const htmlImgEmpresa = imgEmpresaId
-  ? `<div style="margin:16px 0;text-align:center"><img src="https://lh3.googleusercontent.com/d/${imgEmpresaId}" style="max-width:100%;max-height:220px;border-radius:8px;object-fit:cover" alt="Equip Solenver"></div>`
+  ? `<div style="margin:12px 0;text-align:center"><img src="https://lh3.googleusercontent.com/d/${imgEmpresaId}" style="max-width:100%;max-height:150px;border-radius:8px;object-fit:cover" alt="Equip Solenver"></div>`
   : '';
 
 // ─── IMATGE MONITORITZACIÓ (per fabricant inversor) ───

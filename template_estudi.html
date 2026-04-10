@@ -54,7 +54,8 @@
     h3    { page-break-after: avoid; break-after: avoid }
     .sh   { page-break-after: avoid; break-after: avoid }
 
-    /* Peu de pàgina visible en totes les pàgines */
+    /* Peu de pàgina (Playwright l'afegeix automàticament a totes les pàgines físiques) */
+    @media print { .pfooter { display: none !important } }
 
     /* SECTION HEADER */
     .sh {
@@ -798,24 +799,6 @@
       <li>Actualització de programari de l'inversor i sistema de monitoratge.</li>
       <li>Informe tècnic complet després de cada visita presencial.</li>
     </ul>
-
-    <div class="vals" style="margin-top:24px">
-      <div class="val-item" style="padding:16px">
-        <div class="val-icon">📱</div>
-        <div class="val-title">Monitoratge 24/7</div>
-        <div class="val-desc">Control integral remot.</div>
-      </div>
-      <div class="val-item" style="padding:16px">
-        <div class="val-icon">🛡️</div>
-        <div class="val-title">Gestió Garanties</div>
-        <div class="val-desc">Tràmits amb fabricants.</div>
-      </div>
-      <div class="val-item" style="padding:16px">
-        <div class="val-icon">⚡</div>
-        <div class="val-title">Suport Tècnic</div>
-        <div class="val-desc">Suport davant la distribuïdora.</div>
-      </div>
-    </div>
 
     <div class="pfooter">
       <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
