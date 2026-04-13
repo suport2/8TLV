@@ -197,7 +197,20 @@ const plansActius = mantenimentsData.length > 0
   ? mantenimentsData.filter(m => (parseFloat(m.preu_base) || parseFloat(m.preu_kwp_any)) > 0)
   : [];
 
-const htmlMantCards = plansActius.length === 0 ? '' : `
+const senseSel = mantId === 'sense';
+const senseCard = `<div style="border:2px solid ${senseSel ? '#455a64' : '#cfd8dc'};border-radius:12px;padding:20px;background:${senseSel ? '#eceff1' : '#fff'};display:flex;flex-direction:column">
+  <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#78909c;margin-bottom:6px">Sense manteniment</div>
+  <div style="font-size:30px;font-weight:800;color:#455a64;line-height:1">0<span style="font-size:14px;font-weight:400;color:#555"> €</span></div>
+  <div style="font-size:11px;color:#aaa;margin:4px 0 14px">Sense contracte de manteniment</div>
+  <ul style="margin:0;padding-left:16px;font-size:12px;color:#666;line-height:2;flex:1">
+    <li>El client gestiona el manteniment de forma autònoma</li>
+    <li>Accés al suport tècnic puntual de Solenver (pressupost a part)</li>
+    <li>Recomanem revisió anual per preservar el rendiment i la garantia</li>
+  </ul>
+  ${senseSel ? '<div style="margin-top:12px;font-size:11px;font-weight:700;color:#455a64;text-transform:uppercase">✓ Opció seleccionada</div>' : ''}
+</div>`;
+
+const htmlMantCards = `
 <div class="mant-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:16px 0">
   ${plansActius.map(m => {
     const costAny  = calcPreuMant(m);
@@ -218,6 +231,7 @@ const htmlMantCards = plansActius.length === 0 ? '' : `
   ${sel ? '<div style="margin-top:12px;font-size:11px;font-weight:700;color:#1b5e20;text-transform:uppercase">✓ Pla seleccionat</div>' : ''}
 </div>`;
   }).join('\n  ')}
+  ${senseCard}
 </div>`;
 
 const mantSeleccionat = mantenimentsData.find(m => m.id === mantId) || null;
