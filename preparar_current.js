@@ -404,15 +404,22 @@ const logoId = config['IMG_LOGO'] || '';
 // Converteix una URL de Google Drive a base64 per evitar bloquejos Playwright
 async function driveToBase64(id, mime) {
   if (!id) return null;
-  try {
-    const url = `https://lh3.googleusercontent.com/d/${id}`;
-    const resp = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' }, signal: AbortSignal.timeout(8000) });
-    if (!resp.ok) return null;
-    const buf = await resp.arrayBuffer();
-    if (!buf.byteLength) return null;
-    const type = resp.headers.get('content-type') || mime || 'image/png';
-    return `data:${type};base64,` + Buffer.from(buf).toString('base64');
-  } catch(e) { return null; }
+  const urls = [
+    `https://drive.google.com/uc?export=view&id=${id}`,
+    `https://lh3.googleusercontent.com/d/${id}`,
+  ];
+  for (const url of urls) {
+    try {
+      const resp = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' }, redirect: 'follow', signal: AbortSignal.timeout(10000) });
+      if (!resp.ok) continue;
+      const buf = await resp.arrayBuffer();
+      if (!buf.byteLength) continue;
+      const type = resp.headers.get('content-type') || mime || 'image/png';
+      if (!type.startsWith('image/')) continue; // descarta pàgines HTML d'error
+      return `data:${type};base64,` + Buffer.from(buf).toString('base64');
+    } catch(e) { continue; }
+  }
+  return null;
 }
 
 const logoB64 = await driveToBase64(logoId, 'image/png');
