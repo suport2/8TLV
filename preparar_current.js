@@ -426,9 +426,16 @@ async function driveToBase64(id, mime) {
 
 const logoB64 = await driveToBase64(logoId, 'image/png');
 const logoSrc = logoB64 || (logoId ? `https://lh3.googleusercontent.com/d/${logoId}` : '');
+// CSS override injectat directament (no depèn de la versió del template a GitHub)
+const portadaCssOverride = `<style>
+.portada{display:block!important;height:297mm!important;max-height:297mm!important;overflow:hidden!important;position:relative!important}
+.portada-aerial{position:absolute!important;top:0!important;left:0!important;right:0!important;bottom:0!important;z-index:1!important}
+.portada-top{position:relative!important;z-index:2!important}
+.portada-kpis{position:absolute!important;bottom:0!important;left:0!important;right:0!important;z-index:3!important;display:grid!important}
+</style>`;
 const htmlLogo = logoSrc
-  ? `<img src="${logoSrc}" class="plogo" style="max-height:65px;width:auto;display:block;margin-bottom:4px" alt="Solenver">`
-  : `<span style="font-weight:800;font-size:22px;color:inherit;letter-spacing:2px">SOLENVER</span>`;
+  ? `${portadaCssOverride}<img src="${logoSrc}" class="plogo" style="max-height:65px;width:auto;display:block;margin-bottom:4px" alt="Solenver">`
+  : `${portadaCssOverride}<span style="font-weight:800;font-size:22px;color:inherit;letter-spacing:2px">SOLENVER</span>`;
 
 const nomEmpresaHeader   = config['NOM_EMPRESA']         || 'SOLENVER soluciones energéticas, SL';
 const adrecaEmpresaHeader= config['ADRECA_EMPRESA']      || 'Carrer Marinada 37, Pol. Ind. Torrefarrera, Lleida';
