@@ -231,7 +231,7 @@ const htmlMantCards = `
   ${sel ? '<div style="margin-top:12px;font-size:11px;font-weight:700;color:#1b5e20;text-transform:uppercase">✓ Pla seleccionat</div>' : ''}
 </div>`;
   }).join('\n  ')}
-  ${senseCard}
+  ${senseSel ? senseCard : ''}
 </div>`;
 
 const mantSeleccionat = mantenimentsData.find(m => m.id === mantId) || null;
@@ -532,7 +532,7 @@ const titolEstudi = decodeStr(informeIA.titol) ||
 // ─── FOOTER PER PLAYWRIGHT (apareix a totes les pàgines físiques menys portada) ───
 const telDisplay = telefonEmpresa ? ` · ${telefonEmpresa}` : '';
 const footerHtml = `<div style="font-size:8px;color:#64748b;font-family:'Segoe UI',Arial,Helvetica,sans-serif;width:100%;display:flex;justify-content:space-between;align-items:center;padding:4px 18mm 0;box-sizing:border-box;border-top:1px solid #e2e8f0"><span>${emailEmpresa}${telDisplay}</span><span style="font-weight:600">${input.client_nom||'-'}</span><span>${idEstudi}</span></div>`;
-const logoImgHtml = logoSrc ? `<img src="${logoSrc}" style="height:24px;width:auto;vertical-align:middle;margin-right:6px">` : '';
+const logoImgHtml = logoB64 ? `<img src="${logoB64}" style="height:24px;width:auto;vertical-align:middle;margin-right:6px">` : '';
 const headerHtml = `<div style="font-family:'Segoe UI',Arial,Helvetica,sans-serif;width:100%;display:flex;justify-content:space-between;align-items:center;padding:0 18mm;box-sizing:border-box;border-bottom:2px solid #27ae60;font-size:8px;"><span style="display:flex;align-items:center;gap:6px">${logoImgHtml}<span style="font-weight:800;letter-spacing:1.5px;color:#1b5e20;font-size:9px">SOLENVER</span></span><span style="color:#64748b">Energia Solar Fotovoltaica</span></div>`;
 
 // ─── HTML IMATGES MÒDUL / INVERSOR ───
@@ -657,6 +657,7 @@ return [{json: {
     '{{IMG_GRAFIC_COST_ACTUAL_VS_PV}}':   urlGraficCostVsPV,
     '{{IMG_GRAFIC_CASHFLOW}}':            urlGraficCashflow,
     '{{HTML_MANTENIMENT_CARDS}}':         htmlMantCards,
+    '{{HTML_IMG_MANTENIMENT}}':          (() => { const id = config['IMG_MANTENIMENT'] || ''; return id ? `<img src="${driveUrl(id)}" style="width:100%;height:200px;object-fit:cover;border-radius:10px;margin:16px 0;display:block;box-shadow:0 3px 10px rgba(0,0,0,0.07)" alt="Manteniment Solenver">` : ''; })(),
     '{{MANTENIMENT_NOM}}':                mantNom,
     '{{MANTENIMENT_COST_ANY}}':           mantCostAnual > 0 ? fmtE(mantCostAnual) : 'Sense contracte',
     '{{HTML_IMG_MODUL}}':                 htmlImgModul,

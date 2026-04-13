@@ -79,7 +79,7 @@
     /* ── PORTADA ── */
     .portada {
       background: linear-gradient(135deg, var(--slate-900) 0%, #0d3b11 100%);
-      color: #fff; padding: 0; height: 297mm;
+      color: #fff; padding: 0; min-height: 297mm;
       display: flex; flex-direction: column; position: relative; overflow: hidden
     }
     .portada::after {
@@ -87,7 +87,8 @@
       background: radial-gradient(circle at 70% 30%, rgba(46,204,113,0.12) 0%, transparent 50%);
       pointer-events: none
     }
-    .portada-top { padding: 22mm 20mm 0; flex: 1; position: relative; z-index: 2 }
+    /* portada-top: natural height (NO flex:1) */
+    .portada-top { padding: 22mm 20mm 24px; position: relative; z-index: 2 }
     .plogo { max-height: 80px; margin-bottom: 10px; display: block }
     .ptag {
       font-size: 8.5pt; font-weight: 600; color: var(--green-500);
@@ -101,21 +102,20 @@
     .padr    { font-size: 10.5pt; color: #94a3b8; opacity: 0.9; margin-bottom: 5px }
     .pdata   { font-size: 9pt; color: #64748b; margin-top: 18px; letter-spacing: 0.5px }
 
-    /* portada aerial strip */
-    .portada-aerial {
-      height: 150px; background: center/cover no-repeat;
-      opacity: 0.75; margin: 10px 0 0;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      border-bottom: 1px solid rgba(255,255,255,0.08)
-    }
-
-    /* portada KPIs bar */
+    /* portada KPIs bar — right after content, not at bottom */
     .portada-kpis {
-      background: var(--bg-card); padding: 22px 20mm;
+      background: var(--bg-card); padding: 18px 20mm;
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
       position: relative; z-index: 2;
       border-top: 1px solid rgba(0,0,0,0.04);
       box-shadow: 0 -12px 40px rgba(0,0,0,0.18)
+    }
+
+    /* portada aerial strip — flex:1 fills remaining space */
+    .portada-aerial {
+      flex: 1; min-height: 100px; background: center/cover no-repeat;
+      opacity: 0.8;
+      border-top: 1px solid rgba(255,255,255,0.08)
     }
     .kbox {
       text-align: left; padding: 10px 14px;
@@ -283,7 +283,6 @@
       <div class="padr">{{CLIENT_ADRECA}}</div>
       <div class="pdata">{{DATA_ESTUDI}} · Ref. {{ID_ESTUDI}}</div>
     </div>
-    {{IMG_VISTA_AERIA_PORTADA}}
     <div class="portada-kpis">
       <div class="kbox">
         <div class="kval">{{KWP}}</div>
@@ -302,6 +301,7 @@
         <div class="klbl">% Autoconsum</div>
       </div>
     </div>
+    {{IMG_VISTA_AERIA_PORTADA}}
   </div>
 
   <!-- §01 QUI SOM -->
@@ -722,34 +722,11 @@
 
     {{HTML_MANTENIMENT_CARDS}}
 
-    <h3 style="page-break-before:auto;margin-top:20px">Revisió tècnica anual — què inclou</h3>
-    <p style="font-size:9pt;color:var(--slate-500);margin:0 0 10px;font-style:italic">Recomanem revisió anual per preservar el rendiment i la garantia de la instal·lació.</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;page-break-inside:avoid;break-inside:avoid">
-      <div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:7px">
-        <span style="color:var(--green-600);font-weight:700;flex-shrink:0">✓</span>
-        <span style="font-size:9pt">Inspecció visual de panells (trencaments, brutícia, ombres)</span>
-      </div>
-      <div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:7px">
-        <span style="color:var(--green-600);font-weight:700;flex-shrink:0">✓</span>
-        <span style="font-size:9pt">Inspecció de l'estructura de suport i connexions</span>
-      </div>
-      <div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:7px">
-        <span style="color:var(--green-600);font-weight:700;flex-shrink:0">✓</span>
-        <span style="font-size:9pt">Verificació de proteccions elèctriques i posada a terra</span>
-      </div>
-      <div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:7px">
-        <span style="color:var(--green-600);font-weight:700;flex-shrink:0">✓</span>
-        <span style="font-size:9pt">Inspecció termogràfica (detecció punts calents)</span>
-      </div>
-      <div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:7px">
-        <span style="color:var(--green-600);font-weight:700;flex-shrink:0">✓</span>
-        <span style="font-size:9pt">Actualització firmware inversor i sistema de monitoratge</span>
-      </div>
-      <div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:7px">
-        <span style="color:var(--green-600);font-weight:700;flex-shrink:0">✓</span>
-        <span style="font-size:9pt">Informe tècnic complet amb resultats de la revisió</span>
-      </div>
-    </div>
+    {{HTML_IMG_MANTENIMENT}}
+
+    <h3 style="margin-top:18px">Revisió tècnica anual — servei inclòs als plans</h3>
+    <p>Cada any, un tècnic certificat de Solenver realitza una inspecció exhaustiva de la instal·lació. La visita inclou la <strong>inspecció visual de tots els mòduls</strong> per detectar trencaments, brutícia acumulada o possibles ombres noves; la <strong>revisió de l'estructura de suport i connexions</strong> per verificar l'estat dels ancoratges, cargoleria i unions; i la <strong>verificació de les proteccions elèctriques i la posada a terra</strong>, assegurant el compliment normatiu i la seguretat de la instal·lació.</p>
+    <p>A més, es realitza una <strong>inspecció termogràfica</strong> amb càmera d'infraroig per localitzar punts calents que podrien indicar cèl·lules degradades o connexions defectuoses, una <strong>actualització del firmware</strong> de l'inversor i del sistema de monitoratge per garantir el rendiment òptim, i s'emet un <strong>informe tècnic complet</strong> amb els resultats de la revisió i les recomanacions per als propers mesos. El servei de revisió anual garanteix mantenir la garantia del fabricant i maximitzar la vida útil de la instal·lació durant els 25 anys de funcionament.</p>
 
     <div class="pfooter">
       <span>{{EMAIL_EMPRESA}} | {{TELEFON_EMPRESA}}</span>
