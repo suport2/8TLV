@@ -79,7 +79,7 @@
     /* ── PORTADA ── */
     .portada {
       background: linear-gradient(135deg, var(--slate-900) 0%, #0d3b11 100%);
-      color: #fff; padding: 0; min-height: 297mm;
+      color: #fff; padding: 0; height: 297mm;
       display: flex; flex-direction: column; position: relative; overflow: hidden
     }
     .portada::after {
@@ -91,7 +91,7 @@
     .plogo { max-height: 80px; margin-bottom: 10px; display: block }
     .ptag {
       font-size: 8.5pt; font-weight: 600; color: var(--green-500);
-      letter-spacing: 2px; margin-bottom: 45px; text-transform: uppercase
+      letter-spacing: 2px; margin-bottom: 22px; text-transform: uppercase
     }
     .ptitle {
       font-size: 25pt; font-weight: 800; line-height: 1.2;
@@ -103,8 +103,8 @@
 
     /* portada aerial strip */
     .portada-aerial {
-      height: 170px; background: center/cover no-repeat;
-      opacity: 0.75; margin: 18px 0 0;
+      height: 150px; background: center/cover no-repeat;
+      opacity: 0.75; margin: 10px 0 0;
       border-top: 1px solid rgba(255,255,255,0.08);
       border-bottom: 1px solid rgba(255,255,255,0.08)
     }
@@ -722,8 +722,9 @@
 
     {{HTML_MANTENIMENT_CARDS}}
 
-    <h3>Revisió tècnica anual — què inclou</h3>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0">
+    <h3 style="page-break-before:auto;margin-top:20px">Revisió tècnica anual — què inclou</h3>
+    <p style="font-size:9pt;color:var(--slate-500);margin:0 0 10px;font-style:italic">Recomanem revisió anual per preservar el rendiment i la garantia de la instal·lació.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;page-break-inside:avoid;break-inside:avoid">
       <div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:7px">
         <span style="color:var(--green-600);font-weight:700;flex-shrink:0">✓</span>
         <span style="font-size:9pt">Inspecció visual de panells (trencaments, brutícia, ombres)</span>

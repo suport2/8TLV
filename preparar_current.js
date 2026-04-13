@@ -198,7 +198,7 @@ const plansActius = mantenimentsData.length > 0
   : [];
 
 const senseSel = mantId === 'sense';
-const senseCard = `<div style="border:2px solid ${senseSel ? '#455a64' : '#cfd8dc'};border-radius:12px;padding:20px;background:${senseSel ? '#eceff1' : '#fff'};display:flex;flex-direction:column">
+const senseCard = `<div class="mant-card" style="border:2px solid ${senseSel ? '#455a64' : '#cfd8dc'};border-radius:12px;padding:20px;background:${senseSel ? '#eceff1' : '#fff'};display:flex;flex-direction:column">
   <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#78909c;margin-bottom:6px">Sense manteniment</div>
   <div style="font-size:30px;font-weight:800;color:#455a64;line-height:1">0<span style="font-size:14px;font-weight:400;color:#555"> €</span></div>
   <div style="font-size:11px;color:#aaa;margin:4px 0 14px">Sense contracte de manteniment</div>
@@ -211,7 +211,7 @@ const senseCard = `<div style="border:2px solid ${senseSel ? '#455a64' : '#cfd8d
 </div>`;
 
 const htmlMantCards = `
-<div class="mant-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:16px 0">
+<div class="mant-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:16px 0;page-break-inside:auto">
   ${plansActius.map(m => {
     const costAny  = calcPreuMant(m);
     const perKwp   = parseFloat(m.preu_per_kwp) || parseFloat(m.preu_kwp_any) || 0;
