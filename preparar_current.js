@@ -414,9 +414,10 @@ async function driveToBase64(id, mime) {
       if (!resp.ok) continue;
       const buf = await resp.arrayBuffer();
       if (!buf.byteLength) continue;
-      const type = resp.headers.get('content-type') || mime || 'image/png';
-      if (!type.startsWith('image/')) continue; // descarta pàgines HTML d'error
-      return `data:${type};base64,` + Buffer.from(buf).toString('base64');
+      const ct = resp.headers.get('content-type') || '';
+      if (ct.startsWith('text/html')) continue; // descarta pàgines HTML d'error/confirmació
+      const finalType = ct.startsWith('image/') ? ct : (mime || 'image/png');
+      return `data:${finalType};base64,` + Buffer.from(buf).toString('base64');
     } catch(e) { continue; }
   }
   return null;

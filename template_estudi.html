@@ -78,44 +78,44 @@
 
     /* ── PORTADA ── */
     .portada {
-      background: linear-gradient(135deg, var(--slate-900) 0%, #0d3b11 100%);
+      background: linear-gradient(160deg, #040d05 0%, #0a3614 45%, #176128 100%);
       color: #fff; padding: 0; min-height: 297mm;
       display: flex; flex-direction: column; position: relative; overflow: hidden
     }
     .portada::after {
       content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-      background: radial-gradient(circle at 70% 30%, rgba(46,204,113,0.12) 0%, transparent 50%);
+      background:
+        radial-gradient(ellipse at 70% 15%, rgba(39,174,96,0.28) 0%, transparent 50%),
+        radial-gradient(ellipse at 20% 80%, rgba(22,160,133,0.12) 0%, transparent 45%);
       pointer-events: none
     }
     /* portada-top: natural height (NO flex:1) */
-    .portada-top { padding: 22mm 20mm 24px; position: relative; z-index: 2 }
-    .plogo { max-height: 80px; margin-bottom: 10px; display: block }
+    .portada-top { padding: 18mm 20mm 20px; position: relative; z-index: 2 }
+    .plogo { max-height: 70px; margin-bottom: 10px; display: block }
     .ptag {
-      font-size: 8.5pt; font-weight: 600; color: var(--green-500);
-      letter-spacing: 2px; margin-bottom: 22px; text-transform: uppercase
+      font-size: 8.5pt; font-weight: 600; color: #4ade80;
+      letter-spacing: 2px; margin-bottom: 16px; text-transform: uppercase
     }
     .ptitle {
       font-size: 25pt; font-weight: 800; line-height: 1.2;
-      margin-bottom: 16px; max-width: 490px; letter-spacing: -1px
+      margin-bottom: 14px; max-width: 490px; letter-spacing: -1px
     }
-    .pclient { font-size: 14pt; font-weight: 600; color: #cbd5e1; margin-bottom: 5px }
-    .padr    { font-size: 10.5pt; color: #94a3b8; opacity: 0.9; margin-bottom: 5px }
-    .pdata   { font-size: 9pt; color: #64748b; margin-top: 18px; letter-spacing: 0.5px }
+    .pclient { font-size: 14pt; font-weight: 600; color: #cbd5e1; margin-bottom: 4px }
+    .padr    { font-size: 10.5pt; color: #94a3b8; opacity: 0.9; margin-bottom: 4px }
+    .pdata   { font-size: 9pt; color: #64748b; margin-top: 14px; letter-spacing: 0.5px }
 
-    /* portada KPIs bar — right after content, not at bottom */
+    /* portada aerial strip — fills middle, flex:1 */
+    .portada-aerial {
+      flex: 1; min-height: 120px; background: center/cover no-repeat;
+      position: relative; z-index: 1
+    }
+
+    /* portada KPIs bar — always at bottom */
     .portada-kpis {
-      background: var(--bg-card); padding: 18px 20mm;
+      background: #fff; padding: 16px 20mm;
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
       position: relative; z-index: 2;
-      border-top: 1px solid rgba(0,0,0,0.04);
-      box-shadow: 0 -12px 40px rgba(0,0,0,0.18)
-    }
-
-    /* portada aerial strip — flex:1 fills remaining space */
-    .portada-aerial {
-      flex: 1; min-height: 100px; background: center/cover no-repeat;
-      opacity: 0.8;
-      border-top: 1px solid rgba(255,255,255,0.08)
+      box-shadow: 0 -4px 24px rgba(0,0,0,0.25)
     }
     .kbox {
       text-align: left; padding: 10px 14px;
@@ -283,6 +283,7 @@
       <div class="padr">{{CLIENT_ADRECA}}</div>
       <div class="pdata">{{DATA_ESTUDI}} · Ref. {{ID_ESTUDI}}</div>
     </div>
+    {{IMG_VISTA_AERIA_PORTADA}}
     <div class="portada-kpis">
       <div class="kbox">
         <div class="kval">{{KWP}}</div>
@@ -301,7 +302,6 @@
         <div class="klbl">% Autoconsum</div>
       </div>
     </div>
-    {{IMG_VISTA_AERIA_PORTADA}}
   </div>
 
   <!-- §01 QUI SOM -->
