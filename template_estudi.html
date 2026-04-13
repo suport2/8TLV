@@ -110,12 +110,12 @@
       position: relative; z-index: 1
     }
 
-    /* portada KPIs bar — always at bottom */
+    /* portada KPIs bar — fixed at bottom via absolute positioning */
     .portada-kpis {
+      position: absolute; bottom: 0; left: 0; right: 0;
       background: #fff; padding: 16px 20mm;
-      flex-shrink: 0;
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
-      position: relative; z-index: 2;
+      z-index: 2;
       box-shadow: 0 -4px 24px rgba(0,0,0,0.25)
     }
     .kbox {

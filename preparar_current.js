@@ -427,7 +427,7 @@ async function driveToBase64(id, mime) {
 const logoB64 = await driveToBase64(logoId, 'image/png');
 const logoSrc = logoB64 || (logoId ? `https://lh3.googleusercontent.com/d/${logoId}` : '');
 const htmlLogo = logoSrc
-  ? `<img src="${logoSrc}" style="max-height:65px;width:auto;display:block;margin-bottom:4px" alt="Solenver">`
+  ? `<img src="${logoSrc}" class="plogo" style="max-height:65px;width:auto;display:block;margin-bottom:4px" alt="Solenver">`
   : `<span style="font-weight:800;font-size:22px;color:inherit;letter-spacing:2px">SOLENVER</span>`;
 
 const nomEmpresaHeader   = config['NOM_EMPRESA']         || 'SOLENVER soluciones energéticas, SL';
@@ -543,7 +543,7 @@ const titolEstudi = decodeStr(informeIA.titol) ||
 // ─── FOOTER PER PLAYWRIGHT (apareix a totes les pàgines físiques menys portada) ───
 const telDisplay = telefonEmpresa ? ` · ${telefonEmpresa}` : '';
 const footerHtml = `<div style="font-size:8px;color:#64748b;font-family:'Segoe UI',Arial,Helvetica,sans-serif;width:100%;display:flex;justify-content:space-between;align-items:center;padding:4px 18mm 0;box-sizing:border-box;border-top:1px solid #e2e8f0"><span>${emailEmpresa}${telDisplay}</span><span style="font-weight:600">${input.client_nom||'-'}</span><span>${idEstudi}</span></div>`;
-const logoImgHtml = logoB64 ? `<img src="${logoB64}" style="height:24px;width:auto;vertical-align:middle;margin-right:6px">` : '';
+const logoImgHtml = logoId ? `<img src="LOGO_PLACEHOLDER" style="height:24px;width:auto;vertical-align:middle;margin-right:6px">` : '';
 const headerHtml = `<div style="font-family:'Segoe UI',Arial,Helvetica,sans-serif;width:100%;display:flex;justify-content:space-between;align-items:center;padding:0 18mm;box-sizing:border-box;border-bottom:2px solid #27ae60;font-size:8px;"><span style="display:flex;align-items:center;gap:6px">${logoImgHtml}<span style="font-weight:800;letter-spacing:1.5px;color:#1b5e20;font-size:9px">SOLENVER</span></span><span style="text-align:right;line-height:1.5;color:#64748b"><span style="font-weight:700;color:#1b5e20">${nomEmpresaHeader}</span><br>${adrecaEmpresaHeader}<br>${webEmpresa}</span></div>`;
 
 // ─── HTML IMATGES MÒDUL / INVERSOR ───
