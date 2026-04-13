@@ -278,7 +278,7 @@ const urlGraficConsum = 'https://quickchart.io/chart?w=420&h=210&c=' + encodeURI
         type: 'bar',
         label: 'Mensual (kWh)',
         data: consumTotal,
-        backgroundColor: 'rgba(27,94,32,0.85)',
+        backgroundColor: 'rgba(39,174,96,0.92)',
         yAxisID: 'y-axis-0'
       },
       {
@@ -325,7 +325,7 @@ const urlGraficPVProd = 'https://quickchart.io/chart?w=420&h=210&c=' + encodeURI
     labels: labelsM,
     datasets: [
       { type:'bar',  label:'Producció FV (kWh)', data: prodTotal,
-        backgroundColor:'rgba(76,175,80,0.85)', yAxisID:'y-axis-0' },
+        backgroundColor:'rgba(39,174,96,0.92)', yAxisID:'y-axis-0' },
       { type:'line', label:'Acumulat (kWh)',       data: prodAcum,
         borderColor:'#F57C00', backgroundColor:'transparent',
         pointRadius:3, borderWidth:2, yAxisID:'y-axis-1', lineTension:0.3 }
@@ -345,8 +345,8 @@ const urlGraficPVProd = 'https://quickchart.io/chart?w=420&h=210&c=' + encodeURI
 const urlGraficProdVsConsum = 'https://quickchart.io/chart?w=420&h=210&c=' + encodeURIComponent(JSON.stringify({
   type: 'bar',
   data: { labels: labelsM, datasets: [
-    { label:'Produccio PV', data: prodTotal,   backgroundColor:'rgba(76,175,80,0.85)' },
-    { label:'Demanda',      data: consumTotal, backgroundColor:'rgba(198,40,40,0.75)' }
+    { label:'Produccio PV', data: prodTotal,   backgroundColor:'rgba(39,174,96,0.92)' },
+    { label:'Demanda',      data: consumTotal, backgroundColor:'rgba(231,76,60,0.9)' }
   ]},
   options: {
     legend: { position:'top' },
@@ -357,8 +357,8 @@ const urlGraficProdVsConsum = 'https://quickchart.io/chart?w=420&h=210&c=' + enc
 const urlGraficCostVsPV = 'https://quickchart.io/chart?w=420&h=210&c=' + encodeURIComponent(JSON.stringify({
   type: 'bar',
   data: { labels: labelsM, datasets: [
-    { label:'Cost actual', data: costActualMens, backgroundColor:'rgba(198,40,40,0.8)' },
-    { label:'Cost amb PV', data: costPVMens,     backgroundColor:'rgba(76,175,80,0.8)' }
+    { label:'Cost actual', data: costActualMens, backgroundColor:'rgba(231,76,60,0.9)' },
+    { label:'Cost amb PV', data: costPVMens,     backgroundColor:'rgba(39,174,96,0.92)' }
   ]},
   options: {
     legend: { position:'top' },
@@ -370,7 +370,7 @@ const urlGraficCashflow = 'https://quickchart.io/chart?w=420&h=210&c=' + encodeU
   type: 'line',
   data: { labels: cfLabels, datasets: [{
     label:'Flux acumulat (EUR)', data: cfVals,
-    borderColor:'rgba(27,94,32,1)', backgroundColor:'rgba(76,175,80,0.15)',
+    borderColor:'rgba(39,174,96,1)', backgroundColor:'rgba(39,174,96,0.12)',
     fill: true, pointRadius: 2, lineTension: 0.1
   }]},
   options: {
@@ -391,7 +391,7 @@ const htmlLogo = logoId
   : `<span style="font-weight:700;font-size:20px;color:inherit;letter-spacing:2px">SOLENVER</span>`;
 
 const emailEmpresa       = config['EMAIL_EMPRESA']       || 'info@solenver.cat';
-const telefonEmpresa     = config['TELEFON_EMPRESA']     || '';
+const telefonEmpresa     = (config['TELEFON_EMPRESA'] || '').replace(/#[A-Z!/]+.*/g, '').trim();
 const webEmpresa         = config['WEB_EMPRESA']         || 'www.solenver.cat';
 const coberturaEmpresa   = config['COBERTURA_EMPRESA']   || 'Catalunya i Aragó';
 const certificacioEmpresa= config['CERTIFICACIO_EMPRESA']|| 'Instal·ladors REE Autoritzats';
@@ -490,9 +490,47 @@ const textExcedents = injectKpisText(decodeStr(informeIA.recomanacio_bateria)) |
 const titolEstudi = decodeStr(informeIA.titol) ||
   `Memòria de la Valoració d'un Sistema d'Autoconsum Fotovoltaic ${perfilNom}`;
 
-// ─── FOOTER PER PLAYWRIGHT (apareix a totes les pàgines físiques) ───
-const footerHtml = `<div style="font-size:8px;color:#64748b;font-family:'Segoe UI',Arial,Helvetica,sans-serif;width:100%;display:flex;justify-content:space-between;align-items:center;padding:4px 18mm 0;box-sizing:border-box;border-top:1px solid #e2e8f0"><span>${emailEmpresa} | ${telefonEmpresa}</span><span style="font-weight:600">${input.client_nom||'-'}</span><span>${idEstudi}</span></div>`;
-const headerHtml = `<div style="font-family:'Segoe UI',Arial,Helvetica,sans-serif;width:100%;display:flex;justify-content:space-between;align-items:center;padding:0 18mm;box-sizing:border-box;border-bottom:2px solid #3b9c3f;font-size:8px;"><span style="font-weight:800;letter-spacing:1.5px;color:#2c7d2e;font-size:9px">SOLENVER</span><span style="color:#64748b">Energia Solar Fotovoltaica</span></div>`;
+// ─── FOOTER PER PLAYWRIGHT (apareix a totes les pàgines físiques menys portada) ───
+const telDisplay = telefonEmpresa ? ` · ${telefonEmpresa}` : '';
+const footerHtml = `<div style="font-size:8px;color:#64748b;font-family:'Segoe UI',Arial,Helvetica,sans-serif;width:100%;display:flex;justify-content:space-between;align-items:center;padding:4px 18mm 0;box-sizing:border-box;border-top:1px solid #e2e8f0"><span>${emailEmpresa}${telDisplay}</span><span style="font-weight:600">${input.client_nom||'-'}</span><span>${idEstudi}</span></div>`;
+const logoImgHtml = logoId ? `<img src="https://lh3.googleusercontent.com/d/${logoId}" style="height:24px;width:auto;vertical-align:middle;margin-right:8px">` : '';
+const headerHtml = `<div style="font-family:'Segoe UI',Arial,Helvetica,sans-serif;width:100%;display:flex;justify-content:space-between;align-items:center;padding:0 18mm;box-sizing:border-box;border-bottom:2px solid #27ae60;font-size:8px;"><span style="display:flex;align-items:center;gap:6px">${logoImgHtml}<span style="font-weight:800;letter-spacing:1.5px;color:#1b5e20;font-size:9px">SOLENVER</span></span><span style="color:#64748b">Energia Solar Fotovoltaica</span></div>`;
+
+// ─── HTML IMATGES MÒDUL / INVERSOR ───
+const modulFotoUrl   = driveUrl(modul.foto_url   || '');
+const inversorFotoUrl= driveUrl(inversor.foto_url || '');
+const htmlImgModul   = modulFotoUrl
+  ? `<img src="${modulFotoUrl}" alt="Mòdul fotovoltaic" style="width:100%;border-radius:8px;border:1px solid #e2e8f0;object-fit:contain;max-height:200px;background:#fff;padding:8px;display:block">`
+  : `<div style="height:140px;background:#f8fafc;border:1px dashed #e2e8f0;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28pt;color:#94a3b8">☀️</div>`;
+const htmlImgInversor= inversorFotoUrl
+  ? `<img src="${inversorFotoUrl}" alt="Inversor" style="width:100%;border-radius:8px;border:1px solid #e2e8f0;object-fit:contain;max-height:200px;background:#fff;padding:8px;display:block">`
+  : `<div style="height:140px;background:#f8fafc;border:1px dashed #e2e8f0;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28pt;color:#94a3b8">⚡</div>`;
+
+// ─── CASOS D'ÈXIT (fotos de projectes des de Sheets configuracio) ───
+// Camps: IMG_CASO_EXIT_1..4, TITLE_CASO_EXIT_1..4, DESC_CASO_EXIT_1..4
+const casosItems = [];
+for (let i = 1; i <= 4; i++) {
+  const imgId = config[`IMG_CASO_EXIT_${i}`] || '';
+  const title = config[`TITLE_CASO_EXIT_${i}`] || '';
+  const desc  = config[`DESC_CASO_EXIT_${i}`] || '';
+  if (imgId || title) casosItems.push({ img: driveUrl(imgId), title: title || `Projecte ${i}`, desc });
+}
+const htmlCasosExit = casosItems.length > 0
+  ? `<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:16px 0">
+      ${casosItems.map(c => `
+      <div style="border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.05)">
+        ${c.img ? `<img src="${c.img}" style="width:100%;height:160px;object-fit:cover;display:block" alt="${c.title}">` : '<div style="height:160px;background:linear-gradient(135deg,#e8f5e9,#f1f8e9);display:flex;align-items:center;justify-content:center;font-size:28pt">☀️</div>'}
+        <div style="padding:10px 14px">
+          <div style="font-weight:700;font-size:10pt;color:#0f172a;margin-bottom:3px">${c.title}</div>
+          ${c.desc ? `<div style="font-size:8.5pt;color:#64748b">${c.desc}</div>` : ''}
+        </div>
+      </div>`).join('')}
+    </div>`
+  : `<div style="text-align:center;padding:36px 20px;background:#f8fafc;border-radius:10px;border:1px dashed #e2e8f0">
+      <div style="font-size:28pt;margin-bottom:10px">☀️</div>
+      <div style="font-weight:700;font-size:11pt;color:#334155">Galeria de Projectes Solenver</div>
+      <div style="font-size:9pt;color:#64748b;margin-top:6px">Més de 200 instal·lacions a Catalunya i Aragó. Contacta'ns per veure el portafoli complet.</div>
+    </div>`;
 
 return [{json: {
   id_estudi:   idEstudi,
@@ -575,5 +613,8 @@ return [{json: {
     '{{HTML_MANTENIMENT_CARDS}}':         htmlMantCards,
     '{{MANTENIMENT_NOM}}':                mantNom,
     '{{MANTENIMENT_COST_ANY}}':           mantCostAnual > 0 ? fmtE(mantCostAnual) : 'Sense contracte',
+    '{{HTML_IMG_MODUL}}':                 htmlImgModul,
+    '{{HTML_IMG_INVERSOR}}':             htmlImgInversor,
+    '{{HTML_CASOS_EXIT}}':               htmlCasosExit,
   },
 }}];

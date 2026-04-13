@@ -5,17 +5,19 @@
   <meta charset="UTF-8">
   <style>
     :root {
-      --green-900: #123e15;
-      --green-800: #1b5b1f;
-      --green-700: #2c7d2e;
-      --green-600: #3b9c3f;
-      --green-500: #4bb551;
-      --green-50: #f4faf4;
-      --blue-main: #2ea3f2;
+      --green-900: #103d14;
+      --green-800: #1b5e20;
+      --green-700: #218838;
+      --green-600: #27ae60;
+      --green-500: #2ecc71;
+      --green-50: #f0faf4;
+      --red-vivid: #e74c3c;
       --slate-900: #0f172a;
       --slate-700: #334155;
+      --slate-600: #475569;
       --slate-500: #64748b;
       --slate-200: #e2e8f0;
+      --slate-100: #f1f5f9;
       --slate-50: #f8fafc;
       --bg-card: #ffffff;
     }
@@ -30,366 +32,249 @@
       line-height: 1.6
     }
 
-    /* PAGE BREAKS */
+    /* ── PAGE BREAKS ── */
     .page {
       page-break-before: always;
-      padding: 16mm 16mm 12mm;
+      padding: 14mm 16mm 12mm;
       min-height: 257mm;
       position: relative
     }
-
     .page:first-child { page-break-before: avoid }
+    .page:not(.portada) { padding-top: 6mm }
 
-    /* Pàgines interiors: reduir padding top (el header de Playwright ja ocupa 14mm) */
-    .page:not(.portada) { padding-top: 8mm }
+    /* ── CSS PAGE MARGINS ── */
+    /* inner pages: 14mm top (Playwright header) + 10mm bottom (footer) */
+    @page { margin-top: 14mm; margin-bottom: 10mm; margin-left: 0; margin-right: 0 }
+    /* cover page: 0 margins → no header/footer rendered by Playwright */
+    @page :first { margin-top: 0; margin-bottom: 0 }
 
-    /* Evitar talls dins d'elements importants */
+    /* ── BREAK AVOIDANCE ── */
     .kcard, .kbox, .ibox, .val-item, .gar-box, .pas,
     .chart, .callout, .vista-aeria, .mant-card, .igrid, .vals {
-      page-break-inside: avoid;
-      break-inside: avoid
+      page-break-inside: avoid; break-inside: avoid
     }
-
-    /* Taules: capçalera repetida + no tallar files */
     table { page-break-inside: auto; width: 100% }
     thead { display: table-header-group }
     tr    { page-break-inside: avoid; break-inside: avoid }
     h3    { page-break-after: avoid; break-after: avoid }
     .sh   { page-break-after: avoid; break-after: avoid }
 
-    /* Peu de pàgina inline (ocult en impressió - Playwright gestiona header/footer) */
     @media print { .pfooter { display: none !important } }
 
-    /* Marges de pàgina: header 14mm dalt, footer 10mm baix. Portada sense marges. */
-    @page { margin-top: 14mm; margin-bottom: 10mm; }
-    @page :first { margin-top: 0; margin-bottom: 0; }
-
-    /* SECTION HEADER */
+    /* ── SECTION HEADER ── */
     .sh {
-      display: flex;
-      align-items: flex-end;
-      margin-bottom: 30px;
-      position: relative;
-      padding-top: 10px
+      display: flex; align-items: flex-end;
+      margin-bottom: 22px; position: relative; padding-top: 8px
     }
-
     .sh-num {
-      font-size: 64pt;
-      font-weight: 900;
-      color: rgba(0,0,0,0.07);
-      line-height: 0.75;
-      position: absolute;
-      top: -10px;
-      left: -5px;
-      z-index: -1;
-      letter-spacing: -2px
+      font-size: 60pt; font-weight: 900; color: rgba(0,0,0,0.06);
+      line-height: 0.75; position: absolute; top: -8px; left: -4px;
+      z-index: -1; letter-spacing: -2px
     }
-
     .sh-title {
-      font-size: 16pt;
-      font-weight: 800;
-      color: var(--green-900);
-      letter-spacing: -0.5px;
-      border-bottom: 3px solid var(--green-500);
-      padding-bottom: 6px;
-      display: inline-block
+      font-size: 15pt; font-weight: 800; color: var(--green-800);
+      letter-spacing: -0.5px; border-bottom: 3px solid var(--green-500);
+      padding-bottom: 5px; display: inline-block
     }
 
-    /* PORTADA */
+    /* ── PORTADA ── */
     .portada {
-      background: linear-gradient(135deg, var(--slate-900) 0%, var(--green-900) 100%);
-      color: #fff;
-      padding: 0;
-      min-height: 297mm;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow: hidden
+      background: linear-gradient(135deg, var(--slate-900) 0%, #0d3b11 100%);
+      color: #fff; padding: 0; min-height: 297mm;
+      display: flex; flex-direction: column; position: relative; overflow: hidden
     }
-
     .portada::after {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: radial-gradient(circle at top right, rgba(255,255,255,0.1) 0%, transparent 40%);
+      content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at 70% 30%, rgba(46,204,113,0.12) 0%, transparent 50%);
       pointer-events: none
     }
-
-    .portada-top {
-      padding: 25mm 20mm 0;
-      flex: 1;
-      position: relative;
-      z-index: 2
-    }
-
-    .plogo { max-height: 80px; margin-bottom: 12px; display: block }
-
+    .portada-top { padding: 22mm 20mm 0; flex: 1; position: relative; z-index: 2 }
+    .plogo { max-height: 80px; margin-bottom: 10px; display: block }
     .ptag {
-      font-size: 9pt;
-      font-weight: 600;
-      color: var(--green-500);
-      letter-spacing: 2px;
-      margin-bottom: 50px;
-      text-transform: uppercase
+      font-size: 8.5pt; font-weight: 600; color: var(--green-500);
+      letter-spacing: 2px; margin-bottom: 45px; text-transform: uppercase
     }
-
     .ptitle {
-      font-size: 26pt;
-      font-weight: 800;
-      line-height: 1.2;
-      margin-bottom: 18px;
-      max-width: 500px;
-      letter-spacing: -1px
+      font-size: 25pt; font-weight: 800; line-height: 1.2;
+      margin-bottom: 16px; max-width: 490px; letter-spacing: -1px
     }
+    .pclient { font-size: 14pt; font-weight: 600; color: #cbd5e1; margin-bottom: 5px }
+    .padr    { font-size: 10.5pt; color: #94a3b8; opacity: 0.9; margin-bottom: 5px }
+    .pdata   { font-size: 9pt; color: #64748b; margin-top: 18px; letter-spacing: 0.5px }
 
-    .pclient { font-size: 14pt; font-weight: 600; color: var(--slate-200); margin-bottom: 6px }
-    .padr { font-size: 11pt; color: var(--slate-200); opacity: 0.9; margin-bottom: 6px }
-    .pdata { font-size: 9.5pt; color: var(--slate-500); margin-top: 20px; letter-spacing: 0.5px }
-
-    .portada-kpis {
-      background: var(--bg-card);
-      padding: 25px 20mm;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-top: auto;
-      position: relative;
-      z-index: 2;
-      border-top: 1px solid rgba(0,0,0,0.05);
-      box-shadow: 0 -10px 40px rgba(0,0,0,0.15)
-    }
-
-    .kbox {
-      text-align: left;
-      padding: 10px 15px;
-      border-left: 3px solid var(--green-500);
-      background: var(--slate-50);
-      border-radius: 0 8px 8px 0
-    }
-
-    .kval { font-size: 18pt; font-weight: 900; line-height: 1.1; color: var(--green-900) }
-    .klbl { font-size: 7.5pt; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 6px; font-weight: 600 }
-
-    /* VISTA AÈRIA PORTADA */
+    /* portada aerial strip */
     .portada-aerial {
-      height: 180px;
-      background: center/cover no-repeat;
-      opacity: 0.8;
-      margin: 20px -20mm 0;
-      border-top: 2px solid rgba(255,255,255,0.1);
-      border-bottom: 2px solid rgba(255,255,255,0.1)
+      height: 170px; background: center/cover no-repeat;
+      opacity: 0.75; margin: 18px 0 0;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.08)
     }
 
-    /* KPI CARDS */
-    .kgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0 }
+    /* portada KPIs bar */
+    .portada-kpis {
+      background: var(--bg-card); padding: 22px 20mm;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+      position: relative; z-index: 2;
+      border-top: 1px solid rgba(0,0,0,0.04);
+      box-shadow: 0 -12px 40px rgba(0,0,0,0.18)
+    }
+    .kbox {
+      text-align: left; padding: 10px 14px;
+      border-left: 3px solid var(--green-500);
+      background: var(--slate-50); border-radius: 0 8px 8px 0
+    }
+    .kval { font-size: 17pt; font-weight: 900; line-height: 1.1; color: var(--green-800) }
+    .klbl { font-size: 7.5pt; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 5px; font-weight: 600 }
 
+    /* ── KPI CARDS ── */
+    .kgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 0 }
     .kcard {
-      background: var(--bg-card);
-      border: 1px solid var(--slate-200);
-      border-radius: 12px;
-      padding: 14px 14px;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-      position: relative;
-      overflow: hidden
+      background: var(--bg-card); border: 1px solid var(--slate-200);
+      border-radius: 10px; padding: 12px 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04); position: relative; overflow: hidden
     }
-
     .kcard::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 4px; height: 100%;
-      background: var(--green-500)
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 4px; height: 100%; background: var(--green-500)
     }
+    .kcard .v { font-size: 16pt; font-weight: 900; color: var(--green-800); line-height: 1.1 }
+    .kcard .l { font-size: 7.5pt; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 5px; font-weight: 600 }
 
-    .kcard .v { font-size: 17pt; font-weight: 900; color: var(--green-900); line-height: 1.1 }
-    .kcard .l { font-size: 7.5pt; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 6px; font-weight: 600 }
-
-    /* INFO GRID */
-    .igrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0 }
-
+    /* ── INFO GRID ── */
+    .igrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 }
     .ibox {
-      background: var(--slate-50);
-      border: 1px solid var(--slate-200);
-      border-radius: 10px;
-      padding: 16px 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center
+      background: var(--slate-50); border: 1px solid var(--slate-200);
+      border-radius: 8px; padding: 14px 18px;
+      display: flex; flex-direction: column; justify-content: center
     }
+    .ibox .il { font-size: 7.5pt; text-transform: uppercase; color: var(--slate-500); letter-spacing: 0.5px; font-weight: 600 }
+    .ibox .iv { font-size: 11pt; font-weight: 700; color: var(--slate-900); margin-top: 3px }
 
-    .ibox .il { font-size: 8pt; text-transform: uppercase; color: var(--slate-500); letter-spacing: 0.5px; font-weight: 600 }
-    .ibox .iv { font-size: 12pt; font-weight: 700; color: var(--slate-900); margin-top: 4px }
-
-    /* TABLES */
+    /* ── TABLES ── */
     table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-      margin: 12px 0;
-      font-size: 8.5pt;
-      border: 1px solid var(--slate-200);
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.02)
+      width: 100%; border-collapse: separate; border-spacing: 0;
+      margin: 10px 0; font-size: 8.5pt;
+      border: 1px solid var(--slate-200); border-radius: 8px;
+      overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02)
     }
-
     thead th {
-      background: var(--slate-50);
-      color: var(--slate-500);
-      padding: 9px 12px;
-      text-align: left;
-      font-weight: 700;
-      font-size: 8pt;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
+      background: var(--slate-50); color: var(--slate-500);
+      padding: 8px 11px; text-align: left; font-weight: 700;
+      font-size: 7.5pt; text-transform: uppercase; letter-spacing: 0.8px;
       border-bottom: 1px solid var(--slate-200)
     }
-
     tbody tr:nth-child(even) { background: var(--slate-50) }
-
-    tbody td {
-      padding: 7px 12px;
-      border-bottom: 1px solid var(--slate-200);
-      color: var(--slate-700)
-    }
-
+    tbody td { padding: 6px 11px; border-bottom: 1px solid var(--slate-200); color: var(--slate-700) }
     tbody tr:last-child td { border-bottom: none }
-
     tfoot td {
-      background: var(--green-50);
-      font-weight: 800;
-      padding: 12px 14px;
-      border-top: 2px solid var(--green-600);
-      color: var(--green-900)
+      background: var(--green-50); font-weight: 800; padding: 10px 12px;
+      border-top: 2px solid var(--green-600); color: var(--green-800)
     }
+    .taula-total { background: var(--green-50) !important; font-weight: 800 !important; color: var(--green-800) !important }
+    .press-total td { background: var(--green-800) !important; color: #fff !important; font-size: 11pt; font-weight: 800 !important; border-bottom: none }
+    .press-sub td { background: var(--green-50); color: var(--green-800); font-weight: 700 }
 
-    .taula-total { background: var(--green-50) !important; font-weight: 800 !important; color: var(--green-900) !important }
-
-    /* CHARTS */
+    /* ── CHARTS ── */
     .chart {
-      margin: 16px 0;
-      text-align: center;
-      background: var(--bg-card);
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid var(--slate-200);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.04)
+      margin: 14px 0; text-align: center; background: var(--bg-card);
+      padding: 10px; border-radius: 10px;
+      border: 1px solid var(--slate-200); box-shadow: 0 2px 8px rgba(0,0,0,0.03)
     }
-
-    .chart img { max-width: 100%; height: auto; border-radius: 8px; display: block; margin: 0 auto }
-
+    .chart img { max-width: 100%; height: auto; border-radius: 6px; display: block; margin: 0 auto }
     .chart-cap {
-      font-size: 8.5pt;
-      color: var(--slate-500);
-      margin-top: 12px;
-      font-weight: 500;
-      padding-top: 10px;
-      border-top: 1px solid var(--slate-100)
+      font-size: 8pt; color: var(--slate-500); margin-top: 9px; font-weight: 500;
+      padding-top: 8px; border-top: 1px solid var(--slate-100)
     }
+    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0 }
 
-    /* TEXT */
-    p { margin-bottom: 10px; line-height: 1.6; text-align: justify; color: var(--slate-700) }
-
+    /* ── TEXT ── */
+    p { margin-bottom: 9px; line-height: 1.6; text-align: justify; color: var(--slate-700) }
     h3 {
-      color: var(--slate-900);
-      font-size: 12pt;
-      font-weight: 800;
-      margin: 18px 0 8px;
-      letter-spacing: -0.3px;
-      display: flex;
-      align-items: center;
-      gap: 8px
+      color: var(--slate-900); font-size: 11pt; font-weight: 800;
+      margin: 16px 0 7px; letter-spacing: -0.3px;
+      display: flex; align-items: center; gap: 7px
     }
-
     h3::before {
-      content: '';
-      display: block;
-      width: 6px; height: 12px;
-      background: var(--green-500);
-      border-radius: 2px
+      content: ''; display: block; width: 5px; height: 11px;
+      background: var(--green-500); border-radius: 2px
     }
-
-    ul { margin: 12px 0 16px 24px; line-height: 1.8 }
-    li { margin-bottom: 6px; padding-left: 4px }
+    ul { margin: 10px 0 14px 22px; line-height: 1.8 }
+    li { margin-bottom: 4px; padding-left: 3px }
     li::marker { color: var(--green-500); font-size: 1.2em }
     strong { font-weight: 700; color: var(--slate-900) }
 
-    /* PRESSUPOST */
-    .press-total td { background: var(--green-900) !important; color: #fff !important; font-size: 12pt; font-weight: 800 !important; border-bottom: none }
-    .press-sub td { background: var(--green-50); color: var(--green-900); font-weight: 700 }
-
-    /* FOOTER */
+    /* ── FOOTER (inline backup) ── */
     .pfooter {
-      position: absolute;
-      bottom: 10mm; left: 18mm; right: 18mm;
-      display: flex;
-      justify-content: space-between;
-      font-size: 8pt;
-      color: var(--slate-500);
+      position: absolute; bottom: 10mm; left: 16mm; right: 16mm;
+      display: flex; justify-content: space-between;
+      font-size: 7.5pt; color: var(--slate-500);
       border-top: 1px solid var(--slate-200);
-      padding-top: 10px;
-      font-weight: 500
+      padding-top: 8px; font-weight: 500
     }
 
-    /* VALORS */
-    .vals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 24px 0 }
-
+    /* ── VALUES GRID ── */
+    .vals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 20px 0 }
     .val-item {
-      text-align: center;
-      padding: 22px 16px;
-      background: var(--slate-50);
-      border: 1px solid var(--slate-200);
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.02)
+      text-align: center; padding: 18px 14px; background: var(--slate-50);
+      border: 1px solid var(--slate-200); border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02)
     }
-
-    .val-icon { font-size: 24pt; margin-bottom: 12px; line-height: 1 }
-    .val-title { font-size: 10pt; font-weight: 800; color: var(--slate-900); margin-bottom: 6px }
+    .val-icon { font-size: 22pt; margin-bottom: 10px; line-height: 1 }
+    .val-title { font-size: 10pt; font-weight: 800; color: var(--slate-900); margin-bottom: 5px }
     .val-desc { font-size: 8.5pt; color: var(--slate-500); line-height: 1.5 }
 
-    /* VISTA AÈRIA */
-    .vista-aeria { margin: 20px 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--slate-200); box-shadow: 0 4px 12px rgba(0,0,0,0.06) }
-    .vista-aeria img { width: 100%; height: 220px; object-fit: cover; display: block }
-    .vista-aeria-cap { background: var(--bg-card); padding: 10px 16px; font-size: 8.5pt; color: var(--slate-500); font-weight: 500; border-top: 1px solid var(--slate-100) }
+    /* ── VISTA AÈRIA ── */
+    .vista-aeria { margin: 14px 0; border-radius: 10px; overflow: hidden; border: 1px solid var(--slate-200); box-shadow: 0 3px 10px rgba(0,0,0,0.05) }
+    .vista-aeria img { width: 100%; height: 210px; object-fit: cover; display: block }
+    .vista-aeria-cap { background: var(--bg-card); padding: 8px 14px; font-size: 8pt; color: var(--slate-500); font-weight: 500; border-top: 1px solid var(--slate-100) }
 
-    /* GARANTIES */
-    .gar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 14px 0 }
-
+    /* ── GARANTIES ── */
+    .gar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 12px 0 }
     .gar-box { border-radius: 10px; padding: 14px 10px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.05) }
-    .gar-box.green { background: var(--green-50); border: 1px solid #a5d6a7 }
-    .gar-box.dark { background: var(--slate-900); color: #fff; border: 1px solid #1e293b }
-
-    .gar-years { font-size: 26pt; font-weight: 900; color: var(--green-700); line-height: 1; letter-spacing: -1px }
-    .gar-box.dark .gar-years { color: #69f0ae }
+    .gar-box.green { background: var(--green-50); border: 1px solid #a8d5b5 }
+    .gar-box.dark  { background: var(--slate-900); color: #fff; border: 1px solid #1e293b }
+    .gar-years { font-size: 26pt; font-weight: 900; color: var(--green-600); line-height: 1; letter-spacing: -1px }
+    .gar-box.dark .gar-years { color: #2ecc71 }
     .gar-label { font-size: 7.5pt; text-transform: uppercase; letter-spacing: 0.5px; color: var(--slate-600); margin-top: 6px; font-weight: 700 }
     .gar-box.dark .gar-label { color: #cbd5e1 }
 
-    /* PROPERS PASSOS */
-    .pas { display: flex; align-items: flex-start; gap: 12px; padding: 10px 14px; background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 8px; margin-bottom: 7px }
-    .pas-num { background: var(--green-600); color: #fff; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 9pt; flex-shrink: 0; box-shadow: 0 2px 4px rgba(22,163,74,0.3) }
+    /* ── PROPERS PASSOS ── */
+    .pas { display: flex; align-items: flex-start; gap: 10px; padding: 9px 12px; background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 8px; margin-bottom: 6px }
+    .pas-num { background: var(--green-600); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 8.5pt; flex-shrink: 0 }
     .pas-text { flex: 1 }
-    .pas-title { font-weight: 800; color: var(--slate-900); font-size: 9.5pt; margin-bottom: 2px }
-    .pas-desc { font-size: 8.5pt; color: var(--slate-600) }
-    .pas-qui { font-size: 7.5pt; color: var(--green-700); margin-top: 4px; font-weight: 600; display: inline-block; padding: 1px 6px; background: var(--green-50); border-radius: 4px }
+    .pas-title { font-weight: 800; color: var(--slate-900); font-size: 9pt; margin-bottom: 1px }
+    .pas-desc { font-size: 8pt; color: var(--slate-600) }
+    .pas-qui { font-size: 7pt; color: var(--green-700); margin-top: 3px; font-weight: 600; display: inline-block; padding: 1px 5px; background: var(--green-50); border-radius: 3px }
 
-    /* CALLOUT */
+    /* ── CALLOUT ── */
     .callout {
-      background: var(--green-50);
-      border: 1px solid #a5d6a7;
-      border-left: 5px solid var(--green-600);
-      border-radius: 10px;
-      padding: 20px 24px;
-      margin: 24px 0;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.03)
+      background: var(--green-50); border: 1px solid #a8d5b5;
+      border-left: 5px solid var(--green-600); border-radius: 10px;
+      padding: 16px 20px; margin: 18px 0;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.03)
     }
+    .callout p { margin: 0; color: var(--green-800); font-weight: 600; font-size: 10.5pt }
 
-    .callout p { margin: 0; color: var(--green-900); font-weight: 600; font-size: 11pt; white-space: normal; word-spacing: normal; letter-spacing: normal }
+    /* ── MODULE/INVERSOR SIDE-BY-SIDE ── */
+    .spec-row { display: flex; gap: 14px; margin: 12px 0; align-items: flex-start }
+    .spec-img { flex: 0 0 32%; max-width: 32% }
+    .spec-img img { width: 100%; border-radius: 8px; border: 1px solid var(--slate-200); object-fit: contain; max-height: 200px; background: #fff; padding: 8px }
+    .spec-img .no-img { height: 140px; background: var(--slate-50); border: 1px dashed var(--slate-200); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24pt; color: var(--slate-500) }
+    .spec-table { flex: 1; min-width: 0 }
+
+    /* ── CASOS D'ÈXIT ── */
+    .casos-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 14px 0 }
+    .caso-item { border: 1px solid var(--slate-200); border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04) }
+    .caso-img { width: 100%; height: 160px; object-fit: cover; display: block }
+    .caso-body { padding: 10px 14px }
+    .caso-title { font-weight: 700; font-size: 10pt; color: var(--slate-900); margin-bottom: 3px }
+    .caso-desc { font-size: 8.5pt; color: var(--slate-500) }
   </style>
 </head>
 
 <body>
 
-  <!-- §00 PORTADA -->
+  <!-- §00 PORTADA (no header/footer per @page :first margin:0) -->
   <div class="portada page">
     <div class="portada-top">
       {{HTML_LOGO}}
@@ -427,35 +312,35 @@
       <div class="sh-title">Qui Som</div>
     </div>
 
-    <p>Solenver és una empresa especialitzada en el disseny, instal·lació i manteniment d'instal·lacions solars fotovoltaiques per a ús industrial, agrícola i residencial. Amb més de 10 anys d'experiència al sector, oferim solucions integrals adaptades a les necessitats energètiques de cada client, des de l'estudi inicial fins a la legalització i el manteniment a llarg termini.</p>
+    <p>Solenver és una empresa especialitzada en el disseny, instal·lació i manteniment d'instal·lacions solars fotovoltaiques per a ús industrial, agrícola i residencial. Amb més de 10 anys d'experiència al sector, oferim solucions integrals adaptades a les necessitats energètiques de cada client, des de l'estudi inicial fins a la legalització i el manteniment a llarg termini. El nostre equip d'enginyers i tècnics certificats garanteix la màxima qualitat en cada projecte.</p>
 
     {{HTML_IMG_EMPRESA}}
 
     <div class="vals">
       <div class="val-item">
         <div class="val-icon">⚡</div>
-        <div class="val-title">Experiència</div>
-        <div class="val-desc">Més de 10 anys dissenyant instal·lacions FV</div>
+        <div class="val-title">+10 anys d'experiència</div>
+        <div class="val-desc">Pioners en autoconsum fotovoltaic a Catalunya i Aragó</div>
       </div>
       <div class="val-item">
         <div class="val-icon">✓</div>
-        <div class="val-title">Qualitat</div>
-        <div class="val-desc">Materials de primera categoria amb garantia fabricant</div>
+        <div class="val-title">Qualitat certificada</div>
+        <div class="val-desc">Materials de primera categoria amb garantia de fabricant</div>
       </div>
       <div class="val-item">
         <div class="val-icon">🔧</div>
-        <div class="val-title">Servei integral</div>
-        <div class="val-desc">De l'estudi a la legalització i el manteniment</div>
+        <div class="val-title">Servei 360°</div>
+        <div class="val-desc">De l'estudi tècnic a la legalització i el manteniment anual</div>
       </div>
     </div>
 
     <div class="igrid">
       <div class="ibox">
         <div class="il">Especialitat</div>
-        <div class="iv">Autoconsum industrial i agrícola</div>
+        <div class="iv">Autoconsum industrial, agrícola i residencial</div>
       </div>
       <div class="ibox">
-        <div class="il">Cobertura</div>
+        <div class="il">Cobertura geogràfica</div>
         <div class="iv">{{COBERTURA_EMPRESA}}</div>
       </div>
       <div class="ibox">
@@ -463,21 +348,34 @@
         <div class="iv">{{CERTIFICACIO_EMPRESA}}</div>
       </div>
       <div class="ibox">
-        <div class="il">Garantia de servei</div>
-        <div class="iv">25 anys de compromís</div>
+        <div class="il">Compromís de servei</div>
+        <div class="iv">25 anys de suport tècnic garantit</div>
       </div>
     </div>
 
-    <h3>Objecte de l'estudi</h3>
+    <div class="pfooter">
+      <span>{{EMAIL_EMPRESA}} | {{TELEFON_EMPRESA}}</span>
+      <span>{{CLIENT_NOM}}</span>
+      <span>{{ID_ESTUDI}}</span>
+    </div>
+  </div>
+
+  <!-- §02 OBJECTE DE L'ESTUDI -->
+  <div class="page">
+    <div class="sh">
+      <div class="sh-num">02</div>
+      <div class="sh-title">Objecte de l'Estudi</div>
+    </div>
+
     <p>{{TEXT_OBJECTE}}</p>
 
-    <h3>Dades del client</h3>
+    <h3>Dades del client i de la instal·lació</h3>
     <table>
       <tbody>
         <tr>
-          <td style="width:25%;font-weight:700;color:var(--slate-900)">Nom / Raó social</td>
-          <td style="width:25%;font-weight:600">{{CLIENT_NOM}}</td>
-          <td style="width:25%;font-weight:700;color:var(--slate-900)">NIF / CIF</td>
+          <td style="width:26%;font-weight:700;color:var(--slate-900)">Nom / Raó social</td>
+          <td style="width:24%;font-weight:600">{{CLIENT_NOM}}</td>
+          <td style="width:26%;font-weight:700;color:var(--slate-900)">NIF / CIF</td>
           <td style="font-weight:600">{{CLIENT_NIF}}</td>
         </tr>
         <tr>
@@ -489,23 +387,33 @@
           <td colspan="3">{{CLIENT_CUPS}}</td>
         </tr>
         <tr>
+          <td style="font-weight:700;color:var(--slate-900)">Tarifa elèctrica</td>
+          <td>{{TARIFA}}</td>
           <td style="font-weight:700;color:var(--slate-900)">Data informe</td>
-          <td colspan="3">{{DATA_ESTUDI}}</td>
+          <td>{{DATA_ESTUDI}}</td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;color:var(--slate-900)">Comercial</td>
+          <td>{{COMERCIAL_NOM}}</td>
+          <td style="font-weight:700;color:var(--slate-900)">Contacte</td>
+          <td>{{COMERCIAL_EMAIL}}</td>
         </tr>
       </tbody>
     </table>
 
+    {{HTML_BLOC_VISTA_AERIA}}
+
     <div class="pfooter">
-      <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
+      <span>{{EMAIL_EMPRESA}} | {{TELEFON_EMPRESA}}</span>
       <span>{{CLIENT_NOM}}</span>
       <span>{{ID_ESTUDI}}</span>
     </div>
   </div>
 
-  <!-- §02 SITUACIÓ ENERGÈTICA -->
+  <!-- §03 SITUACIÓ ENERGÈTICA ACTUAL -->
   <div class="page">
     <div class="sh">
-      <div class="sh-num">02</div>
+      <div class="sh-num">03</div>
       <div class="sh-title">Situació Energètica Actual</div>
     </div>
 
@@ -526,41 +434,31 @@
       </div>
     </div>
 
-    {{HTML_BLOC_VISTA_AERIA}}
+    <div class="charts-row">
+      <div class="chart">
+        <img src="{{IMG_GRAFIC_CONSUM_MENSUAL}}" alt="Consum mensual">
+        <div class="chart-cap">Fig. 1 · Perfil de consum mensual (kWh)</div>
+      </div>
+      <div class="chart">
+        <img src="{{IMG_GRAFIC_PV_PRODUCTION}}" alt="Producció FV mensual">
+        <div class="chart-cap">Fig. 2 · Producció FV estimada (kWh)</div>
+      </div>
+    </div>
 
     <h3>Consums mensuals per períodes tarifaris ({{TARIFA}})</h3>
     {{HTML_TAULA_CONSUMS}}
 
     <div class="pfooter">
-      <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
+      <span>{{EMAIL_EMPRESA}} | {{TELEFON_EMPRESA}}</span>
       <span>{{CLIENT_NOM}}</span>
       <span>{{ID_ESTUDI}}</span>
     </div>
   </div>
 
-  <!-- §02b GRÀFICS CONSUM / PRODUCCIÓ -->
-  <div class="page">
-    <div class="chart">
-      <img src="{{IMG_GRAFIC_CONSUM_MENSUAL}}" alt="Consum mensual">
-      <div class="chart-cap">Figura 1 · Perfil de consum mensual (kWh)</div>
-    </div>
-
-    <div class="chart">
-      <img src="{{IMG_GRAFIC_PV_PRODUCTION}}" alt="Producció FV mensual">
-      <div class="chart-cap">Figura 2 · Producció FV mensual (kWh)</div>
-    </div>
-
-    <div class="pfooter">
-      <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
-      <span>{{CLIENT_NOM}}</span>
-      <span>{{ID_ESTUDI}}</span>
-    </div>
-  </div>
-
-  <!-- §03 INSTAL·LACIÓ PROPOSADA -->
+  <!-- §04 INSTAL·LACIÓ PROPOSADA -->
   <div class="page">
     <div class="sh">
-      <div class="sh-num">03</div>
+      <div class="sh-num">04</div>
       <div class="sh-title">Instal·lació Proposada</div>
     </div>
 
@@ -576,7 +474,7 @@
         <div class="iv">{{KWP}}</div>
       </div>
       <div class="ibox">
-        <div class="il">Model mòdul</div>
+        <div class="il">Model mòdul fotovoltaic</div>
         <div class="iv">{{MODUL_MODEL}}</div>
       </div>
       <div class="ibox">
@@ -585,61 +483,80 @@
       </div>
     </div>
 
-    <h3>Especificacions tècniques del mòdul fotovoltaic</h3>
-    {{HTML_TAULA_MODUL}}
+    <h3>Mòdul fotovoltaic — especificacions tècniques</h3>
+    <div class="spec-row">
+      <div class="spec-img">
+        {{HTML_IMG_MODUL}}
+      </div>
+      <div class="spec-table">
+        {{HTML_TAULA_MODUL}}
+      </div>
+    </div>
 
-    <h3>Especificacions tècniques de l'inversor</h3>
-    {{HTML_TAULA_INVERSOR}}
+    <h3>Inversor — especificacions tècniques</h3>
+    <div class="spec-row">
+      <div class="spec-img">
+        {{HTML_IMG_INVERSOR}}
+      </div>
+      <div class="spec-table">
+        {{HTML_TAULA_INVERSOR}}
+      </div>
+    </div>
 
     <div class="pfooter">
-      <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
+      <span>{{EMAIL_EMPRESA}} | {{TELEFON_EMPRESA}}</span>
       <span>{{CLIENT_NOM}}</span>
       <span>{{ID_ESTUDI}}</span>
     </div>
   </div>
 
-  <!-- §03b MUNTATGE + MONITORITZACIÓ -->
+  <!-- §04b MUNTATGE + MONITORITZACIÓ -->
   <div class="page">
     <h3>Tipus de muntatge: {{MUNTATGE_NOM}}</h3>
-    <p style="margin:8px 0 12px;color:var(--slate-700)">{{TEXT_MUNTATGE_DESC}}</p>
+    <p style="margin:6px 0 10px;color:var(--slate-700)">{{TEXT_MUNTATGE_DESC}}</p>
     <img src="{{IMG_ESTRUCTURA}}"
-      style="width:100%;height:200px;object-fit:cover;border-radius:12px;margin:0 0 20px;display:block;box-shadow:0 4px 12px rgba(0,0,0,0.05);border:1px solid var(--slate-200)"
+      style="width:100%;height:185px;object-fit:cover;border-radius:10px;margin:0 0 18px;display:block;box-shadow:0 3px 10px rgba(0,0,0,0.05);border:1px solid var(--slate-200)"
       alt="Estructura de muntatge">
 
-    <h3>Sistema de monitorització</h3>
-    <p style="margin:8px 0 12px;color:var(--slate-700)">{{TEXT_MONITORITZACIO_DESC}}</p>
-    <img src="{{IMG_MONITORING}}"
-      style="width:100%;height:200px;object-fit:contain;border-radius:12px;margin:0 0 20px;display:block;box-shadow:0 4px 12px rgba(0,0,0,0.05);border:1px solid var(--slate-200);background:#fff;padding:12px"
-      alt="Sistema de monitorització">
-
-    <h3>Factors de pèrdues del sistema</h3>
-    <table>
-      <thead>
-        <tr><th>Factor de pèrdua</th><th>Valor estimat</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Cablejat CC</td><td>1.5%</td></tr>
-        <tr><td>Rendiment inversor</td><td>1.4% (η=98.6%)</td></tr>
-        <tr><td>Brutícia i pols</td><td>2.0%</td></tr>
-        <tr><td>Temperatura</td><td>2.5%</td></tr>
-        <tr><td>Degradació anual mòduls</td><td>0.4% / any</td></tr>
-      </tbody>
-      <tfoot>
-        <tr><td>Performance Ratio (PR) total estimat</td><td>≈ 81%</td></tr>
-      </tfoot>
-    </table>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+      <div>
+        <h3>Sistema de monitorització</h3>
+        <p style="margin:6px 0 10px;color:var(--slate-700);font-size:9.5pt">{{TEXT_MONITORITZACIO_DESC}}</p>
+        <img src="{{IMG_MONITORING}}"
+          style="width:100%;height:140px;object-fit:contain;border-radius:8px;display:block;box-shadow:0 2px 6px rgba(0,0,0,0.04);border:1px solid var(--slate-200);background:#fff;padding:8px"
+          alt="Sistema de monitorització">
+      </div>
+      <div>
+        <h3>Factors de pèrdues del sistema</h3>
+        <table style="margin-top:6px">
+          <thead>
+            <tr><th>Factor</th><th>Valor</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Cablejat CC</td><td>1.5%</td></tr>
+            <tr><td>Rendiment inversor</td><td>1.4% (η=98.6%)</td></tr>
+            <tr><td>Brutícia i pols</td><td>2.0%</td></tr>
+            <tr><td>Temperatura</td><td>2.5%</td></tr>
+            <tr><td>Degradació anual mòduls</td><td>0.4% / any</td></tr>
+          </tbody>
+          <tfoot>
+            <tr><td><strong>Performance Ratio (PR)</strong></td><td><strong>≈ 81%</strong></td></tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
 
     <div class="pfooter">
-      <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
+      <span>{{EMAIL_EMPRESA}} | {{TELEFON_EMPRESA}}</span>
       <span>{{CLIENT_NOM}}</span>
       <span>{{ID_ESTUDI}}</span>
     </div>
   </div>
 
-  <!-- §04 PRODUCCIÓ SOLAR -->
+  <!-- §05 PRODUCCIÓ SOLAR I AUTOCONSUM -->
   <div class="page">
     <div class="sh">
-      <div class="sh-num">04</div>
+      <div class="sh-num">05</div>
       <div class="sh-title">Producció Solar i Autoconsum</div>
     </div>
 
@@ -662,25 +579,25 @@
     </div>
 
     <div class="chart">
-      <img src="{{IMG_GRAFIC_CONSUM_VS_PRODUCCIO}}" alt="Producció vs Consum mensual">
-      <div class="chart-cap">Figura 3 · Producció FV vs Consum mensual (kWh)</div>
+      <img src="{{IMG_GRAFIC_CONSUM_VS_PRODUCCIO}}" alt="Producció vs Consum">
+      <div class="chart-cap">Fig. 3 · Producció FV vs Consum mensual (kWh) — verd: producció · vermell: demanda</div>
     </div>
 
     <h3>Balanç energètic mensual detallat</h3>
     {{HTML_TAULA_PRODUCCIO}}
 
     <div class="pfooter">
-      <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
+      <span>{{EMAIL_EMPRESA}} | {{TELEFON_EMPRESA}}</span>
       <span>{{CLIENT_NOM}}</span>
       <span>{{ID_ESTUDI}}</span>
     </div>
   </div>
 
-  <!-- §05 ANÀLISI ECONÒMICA -->
+  <!-- §06 ANÀLISI ECONÒMICA + CASHFLOW -->
   <div class="page">
     <div class="sh">
-      <div class="sh-num">05</div>
-      <div class="sh-title">Anàlisi Econòmica</div>
+      <div class="sh-num">06</div>
+      <div class="sh-title">Anàlisi Econòmica i Retorn de la Inversió</div>
     </div>
 
     <p>{{TEXT_AVALUACIO_ECONOMICA}}</p>
@@ -712,45 +629,32 @@
       </div>
     </div>
 
-    <div class="chart">
-      <img src="{{IMG_GRAFIC_COST_ACTUAL_VS_PV}}" alt="Cost actual vs amb PV">
-      <div class="chart-cap">Figura 4 · Cost energètic actual vs amb instal·lació PV (EUR)</div>
+    <div class="charts-row">
+      <div class="chart">
+        <img src="{{IMG_GRAFIC_COST_ACTUAL_VS_PV}}" alt="Cost actual vs amb PV">
+        <div class="chart-cap">Fig. 4 · Cost energètic actual (vermell) vs amb PV (verd)</div>
+      </div>
+      <div class="chart">
+        <img src="{{IMG_GRAFIC_CASHFLOW}}" alt="Cashflow 25 anys">
+        <div class="chart-cap">Fig. 5 · Cashflow acumulat a 25 anys (EUR)</div>
+      </div>
     </div>
 
     <div class="callout">
-      <p>L'estalvi generat per la instal·lació solar compensa la inversió inicial en {{RETORN_ANYS}}, generant un benefici net de {{BENEFICI_25_ANYS}} al llarg dels 25 anys de vida útil del sistema.</p>
-    </div>
-
-    <div class="pfooter">
-      <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
-      <span>{{CLIENT_NOM}}</span>
-      <span>{{ID_ESTUDI}}</span>
-    </div>
-  </div>
-
-  <!-- §06 RETORN DE LA INVERSIÓ -->
-  <div class="page">
-    <div class="sh">
-      <div class="sh-num">06</div>
-      <div class="sh-title">Retorn de la Inversió — Cashflow</div>
-    </div>
-
-    <div class="chart">
-      <img src="{{IMG_GRAFIC_CASHFLOW}}" alt="Cashflow 25 anys">
-      <div class="chart-cap">Figura 5 · Evolució del cashflow acumulat</div>
+      <p>La instal·lació solar es paga sola en <strong>{{RETORN_ANYS}}</strong>, generant un benefici net de <strong>{{BENEFICI_25_ANYS}}</strong> al llarg dels 25 anys de vida útil. TIR: {{TIR_PCT}}% · VAN: {{VAN_25_ANYS}}</p>
     </div>
 
     <h3>Flux de caixa anual detallat</h3>
     {{HTML_TAULA_CASHFLOW}}
 
     <div class="pfooter">
-      <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
+      <span>{{EMAIL_EMPRESA}} | {{TELEFON_EMPRESA}}</span>
       <span>{{CLIENT_NOM}}</span>
       <span>{{ID_ESTUDI}}</span>
     </div>
   </div>
 
-  <!-- §07 PRESSUPOST -->
+  <!-- §07 PRESSUPOST DETALLAT -->
   <div class="page">
     <div class="sh">
       <div class="sh-num">07</div>
@@ -759,24 +663,24 @@
 
     {{HTML_TAULA_PRESSUPOST}}
 
-    <h3>Aquest pressupost inclou</h3>
+    <h3>El pressupost inclou</h3>
     <ul>
-      <li>Materials de primera qualitat (mòduls {{MODUL_MODEL}}, inversor {{INVERSOR_MODEL}})</li>
-      <li>Muntatge i posta en marxa complets realitzats per instal·ladors certificats</li>
-      <li>Sistema de monitoratge integrat amb app mòbil</li>
-      <li>Redacció de la memòria tècnica i direcció d'obra per part dels nostres enginyers</li>
-      <li>Legalització administrativa de la instal·lació al departament corresponent</li>
-      <li>Gestió de l'alta als sistemes de compensació d'excedents energètics a la xarxa</li>
-      <li>Manteniment preventiu gratuït els {{ANYS_MANT_GRATUIT}} primers anys (revisió anual)</li>
-      <li>Telegestió i control d'alarmes en remot les 24h, amb servei d'assistència</li>
+      <li>Materials de primera qualitat: mòduls <strong>{{MODUL_MODEL}}</strong> + inversor <strong>{{INVERSOR_MODEL}}</strong></li>
+      <li>Muntatge complet per instal·ladors certificats i posada en marxa</li>
+      <li>Sistema de monitoratge integrat amb app mòbil (temps real)</li>
+      <li>Memòria tècnica i direcció d'obra per enginyers titulats</li>
+      <li>Legalització administrativa davant el departament corresponent</li>
+      <li>Gestió de l'alta als sistemes de compensació d'excedents a la xarxa</li>
+      <li>Manteniment preventiu gratuït els <strong>{{ANYS_MANT_GRATUIT}} primers anys</strong> (revisió anual inclosa)</li>
+      <li>Telegestió i control d'alarmes en remot les 24h</li>
     </ul>
 
-    <div class="callout" style="margin-top:28px">
-      <p>Pressupost vàlid per {{VALIDESA_PRESSUPOST}} dies. Preus sense IVA. IVA 21% inclòs en el còmput final de la taula de pressupost.</p>
+    <div class="callout" style="margin-top:22px">
+      <p>Pressupost vàlid per <strong>{{VALIDESA_PRESSUPOST}} dies</strong>. Preus sense IVA tret de la fila TOTAL AMB IVA. La instal·lació es realitza per SOLENVER amb personal propi i certificat.</p>
     </div>
 
     <div class="pfooter">
-      <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
+      <span>{{EMAIL_EMPRESA}} | {{TELEFON_EMPRESA}}</span>
       <span>{{CLIENT_NOM}}</span>
       <span>{{ID_ESTUDI}}</span>
     </div>
@@ -786,31 +690,49 @@
   <div class="page">
     <div class="sh">
       <div class="sh-num">08</div>
-      <div class="sh-title">Servei de Manteniment Anual</div>
+      <div class="sh-title">Servei de Manteniment</div>
     </div>
 
-    <p>El nostre pla de manteniment està dissenyat per allargar la vida útil del teu sistema fotovoltaic, evitar avaries costoses i assegurar-ne el funcionament òptim durant tot l'any. A Solenver t'acompanyem més enllà de la instal·lació.</p>
+    <p>El manteniment preventiu és la clau per mantenir la rendibilitat de la instal·lació al llarg dels anys. Solenver ofereix plans de manteniment adaptat a cada client, amb revisió anual presencial, telegestió contínua i assistència tècnica inclosa.</p>
 
     {{HTML_MANTENIMENT_CARDS}}
 
-    <h3>Què inclou la revisió tècnica anual?</h3>
-    <ul>
-      <li>Revisió visual de panells: trencaments, brutícia, ombres o altres danys.</li>
-      <li>Inspecció de l'estructura de suport i cablejat (corrosió, connexions soltes).</li>
-      <li>Verificació de proteccions elèctriques i sistema de posada a terra.</li>
-      <li>Inspecció termogràfica: detecció de punts calents o fallades invisibles (Pla Premium).</li>
-      <li>Actualització de programari de l'inversor i sistema de monitoratge.</li>
-      <li>Informe tècnic complet després de cada visita presencial.</li>
-    </ul>
+    <h3>Revisió tècnica anual — què inclou</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0">
+      <div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:7px">
+        <span style="color:var(--green-600);font-weight:700;flex-shrink:0">✓</span>
+        <span style="font-size:9pt">Inspecció visual de panells (trencaments, brutícia, ombres)</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:7px">
+        <span style="color:var(--green-600);font-weight:700;flex-shrink:0">✓</span>
+        <span style="font-size:9pt">Inspecció de l'estructura de suport i connexions</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:7px">
+        <span style="color:var(--green-600);font-weight:700;flex-shrink:0">✓</span>
+        <span style="font-size:9pt">Verificació de proteccions elèctriques i posada a terra</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:7px">
+        <span style="color:var(--green-600);font-weight:700;flex-shrink:0">✓</span>
+        <span style="font-size:9pt">Inspecció termogràfica (detecció punts calents)</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:7px">
+        <span style="color:var(--green-600);font-weight:700;flex-shrink:0">✓</span>
+        <span style="font-size:9pt">Actualització firmware inversor i sistema de monitoratge</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:7px">
+        <span style="color:var(--green-600);font-weight:700;flex-shrink:0">✓</span>
+        <span style="font-size:9pt">Informe tècnic complet amb resultats de la revisió</span>
+      </div>
+    </div>
 
     <div class="pfooter">
-      <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
+      <span>{{EMAIL_EMPRESA}} | {{TELEFON_EMPRESA}}</span>
       <span>{{CLIENT_NOM}}</span>
       <span>{{ID_ESTUDI}}</span>
     </div>
   </div>
 
-  <!-- §09 GARANTIES + PROPERS PASSOS -->
+  <!-- §09 GARANTIES I PROPERS PASSOS -->
   <div class="page">
     <div class="sh">
       <div class="sh-num">09</div>
@@ -836,19 +758,21 @@
       </div>
     </div>
 
+    <h3 style="margin-top:18px">Propers passos per avançar</h3>
+
     <div class="pas">
       <div class="pas-num">1</div>
       <div class="pas-text">
         <div class="pas-title">Acceptació del pressupost</div>
-        <div class="pas-desc">Confirmació de dades i signatura electrònica o física del document base</div>
+        <div class="pas-desc">Confirmació de dades i signatura del document base (electrònica o física)</div>
         <div class="pas-qui">Responsabilitat: Client</div>
       </div>
     </div>
     <div class="pas">
       <div class="pas-num">2</div>
       <div class="pas-text">
-        <div class="pas-title">Planificació i pagament 30%</div>
-        <div class="pas-desc">Aportació del senyal (transferència/xec) per tancar la reserva logística</div>
+        <div class="pas-title">Pagament inicial (30%)</div>
+        <div class="pas-desc">Aportació del senyal per tancar la reserva logística dels equips</div>
         <div class="pas-qui">Responsabilitat: Client</div>
       </div>
     </div>
@@ -856,47 +780,73 @@
       <div class="pas-num">3</div>
       <div class="pas-text">
         <div class="pas-title">Disseny tècnic definitiu</div>
-        <div class="pas-desc">Inspecció en detall, validació final d'opcions i tramitació de permisos.</div>
+        <div class="pas-desc">Inspecció detallada, validació d'opcions i tramitació de permisos administratius</div>
         <div class="pas-qui">Responsabilitat: Solenver</div>
       </div>
     </div>
     <div class="pas">
       <div class="pas-num">4</div>
       <div class="pas-text">
-        <div class="pas-title">Arribada d'equips i Muntatge</div>
-        <div class="pas-desc">Instal·lació de l'estructura mecànica, col·locació de plaques, tram elèctric i posada en marxa.</div>
+        <div class="pas-title">Muntatge i posada en marxa</div>
+        <div class="pas-desc">Instal·lació d'estructura, plaques, tram elèctric i posada en servei del sistema</div>
         <div class="pas-qui">Responsabilitat: Solenver</div>
       </div>
     </div>
     <div class="pas">
       <div class="pas-num">5</div>
       <div class="pas-text">
-        <div class="pas-title">Certificació i legalització</div>
-        <div class="pas-desc">Emissió del certificat de finalització (Butlletí / CIE) i tramitació davant distribuïdora.</div>
+        <div class="pas-title">Legalització i certificació</div>
+        <div class="pas-desc">Emissió del Butlletí / CIE i tramitació davant la distribuïdora elèctrica</div>
         <div class="pas-qui">Responsabilitat: Solenver</div>
       </div>
     </div>
     <div class="pas">
       <div class="pas-num">6</div>
       <div class="pas-text">
-        <div class="pas-title">Formació d'ús</div>
-        <div class="pas-desc">Configuració de l'App d'usuari i sessió on-boarding sobre manteniment i seguiment.</div>
+        <div class="pas-title">Formació i entrega</div>
+        <div class="pas-desc">Configuració de l'App d'usuari i sessió on-boarding sobre monitoratge i manteniment</div>
         <div class="pas-qui">Responsabilitat: Solenver</div>
       </div>
     </div>
 
-    <div style="margin-top:18px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:10px;padding:16px 20px;text-align:center">
-      <p style="text-align:center;font-size:12pt;font-weight:800;color:var(--green-900);margin:0;letter-spacing:-0.3px">Contacteu amb el vostre assessor energètic per a qualsevol consulta</p>
-      <p style="text-align:center;font-size:10pt;color:var(--slate-500);margin:6px 0 0;font-weight:500">{{EMAIL_EMPRESA}} · {{WEB_EMPRESA}}</p>
+    <div style="margin-top:16px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:10px;padding:14px 18px;text-align:center">
+      <p style="text-align:center;font-size:12pt;font-weight:800;color:var(--green-800);margin:0;letter-spacing:-0.3px">Contacteu amb el vostre assessor energètic Solenver</p>
+      <p style="text-align:center;font-size:10pt;color:var(--slate-500);margin:5px 0 0;font-weight:500">{{EMAIL_EMPRESA}} · {{WEB_EMPRESA}} · {{TELEFON_EMPRESA}}</p>
     </div>
 
     <div class="pfooter">
-      <span>{{EMAIL_EMPRESA}} | {{COMERCIAL_TEL}}</span>
+      <span>{{EMAIL_EMPRESA}} | {{TELEFON_EMPRESA}}</span>
       <span>{{CLIENT_NOM}}</span>
       <span>{{ID_ESTUDI}}</span>
     </div>
   </div>
 
+  <!-- §10 CASOS D'ÈXIT -->
+  <div class="page">
+    <div class="sh">
+      <div class="sh-num">10</div>
+      <div class="sh-title">Casos d'Èxit</div>
+    </div>
+
+    <p>A Solenver portem més de 10 anys transformant el consum energètic d'empreses, granges i habitatges. A continuació trobareu una selecció de projectes representatius que il·lustren la nostra capacitat tècnica i la satisfacció dels nostres clients.</p>
+
+    {{HTML_CASOS_EXIT}}
+
+    <div class="callout" style="margin-top:20px">
+      <p>Cada instal·lació és única. El nostre equip tècnic estudia les vostres necessitats específiques i dissenya la solució més rendible per a vosaltres. <strong>Contacteu-nos per veure el portafoli complet.</strong></p>
+    </div>
+
+    <div style="margin-top:16px;text-align:center;padding:16px;background:var(--green-800);border-radius:10px;color:#fff">
+      <div style="font-size:14pt;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px">SOLENVER · Energia Solar Fotovoltaica</div>
+      <div style="font-size:9pt;opacity:0.85">{{EMAIL_EMPRESA}} · {{WEB_EMPRESA}} · {{COBERTURA_EMPRESA}}</div>
+    </div>
+
+    <div class="pfooter">
+      <span>{{EMAIL_EMPRESA}} | {{TELEFON_EMPRESA}}</span>
+      <span>{{CLIENT_NOM}}</span>
+      <span>{{ID_ESTUDI}}</span>
+    </div>
+  </div>
 
 </body>
 </html>
