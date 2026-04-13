@@ -312,25 +312,27 @@
       <div class="sh-title">Qui Som</div>
     </div>
 
-    <p>Solenver és una empresa especialitzada en el disseny, instal·lació i manteniment d'instal·lacions solars fotovoltaiques per a ús industrial, agrícola i residencial. Amb més de 10 anys d'experiència al sector, oferim solucions integrals adaptades a les necessitats energètiques de cada client, des de l'estudi inicial fins a la legalització i el manteniment a llarg termini. El nostre equip d'enginyers i tècnics certificats garanteix la màxima qualitat en cada projecte.</p>
+    <p><strong>Solenver</strong> és una empresa especialitzada en el disseny, instal·lació i manteniment d'instal·lacions solars fotovoltaiques per a ús industrial, agrícola i residencial. Amb més de 10 anys d'experiència al sector energètic, hem acompanyat centenars d'empreses, granges i habitatges en la transició cap a l'energia solar, reduint la seva factura elèctrica i la petjada de carboni.</p>
+
+    <p>El nostre equip d'enginyers, tècnics i comercials treballa amb un sol objectiu: oferir la solució fotovoltaica que millor s'adapti a les necessitats reals de cada client. Gestionem tot el procés de manera integral: des de l'estudi de viabilitat inicial fins a la legalització administrativa i el manteniment a llarg termini. No subcontractem — tota la instal·lació la realitza personal propi i certificat per garantir la màxima qualitat d'execució.</p>
 
     {{HTML_IMG_EMPRESA}}
 
     <div class="vals">
       <div class="val-item">
         <div class="val-icon">⚡</div>
-        <div class="val-title">+10 anys d'experiència</div>
-        <div class="val-desc">Pioners en autoconsum fotovoltaic a Catalunya i Aragó</div>
+        <div class="val-title">+200 instal·lacions</div>
+        <div class="val-desc">Projectes executats a Catalunya i Aragó en sectors industrial, agrícola i residencial</div>
       </div>
       <div class="val-item">
         <div class="val-icon">✓</div>
         <div class="val-title">Qualitat certificada</div>
-        <div class="val-desc">Materials de primera categoria amb garantia de fabricant</div>
+        <div class="val-desc">Materials de primera categoria (Tier-1) amb garantia de fabricant de fins a 25 anys</div>
       </div>
       <div class="val-item">
         <div class="val-icon">🔧</div>
         <div class="val-title">Servei 360°</div>
-        <div class="val-desc">De l'estudi tècnic a la legalització i el manteniment anual</div>
+        <div class="val-desc">De l'estudi tècnic i la legalització fins al manteniment preventiu anual inclòs</div>
       </div>
     </div>
 
@@ -348,9 +350,14 @@
         <div class="iv">{{CERTIFICACIO_EMPRESA}}</div>
       </div>
       <div class="ibox">
-        <div class="il">Compromís de servei</div>
-        <div class="iv">25 anys de suport tècnic garantit</div>
+        <div class="il">Compromís</div>
+        <div class="iv">25 anys de suport tècnic i acompanyament garantit</div>
       </div>
+    </div>
+
+    <div style="margin-top:14px;background:var(--green-800);border-radius:10px;padding:14px 20px;color:#fff;text-align:center">
+      <div style="font-size:8.5pt;opacity:0.8;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Contacte Solenver</div>
+      <div style="font-size:10pt;font-weight:700">{{EMAIL_EMPRESA}} · {{WEB_EMPRESA}} · {{TELEFON_EMPRESA}}</div>
     </div>
 
     <div class="pfooter">
@@ -367,6 +374,7 @@
       <div class="sh-title">Objecte de l'Estudi</div>
     </div>
 
+    <p>L'objecte d'aquest estudi és l'avaluació tècnico-econòmica de la implementació d'una instal·lació solar fotovoltaica per autoconsum a les instal·lacions de <strong>{{CLIENT_NOM}}</strong>, ubicades a {{CLIENT_ADRECA}}. L'abast del document inclou l'anàlisi del consum energètic actual, el dimensionament del sistema fotovoltaic, la producció estimada, el retorn econòmic de la inversió i el servei de manteniment recomanat.</p>
     <p>{{TEXT_OBJECTE}}</p>
 
     <h3>Dades del client i de la instal·lació</h3>
@@ -418,6 +426,7 @@
     </div>
 
     <p>{{TEXT_SITUACIO_ENERGETICA}}</p>
+    <p style="font-size:9pt;color:var(--slate-600);background:var(--slate-50);border:1px solid var(--slate-200);border-left:4px solid var(--green-500);border-radius:6px;padding:8px 14px;margin-bottom:10px"><em>Les dades de consum s'han extret directament dels consums reals del client via SIPS / factures elèctriques i reflecteixen el perfil energètic dels darrers 12 mesos.</em></p>
 
     <div class="kgrid">
       <div class="kcard">
@@ -434,15 +443,14 @@
       </div>
     </div>
 
-    <div class="charts-row">
-      <div class="chart">
-        <img src="{{IMG_GRAFIC_CONSUM_MENSUAL}}" alt="Consum mensual">
-        <div class="chart-cap">Fig. 1 · Perfil de consum mensual (kWh)</div>
-      </div>
-      <div class="chart">
-        <img src="{{IMG_GRAFIC_PV_PRODUCTION}}" alt="Producció FV mensual">
-        <div class="chart-cap">Fig. 2 · Producció FV estimada (kWh)</div>
-      </div>
+    <div class="chart">
+      <img src="{{IMG_GRAFIC_CONSUM_MENSUAL}}" alt="Consum mensual" style="width:100%;max-height:210px;object-fit:contain">
+      <div class="chart-cap">Fig. 1 · Perfil de consum mensual (kWh) — barres mensuals i línia acumulat anual</div>
+    </div>
+
+    <div class="chart">
+      <img src="{{IMG_GRAFIC_PV_PRODUCTION}}" alt="Producció FV mensual" style="width:100%;max-height:210px;object-fit:contain">
+      <div class="chart-cap">Fig. 2 · Producció fotovoltaica estimada (kWh) — calculada amb dades PVGIS per a la ubicació</div>
     </div>
 
     <h3>Consums mensuals per períodes tarifaris ({{TARIFA}})</h3>
@@ -519,32 +527,40 @@
       alt="Estructura de muntatge">
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
-      <div>
-        <h3>Sistema de monitorització</h3>
-        <p style="margin:6px 0 10px;color:var(--slate-700);font-size:9.5pt">{{TEXT_MONITORITZACIO_DESC}}</p>
+    <h3>Sistema de monitorització</h3>
+    <div style="display:flex;gap:18px;align-items:flex-start;margin:10px 0 20px">
+      <div style="flex:1">
+        <p style="margin:0 0 10px;color:var(--slate-700)">{{TEXT_MONITORITZACIO_DESC}}</p>
+        <ul style="margin:0 0 0 18px;font-size:9.5pt;line-height:2">
+          <li>Monitorització en temps real de producció, consum i exportació</li>
+          <li>App mòbil i plataforma web accessible 24h</li>
+          <li>Alertes automàtiques en cas d'anomalia o baixada de rendiment</li>
+          <li>Històric de dades exportable per a anàlisi energètica</li>
+        </ul>
+      </div>
+      <div style="flex:0 0 42%;max-width:42%">
         <img src="{{IMG_MONITORING}}"
-          style="width:100%;height:140px;object-fit:contain;border-radius:8px;display:block;box-shadow:0 2px 6px rgba(0,0,0,0.04);border:1px solid var(--slate-200);background:#fff;padding:8px"
+          style="width:100%;height:180px;object-fit:contain;border-radius:10px;display:block;box-shadow:0 3px 10px rgba(0,0,0,0.06);border:1px solid var(--slate-200);background:#fff;padding:10px"
           alt="Sistema de monitorització">
       </div>
-      <div>
-        <h3>Factors de pèrdues del sistema</h3>
-        <table style="margin-top:6px">
-          <thead>
-            <tr><th>Factor</th><th>Valor</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Cablejat CC</td><td>1.5%</td></tr>
-            <tr><td>Rendiment inversor</td><td>1.4% (η=98.6%)</td></tr>
-            <tr><td>Brutícia i pols</td><td>2.0%</td></tr>
-            <tr><td>Temperatura</td><td>2.5%</td></tr>
-            <tr><td>Degradació anual mòduls</td><td>0.4% / any</td></tr>
-          </tbody>
-          <tfoot>
-            <tr><td><strong>Performance Ratio (PR)</strong></td><td><strong>≈ 81%</strong></td></tr>
-          </tfoot>
-        </table>
-      </div>
     </div>
+
+    <h3>Factors de pèrdues del sistema</h3>
+    <table style="margin-top:6px">
+      <thead>
+        <tr><th>Factor de pèrdua</th><th>Valor estimat</th><th>Descripció</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Cablejat CC</td><td>1.5%</td><td>Pèrdues resistives al cablejat de contínua</td></tr>
+        <tr><td>Rendiment inversor</td><td>1.4% (η=98.6%)</td><td>Pèrdues de conversió CC→CA</td></tr>
+        <tr><td>Brutícia i pols</td><td>2.0%</td><td>Reducció de captació per dipòsit de partícules</td></tr>
+        <tr><td>Temperatura</td><td>2.5%</td><td>Efecte de la temperatura en el rendiment del mòdul</td></tr>
+        <tr><td>Degradació anual mòduls</td><td>0.4% / any</td><td>Degradació progressiva de la cèl·lula fotovoltaica</td></tr>
+      </tbody>
+      <tfoot>
+        <tr><td colspan="2"><strong>Performance Ratio (PR) total estimat</strong></td><td><strong>≈ 81%</strong></td></tr>
+      </tfoot>
+    </table>
 
     <div class="pfooter">
       <span>{{EMAIL_EMPRESA}} | {{TELEFON_EMPRESA}}</span>
@@ -579,8 +595,8 @@
     </div>
 
     <div class="chart">
-      <img src="{{IMG_GRAFIC_CONSUM_VS_PRODUCCIO}}" alt="Producció vs Consum">
-      <div class="chart-cap">Fig. 3 · Producció FV vs Consum mensual (kWh) — verd: producció · vermell: demanda</div>
+      <img src="{{IMG_GRAFIC_CONSUM_VS_PRODUCCIO}}" alt="Producció vs Consum" style="width:100%;max-height:230px;object-fit:contain">
+      <div class="chart-cap">Fig. 3 · Producció FV (verd) vs Demanda (vermell) mensual en kWh — l'excedent de producció s'exporta a la xarxa</div>
     </div>
 
     <h3>Balanç energètic mensual detallat</h3>
@@ -629,19 +645,27 @@
       </div>
     </div>
 
-    <div class="charts-row">
-      <div class="chart">
-        <img src="{{IMG_GRAFIC_COST_ACTUAL_VS_PV}}" alt="Cost actual vs amb PV">
-        <div class="chart-cap">Fig. 4 · Cost energètic actual (vermell) vs amb PV (verd)</div>
-      </div>
-      <div class="chart">
-        <img src="{{IMG_GRAFIC_CASHFLOW}}" alt="Cashflow 25 anys">
-        <div class="chart-cap">Fig. 5 · Cashflow acumulat a 25 anys (EUR)</div>
-      </div>
+    <div class="chart">
+      <img src="{{IMG_GRAFIC_COST_ACTUAL_VS_PV}}" alt="Cost actual vs amb PV" style="width:100%;max-height:220px;object-fit:contain">
+      <div class="chart-cap">Fig. 4 · Cost energètic mensual actual (vermell) vs amb instal·lació PV (verd) — EUR/mes</div>
     </div>
 
     <div class="callout">
       <p>La instal·lació solar es paga sola en <strong>{{RETORN_ANYS}}</strong>, generant un benefici net de <strong>{{BENEFICI_25_ANYS}}</strong> al llarg dels 25 anys de vida útil. TIR: {{TIR_PCT}}% · VAN: {{VAN_25_ANYS}}</p>
+    </div>
+
+    <div class="pfooter">
+      <span>{{EMAIL_EMPRESA}} | {{TELEFON_EMPRESA}}</span>
+      <span>{{CLIENT_NOM}}</span>
+      <span>{{ID_ESTUDI}}</span>
+    </div>
+  </div>
+
+  <!-- §06b CASHFLOW — pàgina separada -->
+  <div class="page">
+    <div class="chart">
+      <img src="{{IMG_GRAFIC_CASHFLOW}}" alt="Cashflow 25 anys" style="width:100%;max-height:240px;object-fit:contain">
+      <div class="chart-cap">Fig. 5 · Evolució del cashflow acumulat (EUR) — la línia creua el zero quan la inversió queda recuperada</div>
     </div>
 
     <h3>Flux de caixa anual detallat</h3>

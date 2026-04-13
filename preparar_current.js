@@ -386,9 +386,26 @@ const MAPS_API_KEY = config['GOOGLE_MAPS_KEY'] || '';
 
 // ─── IMATGES CORPORATIVES (des de Sheets configuracio) ───
 const logoId = config['IMG_LOGO'] || '';
-const htmlLogo = logoId
-  ? `<img src="https://lh3.googleusercontent.com/d/${logoId}" style="max-height:65px;width:auto;display:block" alt="Solenver">`
-  : `<span style="font-weight:700;font-size:20px;color:inherit;letter-spacing:2px">SOLENVER</span>`;
+
+// Converteix una URL de Google Drive a base64 per evitar bloquejos Playwright
+async function driveToBase64(id, mime) {
+  if (!id) return null;
+  try {
+    const url = `https://lh3.googleusercontent.com/d/${id}`;
+    const resp = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' }, signal: AbortSignal.timeout(8000) });
+    if (!resp.ok) return null;
+    const buf = await resp.arrayBuffer();
+    if (!buf.byteLength) return null;
+    const type = resp.headers.get('content-type') || mime || 'image/png';
+    return `data:${type};base64,` + Buffer.from(buf).toString('base64');
+  } catch(e) { return null; }
+}
+
+const logoB64 = await driveToBase64(logoId, 'image/png');
+const logoSrc = logoB64 || (logoId ? `https://lh3.googleusercontent.com/d/${logoId}` : '');
+const htmlLogo = logoSrc
+  ? `<img src="${logoSrc}" style="max-height:65px;width:auto;display:block;margin-bottom:4px" alt="Solenver">`
+  : `<span style="font-weight:800;font-size:22px;color:inherit;letter-spacing:2px">SOLENVER</span>`;
 
 const emailEmpresa       = config['EMAIL_EMPRESA']       || 'info@solenver.cat';
 const telefonEmpresa     = (config['TELEFON_EMPRESA'] || '').replace(/#[A-Z!/]+.*/g, '').trim();
@@ -399,8 +416,10 @@ const anysMantGratuit    = config['ANYS_MANT_GRATUIT']   || '2';
 const validesaPressupost = config['VALIDESA_PRESSUPOST'] || '30';
 
 const imgEmpresaId = config['IMG_EMPRESA'] || '';
-const htmlImgEmpresa = imgEmpresaId
-  ? `<div style="margin:12px 0;text-align:center"><img src="https://lh3.googleusercontent.com/d/${imgEmpresaId}" style="max-width:100%;max-height:150px;border-radius:8px;object-fit:cover" alt="Equip Solenver"></div>`
+const imgEmpresaB64 = await driveToBase64(imgEmpresaId, 'image/jpeg');
+const imgEmpresaSrc = imgEmpresaB64 || (imgEmpresaId ? `https://lh3.googleusercontent.com/d/${imgEmpresaId}` : '');
+const htmlImgEmpresa = imgEmpresaSrc
+  ? `<div style="margin:14px 0;text-align:center"><img src="${imgEmpresaSrc}" style="max-width:90%;max-height:180px;border-radius:10px;object-fit:cover;box-shadow:0 4px 12px rgba(0,0,0,0.08)" alt="Equip Solenver"></div>`
   : '';
 
 // ─── IMATGE MONITORITZACIÓ (per fabricant inversor) ───
@@ -493,7 +512,7 @@ const titolEstudi = decodeStr(informeIA.titol) ||
 // ─── FOOTER PER PLAYWRIGHT (apareix a totes les pàgines físiques menys portada) ───
 const telDisplay = telefonEmpresa ? ` · ${telefonEmpresa}` : '';
 const footerHtml = `<div style="font-size:8px;color:#64748b;font-family:'Segoe UI',Arial,Helvetica,sans-serif;width:100%;display:flex;justify-content:space-between;align-items:center;padding:4px 18mm 0;box-sizing:border-box;border-top:1px solid #e2e8f0"><span>${emailEmpresa}${telDisplay}</span><span style="font-weight:600">${input.client_nom||'-'}</span><span>${idEstudi}</span></div>`;
-const logoImgHtml = logoId ? `<img src="https://lh3.googleusercontent.com/d/${logoId}" style="height:24px;width:auto;vertical-align:middle;margin-right:8px">` : '';
+const logoImgHtml = logoSrc ? `<img src="${logoSrc}" style="height:24px;width:auto;vertical-align:middle;margin-right:6px">` : '';
 const headerHtml = `<div style="font-family:'Segoe UI',Arial,Helvetica,sans-serif;width:100%;display:flex;justify-content:space-between;align-items:center;padding:0 18mm;box-sizing:border-box;border-bottom:2px solid #27ae60;font-size:8px;"><span style="display:flex;align-items:center;gap:6px">${logoImgHtml}<span style="font-weight:800;letter-spacing:1.5px;color:#1b5e20;font-size:9px">SOLENVER</span></span><span style="color:#64748b">Energia Solar Fotovoltaica</span></div>`;
 
 // ─── HTML IMATGES MÒDUL / INVERSOR ───
