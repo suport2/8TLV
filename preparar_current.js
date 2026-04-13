@@ -427,11 +427,12 @@ async function driveToBase64(id, mime) {
 const logoB64 = await driveToBase64(logoId, 'image/png');
 const logoSrc = logoB64 || (logoId ? `https://lh3.googleusercontent.com/d/${logoId}` : '');
 // CSS override injectat directament (no depèn de la versió del template a GitHub)
+// IMPORTANT: mantenim display:flex per al layout de portada — els KPIs van al final del flex column
 const portadaCssOverride = `<style>
-.portada{display:block!important;height:297mm!important;max-height:297mm!important;overflow:hidden!important;position:relative!important}
-.portada-aerial{position:absolute!important;top:0!important;left:0!important;right:0!important;bottom:0!important;z-index:1!important}
-.portada-top{position:relative!important;z-index:2!important}
-.portada-kpis{position:absolute!important;bottom:0!important;left:0!important;right:0!important;z-index:3!important;display:grid!important}
+.portada{display:flex!important;flex-direction:column!important;height:297mm!important;max-height:297mm!important;overflow:hidden!important;position:relative!important}
+.portada-top{flex-shrink:0!important;position:relative!important;z-index:2!important}
+.portada-aerial{flex:1!important;min-height:0!important;position:relative!important;z-index:1!important}
+.portada-kpis{flex-shrink:0!important;position:static!important;display:grid!important;grid-template-columns:repeat(4,1fr)!important;width:100%!important;background:#fff!important;padding:16px 20mm!important;gap:14px!important;box-shadow:0 -4px 24px rgba(0,0,0,0.25)!important}
 </style>`;
 const htmlLogo = logoSrc
   ? `${portadaCssOverride}<img src="${logoSrc}" class="plogo" style="max-height:65px;width:auto;display:block;margin-bottom:4px" alt="Solenver">`
@@ -498,27 +499,32 @@ const mapPlaceholder = `<div style="width:100%;height:220px;background:linear-gr
   <div style="font-size:8.5pt;color:#8bc34a;font-weight:400">Vista aèria de la instal·lació</div>
 </div>`;
 
-// Intentar primer Google Maps, després OSM
+// Intentar primer Google Maps, després múltiples OSM fallbacks
 let mapB64 = null;
 if (MAPS_API_KEY) {
   const mapsUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=17&size=600x300&maptype=satellite&markers=color:red%7C${lat},${lng}&key=${MAPS_API_KEY}`;
   mapB64 = await fetchMapBase64(mapsUrl);
 }
 if (!mapB64) {
-  // OSM fallback
-  const osmUrl = `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lng}&zoom=17&size=600x300&maptype=mapnik&markers=${lat},${lng},ol-marker`;
-  mapB64 = await fetchMapBase64(osmUrl);
+  // OSM fallback 1: staticmap.openstreetmap.de
+  const osmUrl1 = `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lng}&zoom=17&size=600x300&maptype=mapnik&markers=${lat},${lng},ol-marker`;
+  mapB64 = await fetchMapBase64(osmUrl1);
+}
+if (!mapB64) {
+  // OSM fallback 2: maps.geoapify.com (no key needed for low usage)
+  const osmUrl2 = `https://maps.geoapify.com/v1/staticmap?style=osm-bright&width=600&height=300&center=lonlat:${lng},${lat}&zoom=16&marker=lonlat:${lng},${lat};color:%23ff0000;size:medium&apiKey=df85d1c0c31b4816b7a2c1b17f8fd8b0`;
+  mapB64 = await fetchMapBase64(osmUrl2);
 }
 
 if (mapB64) {
   imgVistaAeria = mapB64;
   htmlBlocVistaAeria = `<div class="vista-aeria"><img src="${mapB64}" alt="Vista aèria" style="width:100%;height:220px;object-fit:cover;display:block"><div class="vista-aeria-cap">Vista aèria de la ubicació de la instal·lació (lat: ${lat}, lng: ${lng})</div></div>`;
-  imgVistaAeriaPortada = `<div class="portada-aerial" style="background-image:url('${mapB64}')"></div>`;
+  imgVistaAeriaPortada = `<div class="portada-aerial" data-lat="${lat}" data-lng="${lng}" style="background-image:url('${mapB64}')"></div>`;
 } else {
-  // Placeholder estilitzat si no es pot carregar cap mapa
+  // Sense mapa: Playwright injectarà Leaflet+ESRI satellite durant el render de la portada
   imgVistaAeria = '';
   htmlBlocVistaAeria = `<div class="vista-aeria">${mapPlaceholder}<div class="vista-aeria-cap">Vista aèria de la ubicació de la instal·lació (lat: ${lat}, lng: ${lng})</div></div>`;
-  imgVistaAeriaPortada = `<div class="portada-aerial" style="background:linear-gradient(135deg,#1b5b1f,#2c7d2e)"></div>`;
+  imgVistaAeriaPortada = `<div class="portada-aerial" data-lat="${lat}" data-lng="${lng}" style="background:#1b5e20"></div>`;
 }
 
 // ─── TEXTOS ───
