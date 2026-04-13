@@ -436,19 +436,25 @@ const htmlImgEmpresa = imgEmpresaSrc
   ? `<div style="margin:14px 0;text-align:center"><img src="${imgEmpresaSrc}" style="max-width:90%;max-height:180px;border-radius:10px;object-fit:cover;box-shadow:0 4px 12px rgba(0,0,0,0.08)" alt="Equip Solenver"></div>`
   : '';
 
-// ─── IMATGE MONITORITZACIÓ (per fabricant inversor) ───
+// ─── IMATGE I DESCRIPCIÓ MONITORITZACIÓ (per fabricant inversor) ───
 const fabricantInversor = (inversor.fabricant || inversor.marca || inversor.model || '').toLowerCase();
 let imgMonitoritzacio = '';
+let descMonitoritzacioFabricant = '';
 if (fabricantInversor.includes('huawei')) {
   imgMonitoritzacio = config['IMG_MONITORING_HUAWEI'] || '';
+  descMonitoritzacioFabricant = 'La instal·lació incorpora el sistema de monitorització FusionSolar de Huawei, accessible via app mòbil i portal web. Permet visualitzar en temps real la producció solar, el consum de la llar i l\'exportació a la xarxa, amb alertes automàtiques davant qualsevol anomalia de rendiment.';
 } else if (fabricantInversor.includes('fronius')) {
   imgMonitoritzacio = config['IMG_MONITORING_FRONIUS'] || '';
+  descMonitoritzacioFabricant = 'El sistema Solar.web de Fronius ofereix monitorització en temps real accessible des de qualsevol dispositiu. La plataforma registra totes les dades de producció i consum, envia notificacions davant incidències i permet exportar historials energètics per a una anàlisi detallada.';
 } else if (fabricantInversor.includes('sma')) {
   imgMonitoritzacio = config['IMG_MONITORING_SMA'] || '';
+  descMonitoritzacioFabricant = 'La solució Sunny Portal de SMA permet gestionar i monitoritzar la instal·lació fotovoltaica des de la seva plataforma en línia o app mòbil. Proporciona dades en temps real de producció i consum, alertes d\'errors i informes energètics automatitzats.';
 } else if (fabricantInversor.includes('solaredge')) {
   imgMonitoritzacio = config['IMG_MONITORING_SOLAREDGE'] || '';
+  descMonitoritzacioFabricant = 'El sistema de monitorització SolarEdge proporciona visibilitat a nivell de mòdul individual gràcies als seus optimitzadors de potència. L\'app i el portal web mostren en temps real la producció de cada panell, facilitant la detecció ràpida de possibles incidències.';
 } else {
   imgMonitoritzacio = config['IMG_MONITORING_GENERIC'] || '';
+  descMonitoritzacioFabricant = '';
 }
 
 // ─── VISTA AÈRIA (Google Maps Static API) ───
@@ -620,9 +626,16 @@ return [{json: {
     '{{IMG_INVERSOR}}':               driveUrl(inversor.foto_url),
     '{{MUNTATGE_NOM}}':               muntatge.nom || 'Estructura de muntatge',
     '{{IMG_ESTRUCTURA}}':             driveUrl(muntatge.foto_url),
-    '{{TEXT_MUNTATGE_DESC}}':         muntatge.descripcio || '',
+    '{{TEXT_MUNTATGE_DESC}}':         muntatge.descripcio || (() => {
+      const nomMunt = (muntatge.nom || '').toLowerCase();
+      if (nomMunt.includes('inclinad') || nomMunt.includes('teulada')) return 'Estructura de muntatge sobre coberta inclinada, adaptada al pendent i orientació òptima de la teulada. Els panells s\'integren amb l\'estructura existent minimitzant l\'impacte visual i garantint la màxima captació solar.';
+      if (nomMunt.includes('plan') || nomMunt.includes('plana')) return 'Estructura de muntatge sobre coberta plana amb inclinació optimitzada per maximitzar la captació solar. El sistema permet un manteniment fàcil i evita ombres entre files de panells gràcies al càlcul de distàncies òptim.';
+      if (nomMunt.includes('terra') || nomMunt.includes('suelo')) return 'Estructura de muntatge en terra dissenyada per suportar les condicions meteorològiques de la zona. L\'orientació i inclinació dels panells s\'optimitzen per obtenir el màxim rendiment al llarg de tot l\'any.';
+      if (nomMunt.includes('pergola') || nomMunt.includes('pèrgola')) return 'Estructura tipus pèrgola que integra els panells solars com a element arquitectònic. A més de generar energia, proporciona ombra i protecció als espais situats a sota, aportant valor afegit a la instal·lació.';
+      return 'L\'estructura de muntatge ha estat dissenyada i dimensionada per garantir la màxima resistència i durabilitat, optimitzant l\'orientació i inclinació dels mòduls fotovoltaics per obtenir el millor rendiment energètic possible.';
+    })(),
     '{{IMG_MONITORING}}':             driveUrl(inversor.sistema_monitoritzacio),
-    '{{TEXT_MONITORITZACIO_DESC}}':   inversor.desc_monitoritzacio || 'Sistema de monitorització integrat amb app mòbil per seguiment en temps real de la producció, consum i exportació a la xarxa.',
+    '{{TEXT_MONITORITZACIO_DESC}}':   inversor.desc_monitoritzacio || descMonitoritzacioFabricant || 'Sistema de monitorització integrat amb app mòbil per seguiment en temps real de la producció, consum i exportació a la xarxa.',
     '{{IMG_VISTA_AERIA}}':            imgVistaAeria,
     '{{HTML_BLOC_VISTA_AERIA}}':      htmlBlocVistaAeria,
     '{{IMG_VISTA_AERIA_PORTADA}}':    imgVistaAeriaPortada,

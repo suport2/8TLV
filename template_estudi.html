@@ -44,9 +44,8 @@
 
     /* ── CSS PAGE MARGINS ── */
     /* inner pages: 14mm top (Playwright header) + 10mm bottom (footer) */
+    /* Note: cover page margins are handled by Playwright margin:{top:'0'} in split-render */
     @page { margin-top: 14mm; margin-bottom: 10mm; margin-left: 0; margin-right: 0 }
-    /* cover page: 0 margins → no header/footer rendered by Playwright */
-    @page :first { margin-top: 0; margin-bottom: 0 }
 
     /* ── BREAK AVOIDANCE ── */
     .kcard, .kbox, .ibox, .val-item, .gar-box, .pas,
@@ -521,44 +520,46 @@
   <!-- §04b MUNTATGE + MONITORITZACIÓ -->
   <div class="page">
     <h3>Tipus de muntatge: {{MUNTATGE_NOM}}</h3>
-    <p style="margin:6px 0 10px;color:var(--slate-700)">{{TEXT_MUNTATGE_DESC}}</p>
+    <p style="margin:6px 0 12px;color:var(--slate-700)">{{TEXT_MUNTATGE_DESC}}</p>
     <img src="{{IMG_ESTRUCTURA}}"
-      style="width:100%;height:185px;object-fit:cover;border-radius:10px;margin:0 0 18px;display:block;box-shadow:0 3px 10px rgba(0,0,0,0.05);border:1px solid var(--slate-200)"
+      style="width:100%;height:170px;object-fit:cover;border-radius:10px;margin:0 0 20px;display:block;box-shadow:0 3px 10px rgba(0,0,0,0.07);border:1px solid var(--slate-200)"
       alt="Estructura de muntatge">
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
     <h3>Sistema de monitorització</h3>
-    <div style="display:flex;gap:18px;align-items:flex-start;margin:10px 0 20px">
-      <div style="flex:1">
+    <div style="display:flex;gap:20px;align-items:flex-start;margin:12px 0 20px">
+      <div style="flex:1;min-width:0">
         <p style="margin:0 0 10px;color:var(--slate-700)">{{TEXT_MONITORITZACIO_DESC}}</p>
-        <ul style="margin:0 0 0 18px;font-size:9.5pt;line-height:2">
+        <ul style="margin:0 0 0 18px;font-size:9.5pt;line-height:2.1">
           <li>Monitorització en temps real de producció, consum i exportació</li>
           <li>App mòbil i plataforma web accessible 24h</li>
           <li>Alertes automàtiques en cas d'anomalia o baixada de rendiment</li>
           <li>Històric de dades exportable per a anàlisi energètica</li>
         </ul>
       </div>
-      <div style="flex:0 0 42%;max-width:42%">
+      <div style="flex:0 0 36%;max-width:36%">
         <img src="{{IMG_MONITORING}}"
-          style="width:100%;height:180px;object-fit:contain;border-radius:10px;display:block;box-shadow:0 3px 10px rgba(0,0,0,0.06);border:1px solid var(--slate-200);background:#fff;padding:10px"
+          style="width:100%;height:165px;object-fit:contain;border-radius:10px;display:block;box-shadow:0 3px 10px rgba(0,0,0,0.06);border:1px solid var(--slate-200);background:#fff;padding:8px"
           alt="Sistema de monitorització">
       </div>
     </div>
 
     <h3>Factors de pèrdues del sistema</h3>
-    <table style="margin-top:6px">
+    <table style="margin-top:8px">
       <thead>
-        <tr><th>Factor de pèrdua</th><th>Valor estimat</th><th>Descripció</th></tr>
+        <tr><th>Factor de pèrdua</th><th style="width:130px;text-align:center">Valor estimat</th></tr>
       </thead>
       <tbody>
-        <tr><td>Cablejat CC</td><td>1.5%</td><td>Pèrdues resistives al cablejat de contínua</td></tr>
-        <tr><td>Rendiment inversor</td><td>1.4% (η=98.6%)</td><td>Pèrdues de conversió CC→CA</td></tr>
-        <tr><td>Brutícia i pols</td><td>2.0%</td><td>Reducció de captació per dipòsit de partícules</td></tr>
-        <tr><td>Temperatura</td><td>2.5%</td><td>Efecte de la temperatura en el rendiment del mòdul</td></tr>
-        <tr><td>Degradació anual mòduls</td><td>0.4% / any</td><td>Degradació progressiva de la cèl·lula fotovoltaica</td></tr>
+        <tr><td>Cablejat CC (pèrdues resistives)</td><td style="text-align:center">1.5%</td></tr>
+        <tr><td>Rendiment inversor (η = 98.6%)</td><td style="text-align:center">1.4%</td></tr>
+        <tr><td>Brutícia i pols (reducció de captació)</td><td style="text-align:center">2.0%</td></tr>
+        <tr><td>Temperatura (efecte sobre el mòdul)</td><td style="text-align:center">2.5%</td></tr>
+        <tr><td>Degradació anual del panell fotovoltaic</td><td style="text-align:center">0.4% / any</td></tr>
       </tbody>
       <tfoot>
-        <tr><td colspan="2"><strong>Performance Ratio (PR) total estimat</strong></td><td><strong>≈ 81%</strong></td></tr>
+        <tr>
+          <td><strong>Performance Ratio (PR) total estimat</strong></td>
+          <td style="text-align:center"><strong>≈ 81%</strong></td>
+        </tr>
       </tfoot>
     </table>
 
