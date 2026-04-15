@@ -453,7 +453,7 @@
       <div class="chart-cap">Fig. 2 · Producció fotovoltaica estimada (kWh) — calculada amb dades PVGIS per a la ubicació</div>
     </div>
 
-    <h3>Consums mensuals per períodes tarifaris ({{TARIFA}})</h3>
+    <h3 style="page-break-before:always;break-before:page;margin-top:0">Consums mensuals per períodes tarifaris ({{TARIFA}})</h3>
     {{HTML_TAULA_CONSUMS}}
 
     <div class="pfooter">
@@ -656,6 +656,11 @@
       <p>La instal·lació solar es paga sola en <strong>{{RETORN_ANYS}}</strong>, generant un benefici net de <strong>{{BENEFICI_25_ANYS}}</strong> al llarg dels 25 anys de vida útil. TIR: {{TIR_PCT}}% · VAN: {{VAN_25_ANYS}}</p>
     </div>
 
+    <div class="chart" style="margin-top:12px">
+      <img src="{{IMG_GRAFIC_CASHFLOW}}" alt="Cashflow 25 anys" style="width:100%;max-height:200px;object-fit:contain">
+      <div class="chart-cap">Fig. 5 · Evolució del cashflow acumulat (EUR) — la línia creua el zero quan la inversió queda recuperada</div>
+    </div>
+
     <div class="pfooter">
       <span>{{EMAIL_EMPRESA}} | {{TELEFON_EMPRESA}}</span>
       <span>{{CLIENT_NOM}}</span>
@@ -663,14 +668,9 @@
     </div>
   </div>
 
-  <!-- §06b CASHFLOW — pàgina separada -->
+  <!-- §06b CASHFLOW DETALLAT -->
   <div class="page">
-    <div class="chart">
-      <img src="{{IMG_GRAFIC_CASHFLOW}}" alt="Cashflow 25 anys" style="width:100%;max-height:240px;object-fit:contain">
-      <div class="chart-cap">Fig. 5 · Evolució del cashflow acumulat (EUR) — la línia creua el zero quan la inversió queda recuperada</div>
-    </div>
-
-    <h3>Flux de caixa anual detallat</h3>
+    <h3 style="margin-top:0">Flux de caixa anual detallat</h3>
     {{HTML_TAULA_CASHFLOW}}
 
     <div class="pfooter">
