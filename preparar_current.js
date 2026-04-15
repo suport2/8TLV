@@ -198,20 +198,20 @@ const plansActius = mantenimentsData.length > 0
   : [];
 
 const senseSel = mantId === 'sense';
-const senseCard = `<div class="mant-card" style="border:2px solid ${senseSel ? '#455a64' : '#cfd8dc'};border-radius:12px;padding:20px;background:${senseSel ? '#eceff1' : '#fff'};display:flex;flex-direction:column">
-  <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#78909c;margin-bottom:6px">Sense manteniment</div>
-  <div style="font-size:30px;font-weight:800;color:#455a64;line-height:1">0<span style="font-size:14px;font-weight:400;color:#555"> €</span></div>
-  <div style="font-size:11px;color:#aaa;margin:4px 0 14px">Sense contracte de manteniment</div>
-  <ul style="margin:0;padding-left:16px;font-size:12px;color:#666;line-height:2;flex:1">
-    <li>El client gestiona el manteniment de forma autònoma</li>
-    <li>Accés al suport tècnic puntual de Solenver (pressupost a part)</li>
-    <li>Recomanem revisió anual per preservar el rendiment i la garantia</li>
+const senseCard = `<div class="mant-card" style="border:2px solid ${senseSel ? '#455a64' : '#cfd8dc'};border-radius:10px;padding:12px 14px;background:${senseSel ? '#eceff1' : '#fff'};display:flex;flex-direction:column">
+  <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#78909c;margin-bottom:4px">Sense manteniment</div>
+  <div style="font-size:24px;font-weight:800;color:#455a64;line-height:1">0<span style="font-size:12px;font-weight:400;color:#555"> €</span></div>
+  <div style="font-size:10px;color:#aaa;margin:3px 0 8px">Sense contracte</div>
+  <ul style="margin:0;padding-left:14px;font-size:10.5px;color:#666;line-height:1.65;flex:1">
+    <li>El client gestiona el manteniment autònomament</li>
+    <li>Suport tècnic puntual de Solenver (pressupost a part)</li>
+    <li>Recomanem revisió anual per preservar la garantia</li>
   </ul>
-  ${senseSel ? '<div style="margin-top:12px;font-size:11px;font-weight:700;color:#455a64;text-transform:uppercase">✓ Opció seleccionada</div>' : ''}
+  ${senseSel ? '<div style="margin-top:8px;font-size:10px;font-weight:700;color:#455a64;text-transform:uppercase">✓ Opció seleccionada</div>' : ''}
 </div>`;
 
 const htmlMantCards = `
-<div class="mant-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:16px 0;page-break-inside:auto">
+<div class="mant-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:12px 0;page-break-inside:auto">
   ${plansActius.map(m => {
     const costAny  = calcPreuMant(m);
     const perKwp   = parseFloat(m.preu_per_kwp) || parseFloat(m.preu_kwp_any) || 0;
@@ -221,14 +221,14 @@ const htmlMantCards = `
     const labelPreu = kwpInstalat <= 10
       ? `${preuBase} € + IVA / any`
       : `${perKwp} €/kWp × ${fmt(kwpInstalat,2)} kWp`;
-    return `<div class="mant-card${sel ? ' mant-selected' : ''}" style="border:2px solid ${sel ? '#1b5e20' : '#c8e6c9'};border-radius:12px;padding:20px;background:${sel ? '#f1f8e9' : '#fff'};display:flex;flex-direction:column">
-  <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#4caf50;margin-bottom:6px">${m.nom}</div>
-  <div style="font-size:30px;font-weight:800;color:#1b5e20;line-height:1">${fmt(costAny)}<span style="font-size:14px;font-weight:400;color:#555"> €</span></div>
-  <div style="font-size:11px;color:#888;margin:4px 0 14px">${labelPreu}</div>
-  <ul style="margin:0;padding-left:16px;font-size:12px;color:#333;line-height:2;flex:1">
+    return `<div class="mant-card${sel ? ' mant-selected' : ''}" style="border:2px solid ${sel ? '#1b5e20' : '#c8e6c9'};border-radius:10px;padding:12px 14px;background:${sel ? '#f1f8e9' : '#fff'};display:flex;flex-direction:column">
+  <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#4caf50;margin-bottom:4px">${m.nom}</div>
+  <div style="font-size:24px;font-weight:800;color:#1b5e20;line-height:1">${fmt(costAny)}<span style="font-size:12px;font-weight:400;color:#555"> €</span></div>
+  <div style="font-size:10px;color:#888;margin:3px 0 8px">${labelPreu}</div>
+  <ul style="margin:0;padding-left:14px;font-size:10.5px;color:#333;line-height:1.65;flex:1">
     ${serveis.map(s => `<li>${s}</li>`).join('')}
   </ul>
-  ${sel ? '<div style="margin-top:12px;font-size:11px;font-weight:700;color:#1b5e20;text-transform:uppercase">✓ Pla seleccionat</div>' : ''}
+  ${sel ? '<div style="margin-top:8px;font-size:10px;font-weight:700;color:#1b5e20;text-transform:uppercase">✓ Pla seleccionat</div>' : ''}
 </div>`;
   }).join('\n  ')}
   ${senseSel ? senseCard : ''}
@@ -427,12 +427,12 @@ async function driveToBase64(id, mime) {
 const logoB64 = await driveToBase64(logoId, 'image/png');
 const logoSrc = logoB64 || (logoId ? `https://lh3.googleusercontent.com/d/${logoId}` : '');
 // CSS override injectat directament (no depèn de la versió del template a GitHub)
-// IMPORTANT: mantenim display:flex per al layout de portada — els KPIs van al final del flex column
+// IMPORTANT: kpis position:absolute bottom:0 z-index:3 per sobreposar-se a l'aerial (z-index:1)
 const portadaCssOverride = `<style>
 .portada{display:flex!important;flex-direction:column!important;height:297mm!important;max-height:297mm!important;overflow:hidden!important;position:relative!important}
 .portada-top{flex-shrink:0!important;position:relative!important;z-index:2!important}
-.portada-aerial{flex:1!important;min-height:0!important;position:relative!important;z-index:1!important}
-.portada-kpis{flex-shrink:0!important;position:static!important;display:grid!important;grid-template-columns:repeat(4,1fr)!important;width:100%!important;background:#fff!important;padding:16px 20mm!important;gap:14px!important;box-shadow:0 -4px 24px rgba(0,0,0,0.25)!important}
+.portada-aerial{height:145mm!important;flex:none!important;min-height:0!important;position:relative!important;z-index:1!important}
+.portada-kpis{position:absolute!important;bottom:0!important;left:0!important;right:0!important;z-index:3!important;display:grid!important;grid-template-columns:repeat(4,1fr)!important;background:#fff!important;padding:16px 20mm!important;gap:14px!important;box-shadow:0 -4px 24px rgba(0,0,0,0.25)!important}
 </style>`;
 const htmlLogo = logoSrc
   ? `${portadaCssOverride}<img src="${logoSrc}" class="plogo" style="max-height:65px;width:auto;display:block;margin-bottom:4px" alt="Solenver">`
@@ -521,9 +521,9 @@ if (mapB64) {
   htmlBlocVistaAeria = `<div class="vista-aeria"><img src="${mapB64}" alt="Vista aèria" style="width:100%;height:220px;object-fit:cover;display:block"><div class="vista-aeria-cap">Vista aèria de la ubicació de la instal·lació (lat: ${lat}, lng: ${lng})</div></div>`;
   imgVistaAeriaPortada = `<div class="portada-aerial" data-lat="${lat}" data-lng="${lng}" style="background-image:url('${mapB64}')"></div>`;
 } else {
-  // Sense mapa: Playwright injectarà Leaflet+ESRI satellite durant el render de la portada
+  // Sense mapa: Playwright injectarà Leaflet+ESRI satellite durant el render (portada i interior)
   imgVistaAeria = '';
-  htmlBlocVistaAeria = `<div class="vista-aeria">${mapPlaceholder}<div class="vista-aeria-cap">Vista aèria de la ubicació de la instal·lació (lat: ${lat}, lng: ${lng})</div></div>`;
+  htmlBlocVistaAeria = `<div class="vista-aeria" data-lat="${lat}" data-lng="${lng}" style="height:220px;position:relative;overflow:hidden;border-radius:8px"><div class="vista-aeria-cap" style="position:absolute;bottom:0;left:0;right:0;z-index:10;background:rgba(0,0,0,0.45);color:#fff;font-size:8pt;padding:4px 10px">Vista aèria de la ubicació de la instal·lació (lat: ${lat}, lng: ${lng})</div></div>`;
   imgVistaAeriaPortada = `<div class="portada-aerial" data-lat="${lat}" data-lng="${lng}" style="background:#1b5e20"></div>`;
 }
 
@@ -549,15 +549,15 @@ const textProduccio = injectKpisText(decodeStr(informeIA.seccio_produccio)) ||
 const textAvaluacio = injectKpisText(decodeStr(informeIA.seccio_economia)) ||
   `L'estalvi el primer any és de ${fmtE(kpis.estalvi_any1)}, amb un retorn de la inversió en ${kpis.retorn_anys} anys. El VAN a 25 anys és de ${fmtE(kpis.van_25anys)} i la TIR del ${kpis.tir_pct}%. El benefici net acumulat al llarg de la vida útil és de ${fmtE(kpis.benefici_net_25)}.`;
 const textExcedents = injectKpisText(decodeStr(informeIA.recomanacio_bateria)) ||
-  `La compensació d'excedents a preu de mercat (${fmt(kpis.preu_excedent||0.065,3)} EUR/kWh) complementa l'estalvi directe per autoconsum, millorant el retorn total de la inversió.`;
+  `La compensació d'excedents a preu de mercat (${fmt(kpis.preu_excedent||0.07,3)} EUR/kWh) complementa l'estalvi directe per autoconsum, millorant el retorn total de la inversió.`;
 const titolEstudi = decodeStr(informeIA.titol) ||
   `Memòria de la Valoració d'un Sistema d'Autoconsum Fotovoltaic ${perfilNom}`;
 
 // ─── FOOTER PER PLAYWRIGHT (apareix a totes les pàgines físiques menys portada) ───
 const telDisplay = telefonEmpresa ? ` · ${telefonEmpresa}` : '';
 const footerHtml = `<div style="font-size:8px;color:#64748b;font-family:'Segoe UI',Arial,Helvetica,sans-serif;width:100%;display:flex;justify-content:space-between;align-items:center;padding:4px 18mm 0;box-sizing:border-box;border-top:1px solid #e2e8f0"><span>${emailEmpresa}${telDisplay}</span><span style="font-weight:600">${input.client_nom||'-'}</span><span>${idEstudi}</span></div>`;
-const logoImgHtml = logoId ? `<img src="LOGO_PLACEHOLDER" style="height:24px;width:auto;vertical-align:middle;margin-right:6px">` : '';
-const headerHtml = `<div style="font-family:'Segoe UI',Arial,Helvetica,sans-serif;width:100%;display:flex;justify-content:space-between;align-items:center;padding:0 18mm;box-sizing:border-box;border-bottom:2px solid #27ae60;font-size:8px;"><span style="display:flex;align-items:center;gap:6px">${logoImgHtml}<span style="font-weight:800;letter-spacing:1.5px;color:#1b5e20;font-size:9px">SOLENVER</span></span><span style="text-align:right;line-height:1.5;color:#64748b"><span style="font-weight:700;color:#1b5e20">${nomEmpresaHeader}</span><br>${adrecaEmpresaHeader}<br>${webEmpresa}</span></div>`;
+const logoImgHtml = logoSrc ? `<img src="${logoSrc}" style="height:38px;width:auto;vertical-align:middle">` : `<span style="font-weight:800;letter-spacing:1.5px;color:#1b5e20;font-size:11px">SOLENVER</span>`;
+const headerHtml = `<div style="font-family:'Segoe UI',Arial,Helvetica,sans-serif;width:100%;display:flex;justify-content:space-between;align-items:center;padding:0 18mm;box-sizing:border-box;border-bottom:2px solid #27ae60;font-size:8px;"><span>${logoImgHtml}</span><span style="text-align:right;line-height:1.5;color:#64748b"><span style="font-weight:700;color:#1b5e20">${nomEmpresaHeader}</span><br>${adrecaEmpresaHeader}<br>${webEmpresa}</span></div>`;
 
 // ─── HTML IMATGES MÒDUL / INVERSOR ───
 const modulFotoUrl   = driveUrl(modul.foto_url   || '');
@@ -594,6 +594,145 @@ const htmlCasosExit = casosItems.length > 0
       <div style="font-weight:700;font-size:11pt;color:#334155">Galeria de Projectes Solenver</div>
       <div style="font-size:9pt;color:#64748b;margin-top:6px">Més de 200 instal·lacions a Catalunya i Aragó. Contacta'ns per veure el portafoli complet.</div>
     </div>`;
+
+// ─── PÀGINA DE BATERIES (upsell) ──────────────────────────────────────────────
+// Càlcul estimació amb bateria de 5 kWh
+const excedentAnualKwh   = kpis.excedent_anual || 0;          // kWh exportats a xarxa
+const autoconsumAnualKwh = kpis.autoconsum_anual || 0;        // kWh consumits del solar
+const produccioAnualKwh  = kpis.produccio_anual || (autoconsumAnualKwh + excedentAnualKwh);
+const pctAutoconsum      = kpis.pct_autoconsum || 0;          // %
+// Estimació bateria 5 kWh: captura ~45% de l'excedent diari (distribució mensual desigual)
+const bateriaKwh = 5;
+const excedentCapturaPct = Math.min(0.45, bateriaKwh / Math.max(1, excedentAnualKwh / 365 * 10));
+const excedentCapturat   = Math.round(excedentAnualKwh * Math.min(0.45, excedentCapturaPct));
+const autoconsumAmbBat   = Math.round(autoconsumAnualKwh + excedentCapturat);
+const pctAutoconsumBat   = produccioAnualKwh > 0 ? Math.round(autoconsumAmbBat / produccioAnualKwh * 100) : Math.min(90, Math.round(pctAutoconsum * 1.3));
+const estalviExtra       = Math.round(excedentCapturat * preuMig);  // EUR extra any
+const estalviAmbBat      = Math.round((kpis.estalvi_any1 || 0) + estalviExtra);
+const preuBateria        = parseFloat(config['PREU_BATERIA_REF'] || '') || 2500;  // EUR
+
+// Diagrama SVG flux energètic (simple, esquemàtic)
+const svgDiagrama = `<svg viewBox="0 0 480 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:110px;display:block;margin:12px 0">
+  <defs>
+    <marker id="arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3 z" fill="#27ae60"/>
+    </marker>
+    <marker id="arrb" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3 z" fill="#1d6fa4"/>
+    </marker>
+    <marker id="arrd" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3 z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <!-- Sol -->
+  <circle cx="50" cy="60" r="28" fill="#fbbf24" opacity="0.15"/>
+  <circle cx="50" cy="60" r="18" fill="#f59e0b"/>
+  <text x="50" y="64" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">☀️</text>
+  <text x="50" y="98" text-anchor="middle" font-size="7.5" fill="#64748b" font-weight="600">PLAQUES</text>
+  <!-- Inversor -->
+  <rect x="155" y="40" width="60" height="40" rx="7" fill="#e8f5e9" stroke="#27ae60" stroke-width="1.5"/>
+  <text x="185" y="60" text-anchor="middle" font-size="7" fill="#1b5e20" font-weight="700">INVERSOR</text>
+  <text x="185" y="72" text-anchor="middle" font-size="6.5" fill="#64748b">AC/DC</text>
+  <!-- Casa -->
+  <rect x="335" y="35" width="60" height="50" rx="7" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="365" y="58" text-anchor="middle" font-size="11" fill="#92400e">🏠</text>
+  <text x="365" y="75" text-anchor="middle" font-size="7" fill="#92400e" font-weight="700">CONSUM</text>
+  <!-- Bateria -->
+  <rect x="240" y="68" width="55" height="38" rx="7" fill="#dbeafe" stroke="#1d6fa4" stroke-width="1.5"/>
+  <text x="267" y="86" text-anchor="middle" font-size="9.5" fill="#1e40af">🔋</text>
+  <text x="267" y="98" text-anchor="middle" font-size="6.5" fill="#1e40af" font-weight="700">BATERIA</text>
+  <!-- Xarxa -->
+  <rect x="425" y="40" width="45" height="35" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="447" y="58" text-anchor="middle" font-size="9" fill="#475569">⚡</text>
+  <text x="447" y="70" text-anchor="middle" font-size="6" fill="#64748b" font-weight="600">XARXA</text>
+  <!-- Línies -->
+  <line x1="68" y1="60" x2="155" y2="60" stroke="#27ae60" stroke-width="1.8" marker-end="url(#arr)"/>
+  <line x1="215" y1="60" x2="335" y2="60" stroke="#27ae60" stroke-width="1.8" marker-end="url(#arr)"/>
+  <line x1="267" y1="68" x2="267" y2="55" stroke="#1d6fa4" stroke-width="1.5" marker-end="url(#arrb)"/>
+  <line x1="267" y1="55" x2="335" y2="55" stroke="#1d6fa4" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrb)"/>
+  <line x1="395" y1="58" x2="425" y2="58" stroke="#94a3b8" stroke-width="1.3" stroke-dasharray="3,3" marker-end="url(#arrd)"/>
+</svg>`;
+
+const htmlBateries = excedentAnualKwh > 100 || pctAutoconsum < 85 ? `<div class="page">
+  <div class="sh">
+    <div class="sh-num" style="background:var(--green-600)">10b</div>
+    <div class="sh-title">Milloreu el rendiment amb una bateria</div>
+  </div>
+
+  <p style="margin-top:0;color:#475569;font-size:9.5pt">La vostra instal·lació solar produeix excedents que s'envien a la xarxa a preu baix. Amb una bateria d'emmagatzematge podreu capturar aquesta energia i consumir-la quan més ho necessiteu — de nit o en hores de màxim cost.</p>
+
+  ${svgDiagrama}
+
+  <!-- Taula comparativa -->
+  <table style="width:100%;border-collapse:collapse;font-size:9pt;margin:14px 0">
+    <thead>
+      <tr style="background:#1b5e20;color:#fff">
+        <th style="padding:8px 12px;text-align:left;border-radius:8px 0 0 0;font-weight:700">Indicador</th>
+        <th style="padding:8px 12px;text-align:center;font-weight:700">Sense bateria</th>
+        <th style="padding:8px 12px;text-align:center;border-radius:0 8px 0 0;font-weight:700;background:#27ae60">Amb bateria ~${bateriaKwh} kWh</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="background:#f8fafc">
+        <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;font-weight:600;color:#0f172a">Autoconsum solar</td>
+        <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;text-align:center;color:#64748b">${fmtK(autoconsumAnualKwh)}</td>
+        <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;text-align:center;color:#15803d;font-weight:700">${fmtK(autoconsumAmbBat)}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;font-weight:600;color:#0f172a">% autoconsum estimat</td>
+        <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;text-align:center;color:#64748b">${fmt(pctAutoconsum,1)}%</td>
+        <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;text-align:center;color:#15803d;font-weight:700">${pctAutoconsumBat}%</td>
+      </tr>
+      <tr style="background:#f8fafc">
+        <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;font-weight:600;color:#0f172a">Excedents exportats a xarxa</td>
+        <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;text-align:center;color:#64748b">${fmtK(excedentAnualKwh)}</td>
+        <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;text-align:center;color:#15803d;font-weight:700">${fmtK(Math.max(0, excedentAnualKwh - excedentCapturat))}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 12px;font-weight:600;color:#0f172a">Estalvi estimat 1r any</td>
+        <td style="padding:8px 12px;text-align:center;color:#64748b">${fmtE(kpis.estalvi_any1 || 0)}</td>
+        <td style="padding:8px 12px;text-align:center;color:#15803d;font-weight:700;font-size:10.5pt">${fmtE(estalviAmbBat)}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 5 raons -->
+  <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px 18px;margin:14px 0">
+    <div style="font-weight:800;font-size:10.5pt;color:#15803d;margin-bottom:10px">5 raons per afegir una bateria</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+      ${[
+        ['Independència energètica','Consumiu la vostra pròpia energia de nit i en hores punta sense dependre de la xarxa'],
+        ['Màxim estalvi en hores vall','Estalvieu en la tarifa nocturna aprofitant l\'energia solar emmagatzemada'],
+        ['Protecció davant pujades de preu','L\'energia emmagatzemada protegeix davant futures pujades de la tarifa elèctrica'],
+        ['Suport davant talls de llum','Algunes bateries ofereixen funció d\'UPS per mantenir subministrament en cas de tall'],
+        ['Major retorn de la inversió solar','Aprofiteu el 100% de la producció solar; els excedents que envieu a xarxa valen 4× menys']
+      ].map(([t,d]) => `<div style="background:#fff;border-radius:8px;padding:10px 12px;border-left:3px solid #22c55e">
+        <div style="font-weight:700;font-size:8.5pt;color:#15803d;margin-bottom:3px">${t}</div>
+        <div style="font-size:8pt;color:#475569;line-height:1.4">${d}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <!-- Preu orientatiu -->
+  <div style="display:flex;align-items:center;justify-content:space-between;background:#1b5e20;color:#fff;border-radius:10px;padding:14px 20px;margin-top:6px">
+    <div>
+      <div style="font-size:8.5pt;opacity:0.8;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Inversió orientativa bateria ${bateriaKwh} kWh</div>
+      <div style="font-size:20pt;font-weight:900;letter-spacing:-0.5px">Des de ${fmtE(preuBateria)}</div>
+      <div style="font-size:7.5pt;opacity:0.7;margin-top:2px">IVA inclòs · preus orientatius, a confirmar en pressupost definitiu</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:8pt;opacity:0.8;margin-bottom:4px">Retorn estimat de la inversió</div>
+      <div style="font-size:15pt;font-weight:800">${estalviExtra > 0 ? Math.round(preuBateria / estalviExtra) : '—'} anys</div>
+      <div style="font-size:7.5pt;opacity:0.7">(sobre estalvi addicional de ${fmtE(estalviExtra)}/any)</div>
+    </div>
+  </div>
+
+  <div class="pfooter">
+    <span>${emailEmpresa} | ${telefonEmpresa}</span>
+    <span>${input.client_nom || 'Client'}</span>
+    <span>${idEstudi}</span>
+  </div>
+</div>` : '';
 
 return [{json: {
   id_estudi:   idEstudi,
@@ -682,10 +821,12 @@ return [{json: {
     '{{IMG_GRAFIC_CASHFLOW}}':            urlGraficCashflow,
     '{{HTML_MANTENIMENT_CARDS}}':         htmlMantCards,
     '{{HTML_IMG_MANTENIMENT}}':          (() => { const id = config['IMG_MANTENIMENT'] || ''; return id ? `<img src="${driveUrl(id)}" style="width:100%;height:200px;object-fit:cover;border-radius:10px;margin:16px 0;display:block;box-shadow:0 3px 10px rgba(0,0,0,0.07)" alt="Manteniment Solenver">` : ''; })(),
+    '{{HTML_IMG_REVISIO_ANUAL}}':        (() => { const id = config['IMG_REVISIO_ANUAL'] || ''; return id ? `<div><img src="${driveUrl(id)}" style="width:100%;border-radius:10px;object-fit:cover;max-height:220px;display:block;box-shadow:0 3px 10px rgba(0,0,0,0.08)" alt="Revisió tècnica anual"></div>` : '<div></div>'; })(),
     '{{MANTENIMENT_NOM}}':                mantNom,
     '{{MANTENIMENT_COST_ANY}}':           mantCostAnual > 0 ? fmtE(mantCostAnual) : 'Sense contracte',
     '{{HTML_IMG_MODUL}}':                 htmlImgModul,
     '{{HTML_IMG_INVERSOR}}':             htmlImgInversor,
     '{{HTML_CASOS_EXIT}}':               htmlCasosExit,
+    '{{HTML_BATERIES}}':                 htmlBateries,
   },
 }}];
