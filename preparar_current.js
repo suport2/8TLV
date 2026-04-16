@@ -247,25 +247,33 @@ const costMuntatge     = preuMuntRaw > 200 ? preuMuntRaw : preuMuntRaw * numModu
 const costMaObra       = C_MO_BASE + (C_MO_MOD * numModuls);
 const projecte         = C_PROJECTE;
 const cables           = C_CABLES;
-const costDirecte      = Math.round((numModuls * preuModul) + costMuntatge + preuInv + costMaObra + projecte + cables);
 const MARGE            = C_MARGE;
-const costGestio       = Math.round(costDirecte * MARGE);
-const costSubtotal     = costDirecte + costGestio;
-const ivaEur           = Math.round(costSubtotal * 0.21);
-const costTotal        = costSubtotal + ivaEur;
+
+// Marge aplicat per línia (cada concepte × (1 + MARGE))
+const r = (v) => Math.round(v * 100) / 100;
+const tModuls    = r(numModuls * preuModul * (1 + MARGE));
+const tInv       = r(preuInv * (1 + MARGE));
+const tMuntatge  = r(costMuntatge * (1 + MARGE));
+const tMaObra    = r(costMaObra * (1 + MARGE));
+const tProjecte  = r(projecte * (1 + MARGE));
+const tCables    = r(cables * (1 + MARGE));
+
+const costSubtotal = Math.round(tModuls + tInv + tMuntatge + tMaObra + tProjecte + tCables);
+const ivaEur       = Math.round(costSubtotal * 0.21);
+const costTotal    = costSubtotal + ivaEur;
 
 const htmlTaulaPressupost = `<table>
-  <thead><tr><th>Concepte</th><th>Quantitat</th><th>Preu unit.</th><th>Total (EUR)</th></tr></thead>
+  <thead><tr><th>Concepte</th><th>Quantitat</th><th>Preu unit. s/IVA</th><th>Total amb marge</th></tr></thead>
   <tbody>
-    <tr><td>Mòduls ${modul.marca||'JINKO'} ${modul.model||'Tiger Neo'} ${modul.potencia_wp||510}Wp</td><td>${numModuls} u.</td><td>${fmt(preuModul,2)} EUR</td><td>${fmt(numModuls*preuModul,2)} EUR</td></tr>
-    <tr><td>Inversor ${inversor.marca||'HUAWEI'} ${inversor.model||'SUN2000'} ${inversor.potencia_kw||6}kW</td><td>1 u.</td><td>${fmt(preuInv,2)} EUR</td><td>${fmt(preuInv,2)} EUR</td></tr>
-    <tr><td>Muntatge ${muntatge.nom||'Estructura'} (per placa)</td><td>${numModuls} u.</td><td>${fmt(preuMuntPerPlaca,2)} EUR/u.</td><td>${fmt(costMuntatge,2)} EUR</td></tr>
-    <tr><td>Mà d'obra i instal·lació</td><td>1 lot</td><td>-</td><td>${fmt(costMaObra,2)} EUR</td></tr>
-    <tr><td>Projecte tècnic i legalització</td><td>1 u.</td><td>${fmt(projecte,2)} EUR</td><td>${fmt(projecte,2)} EUR</td></tr>
-    <tr><td>Cablejat i materials</td><td>1 lot</td><td>-</td><td>${fmt(cables,2)} EUR</td></tr>
-    <tr><td>Gestió i coordinació (overhead 35%)</td><td>1 lot</td><td>-</td><td>${fmt(costGestio,2)} EUR</td></tr>
+    <tr><td>Mòduls ${modul.marca||'JINKO'} ${modul.model||'Tiger Neo'} ${modul.potencia_wp||510}Wp</td><td>${numModuls} u.</td><td>${fmt(preuModul,2)} EUR</td><td>${fmt(tModuls,2)} EUR</td></tr>
+    <tr><td>Inversor ${inversor.marca||'HUAWEI'} ${inversor.model||'SUN2000'} ${inversor.potencia_kw||6}kW</td><td>1 u.</td><td>${fmt(preuInv,2)} EUR</td><td>${fmt(tInv,2)} EUR</td></tr>
+    <tr><td>Muntatge ${muntatge.nom||'Estructura'} (per placa)</td><td>${numModuls} u.</td><td>${fmt(preuMuntPerPlaca,2)} EUR/u.</td><td>${fmt(tMuntatge,2)} EUR</td></tr>
+    <tr><td>Mà d'obra i instal·lació</td><td>1 lot</td><td>${fmt(C_MO_BASE,0)}€ base + ${fmt(C_MO_MOD,0)}€/u.</td><td>${fmt(tMaObra,2)} EUR</td></tr>
+    <tr><td>Projecte tècnic i legalització</td><td>1 u.</td><td>${fmt(projecte,2)} EUR</td><td>${fmt(tProjecte,2)} EUR</td></tr>
+    <tr><td>Cablejat i materials</td><td>1 lot</td><td>${fmt(cables,2)} EUR</td><td>${fmt(tCables,2)} EUR</td></tr>
   </tbody>
   <tfoot>
+    <tr><td colspan="3" style="font-size:7.5pt;color:#94a3b8">Marge comercial (${Math.round(MARGE*100)}%) inclòs en cada línia</td><td style="font-size:7.5pt;color:#94a3b8"></td></tr>
     <tr class="press-sub"><td colspan="3"><strong>Subtotal sense IVA</strong></td><td><strong>${fmt(costSubtotal,2)} EUR</strong></td></tr>
     <tr><td colspan="3">IVA (21%)</td><td>${fmt(ivaEur,2)} EUR</td></tr>
     <tr class="press-total"><td colspan="3"><strong>TOTAL AMB IVA</strong></td><td><strong>${fmt(costTotal,2)} EUR</strong></td></tr>

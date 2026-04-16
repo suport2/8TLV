@@ -1414,19 +1414,29 @@ function calcPressupost() {
   const cables      = parseFloat(c.cables)             || 75;
   const MARGE       = parseFloat(c.marge)              || 0.35;
 
-  const costDirecte = Math.round((numModuls * preuModul) + costMuntatge + preuInv + costMaObra + projecte + cables);
-  const costSubtotal= costDirecte + Math.round(costDirecte * MARGE);
-  const costTotal   = costSubtotal + Math.round(costSubtotal * 0.21);
+  // Marge aplicat per línia (igual que preparar_current.js)
+  const r = v => Math.round(v * 100) / 100;
+  const tModuls   = r(numModuls * preuModul * (1 + MARGE));
+  const tInv      = r(preuInv * (1 + MARGE));
+  const tMuntatge = r(costMuntatge * (1 + MARGE));
+  const tMaObra   = r(costMaObra * (1 + MARGE));
+  const tProjecte = r(projecte * (1 + MARGE));
+  const tCables   = r(cables * (1 + MARGE));
+
+  const costSubtotal = Math.round(tModuls + tInv + tMuntatge + tMaObra + tProjecte + tCables);
+  const costTotal    = costSubtotal + Math.round(costSubtotal * 0.21);
 
   const el = document.getElementById('cost_instalacio');
   if (el) el.value = costTotal;
   const hint = document.getElementById('costHint');
   if (hint) hint.textContent =
-    `M\u00f2duls ${Math.round(numModuls*preuModul).toLocaleString('ca')}\u20ac`
-    + ` + Inv. ${Math.round(preuInv).toLocaleString('ca')}\u20ac`
-    + ` + Muntatge ${Math.round(costMuntatge).toLocaleString('ca')}\u20ac`
-    + ` + MO ${Math.round(costMaObra).toLocaleString('ca')}\u20ac`
-    + ` + Marge 35% + IVA 21%`;
+    `M\u00f2duls ${Math.round(tModuls).toLocaleString('ca')}\u20ac`
+    + ` + Inv. ${Math.round(tInv).toLocaleString('ca')}\u20ac`
+    + ` + Muntatge ${Math.round(tMuntatge).toLocaleString('ca')}\u20ac`
+    + ` + MO ${Math.round(tMaObra).toLocaleString('ca')}\u20ac`
+    + ` + Proj. ${Math.round(tProjecte).toLocaleString('ca')}\u20ac`
+    + ` + Cab. ${Math.round(tCables).toLocaleString('ca')}\u20ac`
+    + ` (marge ${Math.round(MARGE*100)}% incl.) + IVA 21%`;
   onFormChange();
 }
 
