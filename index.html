@@ -1460,7 +1460,7 @@ function buildPayload(kpisOnly = false) {
       acimut:          parseFloat(document.getElementById('acimut')?.value||0),
       metres_cablejat: parseFloat(document.getElementById('metres_cablejat')?.value||15),
     },
-    consumos: kpisOnly ? {total_anual: totalAnual} : consumos,
+    consumos,
     economics: {
       preu_p1:              parseFloat(document.getElementById('preu_p1')?.value||0.11025),
       preu_p2:              parseFloat(document.getElementById('preu_p2')?.value||0.095),
