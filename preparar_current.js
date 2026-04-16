@@ -627,133 +627,48 @@ const bats  = [bat5, bat10, bat15];
 const recomanada = bats.find(b => b.pctB >= 60) ||
   bats.reduce((best, b) => (b.pb && (!best.pb || b.pb < best.pb)) ? b : best);
 
-// Alias per compatibilitat (usat al token HTML_BATERIES del template)
-const excedentCapturat = recomanada.cap;
-const estalviAmbBat    = recomanada.estalviT;
-
-// Diagrama SVG flux energètic (simple, esquemàtic)
-const svgDiagrama = `<svg viewBox="0 0 480 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:110px;display:block;margin:12px 0">
-  <defs>
-    <marker id="arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L6,3 z" fill="#27ae60"/>
-    </marker>
-    <marker id="arrb" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L6,3 z" fill="#1d6fa4"/>
-    </marker>
-    <marker id="arrd" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L6,3 z" fill="#64748b"/>
-    </marker>
-  </defs>
-  <!-- Sol -->
-  <circle cx="50" cy="60" r="28" fill="#fbbf24" opacity="0.15"/>
-  <circle cx="50" cy="60" r="18" fill="#f59e0b"/>
-  <text x="50" y="64" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">☀️</text>
-  <text x="50" y="98" text-anchor="middle" font-size="7.5" fill="#64748b" font-weight="600">PLAQUES</text>
-  <!-- Inversor -->
-  <rect x="155" y="40" width="60" height="40" rx="7" fill="#e8f5e9" stroke="#27ae60" stroke-width="1.5"/>
-  <text x="185" y="60" text-anchor="middle" font-size="7" fill="#1b5e20" font-weight="700">INVERSOR</text>
-  <text x="185" y="72" text-anchor="middle" font-size="6.5" fill="#64748b">AC/DC</text>
-  <!-- Casa -->
-  <rect x="335" y="35" width="60" height="50" rx="7" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
-  <text x="365" y="58" text-anchor="middle" font-size="11" fill="#92400e">🏠</text>
-  <text x="365" y="75" text-anchor="middle" font-size="7" fill="#92400e" font-weight="700">CONSUM</text>
-  <!-- Bateria -->
-  <rect x="240" y="68" width="55" height="38" rx="7" fill="#dbeafe" stroke="#1d6fa4" stroke-width="1.5"/>
-  <text x="267" y="86" text-anchor="middle" font-size="9.5" fill="#1e40af">🔋</text>
-  <text x="267" y="98" text-anchor="middle" font-size="6.5" fill="#1e40af" font-weight="700">BATERIA</text>
-  <!-- Xarxa -->
-  <rect x="425" y="40" width="45" height="35" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.2"/>
-  <text x="447" y="58" text-anchor="middle" font-size="9" fill="#475569">⚡</text>
-  <text x="447" y="70" text-anchor="middle" font-size="6" fill="#64748b" font-weight="600">XARXA</text>
-  <!-- Línies -->
-  <line x1="68" y1="60" x2="155" y2="60" stroke="#27ae60" stroke-width="1.8" marker-end="url(#arr)"/>
-  <line x1="215" y1="60" x2="335" y2="60" stroke="#27ae60" stroke-width="1.8" marker-end="url(#arr)"/>
-  <line x1="267" y1="68" x2="267" y2="55" stroke="#1d6fa4" stroke-width="1.5" marker-end="url(#arrb)"/>
-  <line x1="267" y1="55" x2="335" y2="55" stroke="#1d6fa4" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrb)"/>
-  <line x1="395" y1="58" x2="425" y2="58" stroke="#94a3b8" stroke-width="1.3" stroke-dasharray="3,3" marker-end="url(#arrd)"/>
-</svg>`;
-
-const htmlBateries = excedentAnualKwh > 100 || pctAutoconsum < 85 ? `<div class="page">
-  <div class="sh">
-    <div class="sh-num">10b</div>
-    <div class="sh-title">Milloreu el rendiment amb una bateria</div>
-  </div>
-
-  <p style="margin-top:0;color:#475569;font-size:9pt">La vostra instal·lació exporta <strong>${fmtK(excedentAnualKwh)}/any</strong> a la xarxa a ${fmt(preuExcVal,2)} €/kWh. Amb una bateria podreu consumir aquesta energia de nit o en hores punta, on el cost és de ${fmt(preuMig,3)} €/kWh — <strong>${fmt(preuMig/preuExcVal,1)}× més valuosa</strong>.</p>
-
-  <!-- Taula comparativa 3 mides -->
-  <table style="width:100%;border-collapse:collapse;font-size:8.5pt;margin:10px 0">
-    <thead>
-      <tr style="background:#1b5e20;color:#fff">
-        <th style="padding:7px 10px;text-align:left;border-radius:8px 0 0 0;font-weight:700">Indicador</th>
-        <th style="padding:7px 10px;text-align:center;font-weight:600;opacity:0.85">Sense bateria</th>
-        ${bats.map(b => `<th style="padding:7px 10px;text-align:center;font-weight:700${b === recomanada ? ';background:#27ae60' : ''}">${b.n} kWh${b === recomanada ? ' ★' : ''}</th>`).join('')}
-      </tr>
-    </thead>
-    <tbody>
-      <tr style="background:#f8fafc">
-        <td style="padding:7px 10px;border-bottom:1px solid #e2e8f0;font-weight:600;color:#0f172a">Autoconsum solar</td>
-        <td style="padding:7px 10px;border-bottom:1px solid #e2e8f0;text-align:center;color:#64748b">${fmtK(autoconsumAnualKwh)}</td>
-        ${bats.map(b => `<td style="padding:7px 10px;border-bottom:1px solid #e2e8f0;text-align:center;color:#15803d;font-weight:${b === recomanada ? '700' : '500'}">${fmtK(b.acB)}</td>`).join('')}
-      </tr>
-      <tr>
-        <td style="padding:7px 10px;border-bottom:1px solid #e2e8f0;font-weight:600;color:#0f172a">% autoconsum</td>
-        <td style="padding:7px 10px;border-bottom:1px solid #e2e8f0;text-align:center;color:#64748b">${fmt(pctAutoconsum,1)}%</td>
-        ${bats.map(b => `<td style="padding:7px 10px;border-bottom:1px solid #e2e8f0;text-align:center;color:#15803d;font-weight:${b === recomanada ? '700' : '500'}">${b.pctB}%</td>`).join('')}
-      </tr>
-      <tr style="background:#f8fafc">
-        <td style="padding:7px 10px;border-bottom:1px solid #e2e8f0;font-weight:600;color:#0f172a">Excedents exportats</td>
-        <td style="padding:7px 10px;border-bottom:1px solid #e2e8f0;text-align:center;color:#64748b">${fmtK(excedentAnualKwh)}</td>
-        ${bats.map(b => `<td style="padding:7px 10px;border-bottom:1px solid #e2e8f0;text-align:center;color:#64748b">${fmtK(Math.max(0, excedentAnualKwh - b.cap))}</td>`).join('')}
-      </tr>
-      <tr>
-        <td style="padding:7px 10px;font-weight:600;color:#0f172a">Estalvi total 1r any</td>
-        <td style="padding:7px 10px;text-align:center;color:#64748b">${fmtE(kpis.estalvi_any1 || 0)}</td>
-        ${bats.map(b => `<td style="padding:7px 10px;text-align:center;color:#15803d;font-weight:${b === recomanada ? '700' : '500'};font-size:${b === recomanada ? '10pt' : '8.5pt'}">${fmtE(b.estalviT)}</td>`).join('')}
-      </tr>
-    </tbody>
-  </table>
-
-  <!-- Targetes de preu per mida -->
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0">
-    ${bats.map(b => {
-      const isRec = b === recomanada;
-      return `<div style="border-radius:10px;padding:12px 14px;border:${isRec ? '2px solid #22c55e' : '1px solid #e2e8f0'};background:${isRec ? '#f0fdf4' : '#f8fafc'};position:relative">
-        ${isRec ? '<div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:#22c55e;color:#fff;font-size:7pt;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap">★ RECOMANADA</div>' : ''}
-        <div style="font-size:8pt;color:#64748b;font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px">Bateria ${b.n} kWh</div>
-        <div style="font-size:16pt;font-weight:900;color:${isRec ? '#15803d' : '#0f172a'};letter-spacing:-0.5px">Des de ${fmtE(b.preu)}</div>
-        <div style="font-size:7.5pt;color:#64748b;margin-top:4px">+${fmtK(b.cap)}/any autoconsumits</div>
-        <div style="margin-top:6px;padding-top:6px;border-top:1px solid ${isRec ? '#bbf7d0' : '#e2e8f0'}">
-          ${b.pb && b.pb <= 15
-            ? `<div style="font-size:8pt;color:${isRec ? '#15803d' : '#475569'};font-weight:700">Retorn: ${b.pb} anys</div>`
-            : `<div style="font-size:8pt;color:${isRec ? '#15803d' : '#475569'};font-weight:600">+${b.pctB - Math.round(pctAutoconsum)} pts autoconsum</div>`
-          }
-          <div style="font-size:7.5pt;color:#94a3b8">+${fmtE(b.estalviN)}/any addicional</div>
-        </div>
-      </div>`;
-    }).join('')}
-  </div>
-
-  <!-- Raons + nota peu -->
-  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px">
-    ${[
-      ['Independència energètica','Energia solar de nit i en hores punta, sense dependre de la xarxa'],
-      ['Protecció davant pujades de preu','L\'energia emmagatzemada aïlla davant futures pujades de tarifa'],
-      ['Màxim profit de la instal·lació','Aprofiteu cada kWh produït; els excedents valen ' + fmt(preuMig/preuExcVal,1) + '× menys a xarxa'],
-      ['Suport en cas de tall de llum','Algunes bateries ofereixen funció UPS per mantenir el subministrament'],
-    ].map(([t,d]) => `<div style="background:#fff;border-radius:8px;padding:9px 11px;border-left:3px solid #22c55e;border:1px solid #e2e8f0;border-left:3px solid #22c55e">
-      <div style="font-weight:700;font-size:8pt;color:#15803d;margin-bottom:2px">${t}</div>
-      <div style="font-size:7.5pt;color:#475569;line-height:1.4">${d}</div>
-    </div>`).join('')}
-  </div>
-  <div style="margin-top:10px;font-size:7.5pt;color:#94a3b8;text-align:center">Preus orientatius IVA inclòs · estimació basada en ~250 cicles/any i eficiència 90% · a confirmar en pressupost definitiu</div>
-
-  <div class="pfooter">
-    <span>${emailEmpresa} | ${telefonEmpresa}</span>
-    <span>${input.client_nom || 'Client'}</span>
-    <span>${idEstudi}</span>
-  </div>
-</div>` : '';
+// Tokens per a cada mida de bateria
+const showBateries = excedentAnualKwh > 100 || pctAutoconsum < 85;
+const REC_BADGE = '<div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:#22c55e;color:#fff;font-size:7pt;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap">★ RECOMANADA</div>';
+function batTokens(b, prefix) {
+  const isRec = b === recomanada;
+  const paybackLine = b.pb && b.pb <= 15
+    ? 'Retorn: ' + b.pb + ' anys'
+    : '+' + (b.pctB - Math.round(pctAutoconsum)) + ' pts autoconsum';
+  return {
+    [`{{${prefix}_ACB}}`]:         fmtK(b.acB),
+    [`{{${prefix}_PCT}}`]:         String(b.pctB),
+    [`{{${prefix}_EXC_REST}}`]:    fmtK(Math.max(0, excedentAnualKwh - b.cap)),
+    [`{{${prefix}_ESTALVI_T}}`]:   fmtE(b.estalviT),
+    [`{{${prefix}_PREU}}`]:        fmtE(b.preu),
+    [`{{${prefix}_CAP}}`]:         fmtK(b.cap),
+    [`{{${prefix}_ESTALVI_N}}`]:   fmtE(b.estalviN),
+    [`{{${prefix}_PAYBACK_LINE}}`]: paybackLine,
+    [`{{${prefix}_STAR}}`]:        isRec ? ' ★' : '',
+    [`{{${prefix}_TH_STYLE}}`]:    isRec ? 'font-weight:700;background:#27ae60' : 'font-weight:600;opacity:0.85',
+    [`{{${prefix}_FW}}`]:          isRec ? 'font-weight:700' : 'font-weight:500',
+    [`{{${prefix}_CARD_BG}}`]:     isRec ? '#f0fdf4' : '#f8fafc',
+    [`{{${prefix}_CARD_BORDER}}`]: isRec ? '2px solid #22c55e' : '1px solid #e2e8f0',
+    [`{{${prefix}_CARD_COLOR}}`]:  isRec ? '#15803d' : '#0f172a',
+    [`{{${prefix}_CARD_FW}}`]:     isRec ? '700' : '600',
+    [`{{${prefix}_DIVIDER}}`]:     isRec ? '#bbf7d0' : '#e2e8f0',
+    [`{{${prefix}_REC_BADGE}}`]:   isRec ? REC_BADGE : '',
+  };
+}
+const bateriesToks = {
+  '{{BATERIES_DISPLAY}}':  showBateries ? '' : 'display:none',
+  '{{BAT_EXCEDENT_ANY}}':  fmtK(excedentAnualKwh),
+  '{{BAT_PREU_EXC}}':      fmt(preuExcVal, 2),
+  '{{BAT_PREU_MIG}}':      fmt(preuMig, 3),
+  '{{BAT_RATIO_PREU}}':    fmt(preuMig / preuExcVal, 1),
+  '{{BAT_AC_BASE}}':       fmtK(autoconsumAnualKwh),
+  '{{BAT_PCT_BASE}}':      fmt(pctAutoconsum, 1),
+  '{{BAT_EXC_BASE}}':      fmtK(excedentAnualKwh),
+  '{{BAT_ESTALVI_BASE}}':  fmtE(kpis.estalvi_any1 || 0),
+  ...batTokens(bat5,  'BAT5'),
+  ...batTokens(bat10, 'BAT10'),
+  ...batTokens(bat15, 'BAT15'),
+};
 
 return [{json: {
   id_estudi:   idEstudi,
@@ -848,6 +763,6 @@ return [{json: {
     '{{HTML_IMG_MODUL}}':                 htmlImgModul,
     '{{HTML_IMG_INVERSOR}}':             htmlImgInversor,
     '{{HTML_CASOS_EXIT}}':               htmlCasosExit,
-    '{{HTML_BATERIES}}':                 htmlBateries,
+    ...bateriesToks,
   },
 }}];
