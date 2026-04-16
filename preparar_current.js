@@ -656,7 +656,7 @@ const svgDiagrama = `<svg viewBox="0 0 480 120" xmlns="http://www.w3.org/2000/sv
 
 const htmlBateries = excedentAnualKwh > 100 || pctAutoconsum < 85 ? `<div class="page">
   <div class="sh">
-    <div class="sh-num" style="background:var(--green-600)">10b</div>
+    <div class="sh-num">10b</div>
     <div class="sh-title">Milloreu el rendiment amb una bateria</div>
   </div>
 
