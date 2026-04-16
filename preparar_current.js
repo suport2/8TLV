@@ -11,7 +11,7 @@ const C = Object.fromEntries(costosRaw.map(r => [r.clau, parseFloat(r.valor) || 
 const C_MO_BASE     = C.ma_obra_base      || 600;
 const C_MO_MOD      = C.ma_obra_per_modul || 80;
 const C_PROJECTE    = C.projecte_tecnic   || 550;
-const C_CABLES      = C.cables            || 75;
+const C_CABLES_M    = C.cables_per_metre  || 4.50;  // EUR/metre cable DC+AC+MC4
 const C_MARGE       = C.marge             || 0.35;
 
 // BUG 1: Decodifica escape literals \uXXXX en textos IA (doble encoding UTF-8)
@@ -246,7 +246,8 @@ const preuMuntPerPlaca = preuMuntRaw > 200 ? preuMuntRaw / numModuls : preuMuntR
 const costMuntatge     = preuMuntRaw > 200 ? preuMuntRaw : preuMuntRaw * numModuls;
 const costMaObra       = C_MO_BASE + (C_MO_MOD * numModuls);
 const projecte         = C_PROJECTE;
-const cables           = C_CABLES;
+const metresCablejat   = parseFloat(input.metres_cablejat || 15);
+const cables           = metresCablejat * C_CABLES_M;
 const MARGE            = C_MARGE;
 
 // Marge aplicat per línia (cada concepte × (1 + MARGE))
@@ -270,7 +271,7 @@ const htmlTaulaPressupost = `<table>
     <tr><td>Muntatge ${muntatge.nom||'Estructura'} (per placa)</td><td>${numModuls} u.</td><td>${fmt(preuMuntPerPlaca,2)} EUR/u.</td><td>${fmt(tMuntatge,2)} EUR</td></tr>
     <tr><td>Mà d'obra i instal·lació</td><td>1 lot</td><td>${fmt(C_MO_BASE,0)}€ base + ${fmt(C_MO_MOD,0)}€/u.</td><td>${fmt(tMaObra,2)} EUR</td></tr>
     <tr><td>Projecte tècnic i legalització</td><td>1 u.</td><td>${fmt(projecte,2)} EUR</td><td>${fmt(tProjecte,2)} EUR</td></tr>
-    <tr><td>Cablejat i materials</td><td>1 lot</td><td>${fmt(cables,2)} EUR</td><td>${fmt(tCables,2)} EUR</td></tr>
+    <tr><td>Cablejat i materials</td><td>${metresCablejat} m</td><td>${fmt(C_CABLES_M,2)} EUR/m</td><td>${fmt(tCables,2)} EUR</td></tr>
   </tbody>
   <tfoot>
     <tr><td colspan="3" style="font-size:7.5pt;color:#94a3b8">Marge comercial (${Math.round(MARGE*100)}%) inclòs en cada línia</td><td style="font-size:7.5pt;color:#94a3b8"></td></tr>
