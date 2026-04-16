@@ -601,15 +601,16 @@ const excedentAnualKwh   = kpis.excedent_anual || 0;          // kWh exportats a
 const autoconsumAnualKwh = kpis.autoconsum_anual || 0;        // kWh consumits del solar
 const produccioAnualKwh  = kpis.produccio_anual || (autoconsumAnualKwh + excedentAnualKwh);
 const pctAutoconsum      = kpis.pct_autoconsum || 0;          // %
-// Estimació bateria 5 kWh: captura ~45% de l'excedent diari (distribució mensual desigual)
+// Estimació bateria 5 kWh: ~250 cicles/any, eficiència 90%
 const bateriaKwh = 5;
-const excedentCapturaPct = Math.min(0.45, bateriaKwh / Math.max(1, excedentAnualKwh / 365 * 10));
-const excedentCapturat   = Math.round(excedentAnualKwh * Math.min(0.45, excedentCapturaPct));
+const excedentCapturat   = Math.min(excedentAnualKwh, Math.round(bateriaKwh * 250 * 0.9));  // màx ~1125 kWh/any
 const autoconsumAmbBat   = Math.round(autoconsumAnualKwh + excedentCapturat);
 const pctAutoconsumBat   = produccioAnualKwh > 0 ? Math.round(autoconsumAmbBat / produccioAnualKwh * 100) : Math.min(90, Math.round(pctAutoconsum * 1.3));
-const estalviExtra       = Math.round(excedentCapturat * preuMig);  // EUR extra any
+const preuExcVal         = kpis.preu_excedent || 0.07;
+const estalviExtra       = Math.round(excedentCapturat * Math.max(0, preuMig - preuExcVal));  // guany net: preu consum - compensació
 const estalviAmbBat      = Math.round((kpis.estalvi_any1 || 0) + estalviExtra);
 const preuBateria        = parseFloat(config['PREU_BATERIA_REF'] || '') || 2500;  // EUR
+const paybackBateria     = estalviExtra > 0 ? Math.round(preuBateria / estalviExtra) : null;
 
 // Diagrama SVG flux energètic (simple, esquemàtic)
 const svgDiagrama = `<svg viewBox="0 0 480 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:110px;display:block;margin:12px 0">
@@ -721,9 +722,14 @@ const htmlBateries = excedentAnualKwh > 100 || pctAutoconsum < 85 ? `<div class=
       <div style="font-size:7.5pt;opacity:0.7;margin-top:2px">IVA inclòs · preus orientatius, a confirmar en pressupost definitiu</div>
     </div>
     <div style="text-align:right">
-      <div style="font-size:8pt;opacity:0.8;margin-bottom:4px">Retorn estimat de la inversió</div>
-      <div style="font-size:15pt;font-weight:800">${estalviExtra > 0 ? Math.round(preuBateria / estalviExtra) : '—'} anys</div>
-      <div style="font-size:7.5pt;opacity:0.7">(sobre estalvi addicional de ${fmtE(estalviExtra)}/any)</div>
+      ${paybackBateria && paybackBateria <= 15
+        ? `<div style="font-size:8pt;opacity:0.8;margin-bottom:4px">Retorn estimat de la inversió</div>
+      <div style="font-size:15pt;font-weight:800">${paybackBateria} anys</div>
+      <div style="font-size:7.5pt;opacity:0.7">(sobre estalvi addicional de ${fmtE(estalviExtra)}/any)</div>`
+        : `<div style="font-size:8pt;opacity:0.8;margin-bottom:4px">Energia addicional autoconsumida</div>
+      <div style="font-size:15pt;font-weight:800">+${fmtK(excedentCapturat)}/any</div>
+      <div style="font-size:7.5pt;opacity:0.7">menys dependència de la xarxa elèctrica</div>`
+      }
     </div>
   </div>
 
