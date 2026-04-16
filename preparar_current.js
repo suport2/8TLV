@@ -131,9 +131,9 @@ const htmlTaulaConsums = tePeriodes
 // ─── HTML TAULA PRODUCCIÓ ───
 const mensual = kpis.mensual || [];
 const htmlTaulaProduccio = `<table style="font-size:8pt">
-  <thead><tr style="line-height:1.2"><th>Mes</th><th>Prod FV (kWh)</th><th>Consum (kWh)</th><th>Autoconsum (kWh)</th><th>Excedent (kWh)</th><th>Xarxa (kWh)</th><th>Estalvi (EUR)</th></tr></thead>
+  <thead><tr><th style="padding:3px 8px">Mes</th><th style="padding:3px 8px">Prod FV (kWh)</th><th style="padding:3px 8px">Consum (kWh)</th><th style="padding:3px 8px">Autoconsum (kWh)</th><th style="padding:3px 8px">Excedent (kWh)</th><th style="padding:3px 8px">Xarxa (kWh)</th><th style="padding:3px 8px">Estalvi (EUR)</th></tr></thead>
   <tbody>
-    ${mensual.map(m=>`<tr style="line-height:1.2"><td><strong>${m.mes}</strong></td><td>${m.produccio}</td><td>${m.consum}</td><td>${m.autoconsum}</td><td>${m.excedent}</td><td>${m.xarxa}</td><td>${m.estalvi}</td></tr>`).join('\n    ')}
+    ${mensual.map(m=>`<tr><td style="padding:3px 8px"><strong>${m.mes}</strong></td><td style="padding:3px 8px">${m.produccio}</td><td style="padding:3px 8px">${m.consum}</td><td style="padding:3px 8px">${m.autoconsum}</td><td style="padding:3px 8px">${m.excedent}</td><td style="padding:3px 8px">${m.xarxa}</td><td style="padding:3px 8px">${m.estalvi}</td></tr>`).join('\n    ')}
   </tbody>
 </table>`;
 
