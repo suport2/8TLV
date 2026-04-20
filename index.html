@@ -1602,11 +1602,13 @@ async function _generarPdf(previewOnly) {
     method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
   });
   const rawText = await r.text();
-  console.log('[PDF] n8n resposta raw:', rawText.substring(0, 500));
-  if (!r.ok) throw new Error(`Error n8n (${r.status}): ${rawText.substring(0, 200)}`);
+  console.log('[PDF] n8n status:', r.status, '| raw (1000 chars):', rawText.substring(0, 1000));
+  if (!r.ok) throw new Error(`Error n8n (${r.status}): ${rawText.substring(0, 400)}`);
   let data;
-  try { data = JSON.parse(rawText); } catch(e) { throw new Error('n8n ha retornat resposta no-JSON: ' + rawText.substring(0, 200)); }
-  if (!data.html) throw new Error('n8n no ha retornat HTML. Camps rebuts: ' + Object.keys(data).join(', '));
+  try { data = JSON.parse(rawText); } catch(e) {
+    throw new Error(`n8n (${r.status}) resposta no-JSON:\n${rawText.substring(0, 600)}`);
+  }
+  if (!data.html) throw new Error('n8n no ha retornat HTML. Camps: ' + Object.keys(data).join(', '));
 
   // 2. Servidor local (Playwright) converteix HTML → PDF
   showLoading('Generant PDF...');
