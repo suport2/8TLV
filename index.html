@@ -1215,6 +1215,9 @@ async function fetchKpis() {
       if (rp.ok) { const dp = await rp.json(); pvgis_monthly = dp.monthly || null; }
     } catch(e) { /* servidor local no disponible o timeout, el motor usarà fallback */ }
 
+    // Guardar per usar-lo també al payload del PDF
+    state.pvgisMonthly = pvgis_monthly;
+
     const kpiPayload = {
       num_moduls:       p.instalacio.num_moduls,
       potencia_wp:      modul.potencia_wp || 510,
@@ -1432,13 +1435,13 @@ function calcPressupost() {
   if (el) el.value = costTotal;
   const hint = document.getElementById('costHint');
   if (hint) hint.textContent =
-    `M\u00f2duls ${Math.round(tModuls).toLocaleString('ca')}\u20ac`
-    + ` + Inv. ${Math.round(tInv).toLocaleString('ca')}\u20ac`
-    + ` + Muntatge ${Math.round(tMuntatge).toLocaleString('ca')}\u20ac`
-    + ` + MO ${Math.round(tMaObra).toLocaleString('ca')}\u20ac`
-    + ` + Proj. ${Math.round(tProjecte).toLocaleString('ca')}\u20ac`
-    + ` + Cab. ${Math.round(tCables).toLocaleString('ca')}\u20ac`
-    + ` (marge ${Math.round(MARGE*100)}% incl.) + IVA 21%`;
+    `Mòduls ${Math.round(tModuls).toLocaleString('ca')}\u20ac`
+    + ` · Inv. ${Math.round(tInv).toLocaleString('ca')}\u20ac`
+    + ` · Muntatge ${Math.round(tMuntatge).toLocaleString('ca')}\u20ac`
+    + ` · MO ${Math.round(tMaObra).toLocaleString('ca')}\u20ac`
+    + ` · Proj. ${Math.round(tProjecte).toLocaleString('ca')}\u20ac`
+    + ` · Cab. ${Math.round(tCables).toLocaleString('ca')}\u20ac`
+    + ` + IVA 21%`;
   onFormChange();
 }
 
@@ -1561,6 +1564,9 @@ function buildPdfPayload(previewOnly) {
     consum_p2:            MES_CLAUS.map(k => (p.consumos[k]||{}).p2||0),
     consum_p3:            MES_CLAUS.map(k => (p.consumos[k]||{}).p3||0),
     potencia_wp:          modul.potencia_wp || 510,
+    // PVGIS + pèrdues (per alinear motor PDF amb motor formulari)
+    pvgis_monthly:        state.pvgisMonthly || null,
+    ombres:               document.getElementById('ombres')?.value || 'cap',
     // Meta
     comercial_id:         p.meta.comercial_id,
     enviar_email:         p.meta.enviar_email,

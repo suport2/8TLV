@@ -34,6 +34,22 @@ const shape = SHAPES[perfil] || SHAPES['industria_general'];
 // Format consums: {gen:{p1,p2,p3},...} o {gen:700,...}
 const mesClaus = ['gen','feb','mar','abr','mai','jun','jul','ago','set','oct','nov','des'];
 const dies_l   = [31,28,31,30,31,30,31,31,30,31,30,31];
+
+// Pèrdues de sistema (cable + inversor) — quan no hi ha PVGIS
+const factorPerdues = (1 - 0.015) * (1 - 0.08);  // ~0.906
+const factorOmbres  = {'cap': 1, 'parcials': 0.95, 'importants': 0.85}[input.ombres || 'cap'] ?? 1;
+
+// PVGIS: producció mensual real (kWh/kWp) per lat/inclinació/acimut específics del client
+const pvgisMonthly = (input.pvgis_monthly && Array.isArray(input.pvgis_monthly) && input.pvgis_monthly.length === 12)
+  ? input.pvgis_monthly : null;
+
+// Pre-calcular totals mensuals del SOLAR de referència (per factor escala PVGIS)
+const solarMesTotals = new Array(12).fill(0);
+let _si = 0;
+for (let m = 0; m < 12; m++)
+  for (let d = 0; d < dies_l[m]; d++)
+    for (let h = 0; h < 24; h++)
+      if (_si < SOLAR.length) solarMesTotals[m] += SOLAR[_si++];
 const consumos = input.consumos || {};
 let cp1, cp2, cp3;
 
@@ -73,11 +89,20 @@ for (let m = 0; m < 12; m++) {
     P2: sP.P2>0 ? cp2[m]/sP.P2 : 0,
     P3: sP.P3>0 ? cp3[m]/sP.P3 : 0,
   };
+  // Factor PVGIS per aquest mes (escala el perfil horari de referència)
+  let scalePvgis = 1;
+  if (pvgisMonthly && pvgisMonthly[m] > 0 && solarMesTotals[m] > 0)
+    scalePvgis = pvgisMonthly[m] / solarMesTotals[m];
+
   let ac=0,exc=0,xa=0,pv=0,cost=0,comp=0;
   for (let d=0; d<dies_l[m]; d++) {
     for (let h=0; h<24; h++) {
       if(idx>=SOLAR.length) break;
-      const pv_h  = Math.min(SOLAR[idx]*kwp, potInv);
+      // Aplica PVGIS si disponible (ja inclou pèrdues 14%); sinó factorPerdues manual
+      const pv_brut = pvgisMonthly
+        ? SOLAR[idx] * kwp * scalePvgis * factorOmbres
+        : SOLAR[idx] * kwp * factorPerdues * factorOmbres;
+      const pv_h  = Math.min(pv_brut, potInv);
       const t     = TARIFES[idx]||'P3';
       const tn    = t==='P1'?'P1':(t==='P2'?'P2':'P3');
       const con_h = shape[h]*fP[tn];
