@@ -7,7 +7,7 @@ const SOLAR   = motorData.solar_8760h;
 const TARIFES = motorData.tarifes_8760h;
 
 // Producció mensual real de PVGIS (kWh/kWp/mes) per lat/lng/inclinació/acimut del client
-// Si PVGIS no disponible, es fa servir el motor genèric (SOLAR array fix)
+// Prioritat 1: node PVGIS de n8n | Prioritat 2: pvgis_monthly del payload (pre-calculat per formulari)
 let pvgisMonthly = null;
 try {
   const pvgisRaw = $('PVGIS - Producció solar').first().json;
@@ -15,7 +15,12 @@ try {
   if (pvgisData && pvgisData.length === 12) {
     pvgisMonthly = pvgisData.map(r => r.E_m); // kWh/kWp per mes
   }
-} catch(e) { /* PVGIS no disponible, fallback al motor genèric */ }
+} catch(e) { /* PVGIS node no disponible */ }
+
+// Fallback: llegir pvgis_monthly del payload (enviat pel formulari)
+if (!pvgisMonthly && Array.isArray(input.pvgis_monthly) && input.pvgis_monthly.length === 12) {
+  pvgisMonthly = input.pvgis_monthly;
+}
 
 // Construir shapes des de la fulla perfils del Sheets
 const perfilsRaw = $('Llegir perfils PDF').all().map(i => i.json);
