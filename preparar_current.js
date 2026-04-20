@@ -275,7 +275,6 @@ const htmlTaulaPressupost = `<table>
   </tbody>
   <tfoot>
     <tr class="press-total"><td colspan="2"><strong>TOTAL SENSE IVA</strong></td><td><strong>${fmt(costSubtotal,2)} EUR</strong></td></tr>
-    <tr><td colspan="2" style="font-size:7.5pt;color:#64748b">+ IVA (21%)</td><td style="font-size:7.5pt;color:#64748b">${fmt(ivaEur,2)} EUR</td></tr>
   </tfoot>
 </table>`;
 
@@ -363,7 +362,7 @@ const urlGraficPVProd = 'https://quickchart.io/chart?w=420&h=210&c=' + encodeURI
   }
 }));
 
-const urlGraficProdVsConsum = 'https://quickchart.io/chart?w=420&h=210&c=' + encodeURIComponent(JSON.stringify({
+const urlGraficProdVsConsum = 'https://quickchart.io/chart?w=700&h=300&c=' + encodeURIComponent(JSON.stringify({
   type: 'bar',
   data: { labels: labelsM, datasets: [
     { label:'Produccio PV', data: prodTotal,   backgroundColor:'rgba(39,174,96,0.92)' },
