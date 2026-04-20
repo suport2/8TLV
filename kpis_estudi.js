@@ -203,18 +203,19 @@ const estalviAny1 = estalviMesCor.reduce((a,b)=>a+b,0);
 
 // Pressupost — usa el cost_instalacio del payload si ve informat (ja calculat a l'app)
 // i recalcula des del catàleg només si no ve
-let costInstal;
+let costInstal, subtotal;
 if (input.cost_instalacio && parseFloat(input.cost_instalacio) > 0) {
   costInstal = parseFloat(input.cost_instalacio);
+  subtotal   = Math.round(costInstal / (1 + IVA));  // derivat del total amb IVA
 } else {
   const costEstPerMod = 18;
   const preuMod    = parseFloat(input.preu_modul || 66.30);
   const preuInvEur = parseFloat(input.preu_inversor || 793);
   const monit      = trifasic ? 437 : 120;
-  const subtotal   = (numMod*preuMod) + (costEstPerMod*numMod) + preuInvEur + monit +
-                     225 + (15*2.50) + (15*1.80) + 200 + 175 +
-                     (numMod*(parseFloat(input.ma_obra_modul)||100)) +
-                     (parseFloat(input.projecte_tecnic)||550);
+  subtotal   = (numMod*preuMod) + (costEstPerMod*numMod) + preuInvEur + monit +
+               225 + (15*2.50) + (15*1.80) + 200 + 175 +
+               (numMod*(parseFloat(input.ma_obra_modul)||100)) +
+               (parseFloat(input.projecte_tecnic)||550);
   costInstal = subtotal*(1+MARGE)*(1+IVA);
 }
 
