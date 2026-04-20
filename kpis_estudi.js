@@ -205,8 +205,8 @@ const estalviAny1 = estalviMesCor.reduce((a,b)=>a+b,0);
 // i recalcula des del catàleg només si no ve
 let costInstal, subtotal;
 if (input.cost_instalacio && parseFloat(input.cost_instalacio) > 0) {
-  costInstal = parseFloat(input.cost_instalacio);
-  subtotal   = Math.round(costInstal / (1 + IVA));  // derivat del total amb IVA
+  costInstal = parseFloat(input.cost_instalacio);  // ja sense IVA
+  subtotal   = costInstal;
 } else {
   const costEstPerMod = 18;
   const preuMod    = parseFloat(input.preu_modul || 66.30);

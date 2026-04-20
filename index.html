@@ -717,7 +717,7 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
           <div><span class="kpi-value" id="kpi_kwp">&mdash;</span><span class="kpi-unit">kWp</span></div>
         </div>
         <div class="kpi-item">
-          <div><div class="kpi-label">Preu instal·laci&oacute; (IVA incl.)</div></div>
+          <div><div class="kpi-label">Preu instal·laci&oacute; (s/IVA)</div></div>
           <div><span class="kpi-value" id="kpi_capex">&mdash;</span><span class="kpi-unit">&euro;</span></div>
         </div>
         <div class="kpi-item positive">
@@ -1432,7 +1432,7 @@ function calcPressupost() {
   const costTotal    = costSubtotal + Math.round(costSubtotal * 0.21);
 
   const el = document.getElementById('cost_instalacio');
-  if (el) el.value = costTotal;
+  if (el) el.value = costSubtotal;   // sense IVA — és la base per al càlcul de retorn
   const hint = document.getElementById('costHint');
   if (hint) hint.textContent =
     `Mòduls ${Math.round(tModuls).toLocaleString('ca')}\u20ac`
@@ -1441,7 +1441,7 @@ function calcPressupost() {
     + ` · MO ${Math.round(tMaObra).toLocaleString('ca')}\u20ac`
     + ` · Proj. ${Math.round(tProjecte).toLocaleString('ca')}\u20ac`
     + ` · Cab. ${Math.round(tCables).toLocaleString('ca')}\u20ac`
-    + ` + IVA 21%`;
+    + ` (s/IVA)`;
   onFormChange();
 }
 

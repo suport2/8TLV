@@ -707,7 +707,7 @@ return [{json: {
     '{{BENEFICI_25_ANYS}}':           fmtE(kpis.benefici_net_25),
     '{{VAN_25_ANYS}}':                fmtE(kpis.van_25anys),
     '{{TIR_PCT}}':                    String(kpis.tir_pct),
-    '{{COST_INSTALACIO}}':            fmtE(costTotal),
+    '{{COST_INSTALACIO}}':            fmtE(costSubtotal),
     '{{COST_INSTALACIO_SENSE_IVA}}':  fmtE(costSubtotal),
     '{{PCT_REDUCCIO_COST}}':          consumAnual > 0 ? Math.round((kpis.estalvi_any1 / costActual) * 100) + '%' : '-',
     '{{PREU_ENERGIA_ACTUAL}}':        fmt(preuMig,4) + ' EUR/kWh',
