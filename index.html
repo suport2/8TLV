@@ -290,10 +290,10 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
           </div>
           <p class="upload-hint">Puja la factura elèctrica del client i omplirem automàticament les dades de contacte, CUPS i preus de l'energia.</p>
           <div class="upload-drop-zone" id="uploadDropZone">
-            <input type="file" id="facturaFileInput" accept=".pdf" hidden>
+            <input type="file" id="facturaFileInput" accept=".pdf,.jpg,.jpeg,.png,.webp" hidden>
             <div class="upload-icon">📄</div>
             <p><strong>Arrossega la factura aquí</strong><br>o <a href="#" id="uploadBrowseLink">cerca al teu ordinador</a></p>
-            <p class="upload-formats">Format: PDF · Màx. 10 MB</p>
+            <p class="upload-formats">Format: PDF · JPG · PNG · Màx. 10 MB</p>
           </div>
           <div class="upload-status" id="uploadStatus" style="display:none">
             <div class="upload-spinner"></div>
@@ -1722,16 +1722,20 @@ function initUploadFactura() {
     e.preventDefault();
     dropZone.classList.remove('drag-over');
     const file = e.dataTransfer.files[0];
-    if (file && file.type === 'application/pdf') processFacturaFile(file);
-    else showUploadError('Només s\'accepten fitxers PDF.');
+    if (file && isAcceptedFile(file)) processFacturaFile(file);
+    else showUploadError('Formats acceptats: PDF, JPG, PNG.');
   });
 
   document.getElementById('btnApplyExtraction')?.addEventListener('click', applyExtraction);
   document.getElementById('btnCancelUpload')?.addEventListener('click', cancelUpload);
 }
 
+function isAcceptedFile(file) {
+  return ['application/pdf','image/jpeg','image/png','image/webp'].includes(file.type);
+}
+
 async function processFacturaFile(file) {
-  if (file.type !== 'application/pdf') { showUploadError('Només s\'accepten fitxers PDF.'); return; }
+  if (!isAcceptedFile(file)) { showUploadError('Formats acceptats: PDF, JPG, PNG.'); return; }
   if (file.size > MAX_PDF_MB * 1024 * 1024) { showUploadError('El fitxer supera els ' + MAX_PDF_MB + ' MB màxims.'); return; }
 
   showUploadStatus('Analitzant "' + file.name + '"...');
@@ -1740,11 +1744,17 @@ async function processFacturaFile(file) {
   try { base64 = await fileToBase64(file); }
   catch(e) { showUploadError('Error llegint el fitxer: ' + e.message); return; }
 
+  const isPdf = file.type === 'application/pdf';
   try {
     const res = await fetch(ENDPOINT_FACTURA, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ pdf_base64: base64, filename: file.name }),
+      body: JSON.stringify({
+        pdf_base64:  isPdf ? base64 : null,
+        image_base64: isPdf ? null : base64,
+        mime_type: file.type,
+        filename: file.name,
+      }),
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const text = await res.text();
