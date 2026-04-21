@@ -463,8 +463,8 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
             <div class="field">
               <label>M&egrave;tres de cablejat estimats</label>
               <div class="slider-wrap">
-                <input type="range" id="metres_cablejat" min="5" max="100" value="15"
-                  oninput="document.getElementById('metresVal').textContent=this.value+'m';onFormChange()">
+                <input type="range" id="metres_cablejat" min="5" max="300" value="15"
+                  oninput="document.getElementById('metresVal').textContent=this.value+'m';calcPressupost();onFormChange()">
                 <span class="slider-val" id="metresVal">15m</span>
               </div>
             </div>
