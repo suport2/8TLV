@@ -846,6 +846,7 @@ return [{json: {
     '{{IMG_GRAFIC_CASHFLOW}}':            urlGraficCashflow,
     '{{HTML_MANTENIMENT_CARDS}}':         htmlMantCards,
     '{{HTML_IMG_MANTENIMENT}}':          (() => { const id = config['IMG_MANTENIMENT'] || ''; return id ? `<img src="${driveUrl(id)}" style="width:100%;height:200px;object-fit:cover;border-radius:10px;margin:16px 0;display:block;box-shadow:0 3px 10px rgba(0,0,0,0.07)" alt="Manteniment Solenver">` : ''; })(),
+    '{{HTML_IMG_BATERIA}}':              (() => { const id = config['IMG_BATERIA'] || ''; return id ? `<img src="${driveUrl(id)}" style="width:100%;max-height:220px;object-fit:contain;border-radius:10px;margin:12px 0 16px;display:block" alt="Esquema instal·lació amb bateria">` : ''; })(),
     '{{HTML_IMG_REVISIO_ANUAL}}':        (() => { const id = config['IMG_REVISIO_ANUAL'] || ''; return id ? `<div><img src="${driveUrl(id)}" style="width:100%;border-radius:10px;object-fit:cover;max-height:220px;display:block;box-shadow:0 3px 10px rgba(0,0,0,0.08)" alt="Revisió tècnica anual"></div>` : '<div></div>'; })(),
     '{{MANTENIMENT_NOM}}':                mantNom,
     '{{MANTENIMENT_COST_ANY}}':           mantCostAnual > 0 ? fmtE(mantCostAnual) : 'Sense contracte',
