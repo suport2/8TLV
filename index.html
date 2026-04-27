@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ca">
 <head>
 <meta charset="UTF-8">
@@ -234,6 +234,24 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
 .upload-card-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .upload-card-header h3{font-size:13px;font-weight:600;color:var(--v2);margin:0}
 .upload-section-icon{font-size:1.1rem}
+
+/* ── EQUIPS FUTURS ── */
+.equips-futur-toggle{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--blbg);border:1.5px solid #90caf9;border-radius:8px;margin-top:16px;cursor:pointer}
+.equips-futur-toggle input[type=checkbox]{width:16px;height:16px;accent-color:var(--bl);cursor:pointer}
+.equips-futur-toggle span{font-size:13px;font-weight:600;color:var(--bl)}
+.equips-futur-toggle .equips-badge{font-size:10px;background:#dbeafe;color:var(--bl);padding:2px 8px;border-radius:20px;font-weight:600;margin-left:auto}
+.equips-panel{background:#f0f7ff;border:1.5px solid #90caf9;border-radius:10px;padding:14px;margin-top:8px}
+.equips-panel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.equips-panel-header h4{font-size:12px;font-weight:700;color:var(--bl);margin:0}
+.equips-cols{display:grid;grid-template-columns:1fr 34px 72px 72px 30px;gap:6px;align-items:center;margin-bottom:4px}
+.equips-col-head{font-size:10px;font-weight:700;color:var(--gm);text-transform:uppercase;letter-spacing:.3px}
+.equip-row-grid{display:grid;grid-template-columns:1fr 34px 72px 72px 30px;gap:6px;align-items:center;margin-bottom:6px}
+.equip-row-grid select,.equip-row-grid input{padding:6px 8px;border:1.5px solid var(--gl);border-radius:6px;font-size:12px;font-family:var(--font);background:#fff}
+.equip-row-grid input{text-align:center}
+.btn-del-equip{padding:4px 8px;background:#fee2e2;color:var(--rj);border:none;border-radius:6px;cursor:pointer;font-weight:700;font-size:14px;line-height:1}
+.equip-mode-btn{padding:3px 4px;border:1.5px solid #93c5fd;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;background:#dbeafe;color:#1d4ed8;line-height:1;transition:all .15s}
+.equip-mode-btn.pct{background:#fed7aa;color:#c2410c;border-color:#fdba74}
+.equip-summary-box{font-size:11px;color:#1d4ed8;margin-top:10px;padding:8px 12px;background:#fff;border-radius:6px;border:1px solid #93c5fd;line-height:1.5}
 </style>
 </head>
 <body>
@@ -373,6 +391,9 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
           </div>
         </div>
         <div id="geocodeStatus" style="font-size:12px;color:var(--gm);margin-top:4px;display:none"></div>
+        <div style="font-size:11px;color:var(--gm);margin-top:3px">
+          💡 Si la ubicació no és exacta: <a id="gmapsLink" href="#" target="_blank" rel="noopener" style="color:var(--bl);text-decoration:underline">obre Google Maps</a>, clica dret sobre la casa → copia les coordenades i enganxa-les als camps lat/lng.
+        </div>
         <div class="divider"></div>
         <div class="field-grid field-grid-2">
           <div class="field">
@@ -616,6 +637,30 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
             <input type="number" id="preu_p3" value="0.075" step="0.001" min="0" oninput="onFormChange()">
           </div>
         </div>
+        <!-- ─── EQUIPS FUTURS ─── -->
+        <label class="equips-futur-toggle">
+          <input type="checkbox" id="teEquipsFuturs" onchange="onEquipsFuturChange()">
+          <span>&#9889; Preveus instal·lar nous equips? (aerotèrmia, coolings, VE...)</span>
+          <span class="equips-badge">Opcional</span>
+        </label>
+        <div id="equipsFutursPanel" style="display:none">
+          <div class="equips-panel">
+            <div class="equips-panel-header">
+              <h4>Equipament nou previst</h4>
+              <button onclick="addEquipFutur()" style="padding:5px 12px;background:var(--bl);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer">+ Afegir equip</button>
+            </div>
+            <div class="equips-cols">
+              <span class="equips-col-head">Tipus d'equip</span>
+              <span></span>
+              <span class="equips-col-head" style="text-align:center" id="equipColHead3">Unitats</span>
+              <span class="equips-col-head" style="text-align:center">kW/u.</span>
+              <span></span>
+            </div>
+            <div id="equipsList"></div>
+            <div class="equip-summary-box" id="equipSummary" style="display:none"></div>
+          </div>
+        </div>
+
         <div class="nav-buttons">
           <button class="btn btn-secondary" onclick="goTo(2)">&larr; Instal&middot;laci&oacute;</button>
           <button class="btn btn-primary" onclick="goTo(4)">Seg&uuml;ent &rarr; Econ&ograve;mics</button>
@@ -645,6 +690,14 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
               <input type="range" id="increment_energia" min="0" max="5" value="2.5" step="0.5"
                 oninput="document.getElementById('incrVal').textContent=this.value+'%';onFormChange()">
               <span class="slider-val" id="incrVal">2.5%</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>Marge comercial (%)</label>
+            <div class="slider-wrap">
+              <input type="range" id="marge_comercial" min="0" max="60" value="35" step="1"
+                oninput="document.getElementById('margeVal').textContent=this.value+'%';calcPressupost();onFormChange()">
+              <span class="slider-val" id="margeVal">35%</span>
             </div>
           </div>
           <div class="field">
@@ -802,9 +855,10 @@ async function loadCataleg() {
     state.cataleg.mono      = (d.inversors||[]).filter(i => i.trifasic===false || i.trifasic==='FALSE');
     state.cataleg.trifasic  = (d.inversors||[]).filter(i => i.trifasic===true  || i.trifasic==='TRUE');
     state.cataleg.muntatges   = d.muntatges   || [];
-    state.cataleg.comercials  = d.comercials  || [];
-    state.cataleg.manteniments= d.manteniments|| DEFAULT_MANTENIMENTS;
-    state.cataleg.costos      = d.costos      || {};
+    state.cataleg.comercials     = d.comercials     || [];
+    state.cataleg.manteniments   = d.manteniments   || DEFAULT_MANTENIMENTS;
+    state.cataleg.costos         = d.costos         || {};
+    state.cataleg.perfils_equips = d.perfils_equips || [];
     renderModulGrid();
     renderInversorGrid('mono');
     renderMuntatgeGrid();
@@ -842,9 +896,11 @@ function renderMantenimentSelect() {
   const sel = document.getElementById('manteniment_pla');
   if (!sel) return;
   const opts = state.cataleg.manteniments || DEFAULT_MANTENIMENTS;
-  sel.innerHTML = opts.map(m =>
-    `<option value="${m.id}" data-kwp="${m.preu_kwp_any}">${m.nom} ${m.preu_kwp_any > 0 ? '('+m.preu_kwp_any+' \u20ac/kWp)' : ''}</option>`
-  ).join('');
+  sel.innerHTML = '<option value="sense" data-kwp="0">Sense manteniment</option>' +
+    opts.filter(m => m.id !== 'sense').map(m =>
+      `<option value="${m.id}" data-kwp="${m.preu_kwp_any}">${m.nom} ${m.preu_kwp_any > 0 ? '('+m.preu_kwp_any+' €/kWp)' : ''}</option>`
+    ).join('');
+  sel.value = 'sense';
   onMantenimentChange();
 }
 
@@ -1112,43 +1168,72 @@ async function geocodeAddress(addr) {
   if (!addr) return;
 
   const statusEl = document.getElementById('geocodeStatus');
-  if (statusEl) { statusEl.textContent = '⏳ Cercant coordenades per: ' + addr; statusEl.style.display = 'block'; }
+  if (statusEl) { statusEl.textContent = 'Cercant coordenades...'; statusEl.style.display = 'block'; statusEl.style.color = 'var(--gm)'; }
 
-  // Intents progressivament menys específics:
-  // "NOU 1, 25165 JUNCOSA, LÉRIDA" → "25165 JUNCOSA, LÉRIDA" → "JUNCOSA"
-  const parts = addr.split(',').map(p => p.trim()).filter(Boolean);
-  const attempts = [addr];
-  if (parts.length >= 2) attempts.push(parts.slice(-2).join(', '));
-  if (parts.length >= 2) attempts.push(parts[parts.length - 2]);
+  const parts = addr.split(',').map(function(p){ return p.trim(); }).filter(Boolean);
+  const cpMatch = addr.match(/\b(\d{5})\b/);
+  const cp = cpMatch ? cpMatch[1] : '';
+  const muniName = parts.length >= 2
+    ? (parts[parts.length - 2] || '').replace(/\d{5}\s*/, '').trim()
+    : '';
 
-  for (const query of attempts) {
-    if (!query || query.length < 3) continue;
+  const attempts = [];
+  if (parts.length >= 1 && cp && muniName) {
+    attempts.push({ type: 'structured', street: parts[0], city: muniName, postalcode: cp });
+  }
+  attempts.push({ type: 'simple', q: addr });
+  if (cp && muniName) attempts.push({ type: 'simple', q: cp + ' ' + muniName });
+  if (muniName) attempts.push({ type: 'simple', q: muniName });
+
+  for (const attempt of attempts) {
     try {
-      const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=es&q=' + encodeURIComponent(query);
-      const r = await fetch(url);
+      let url;
+      if (attempt.type === 'structured') {
+        url = 'https://nominatim.openstreetmap.org/search?format=json&limit=3&countrycodes=es&addressdetails=1'
+          + '&street=' + encodeURIComponent(attempt.street)
+          + '&city=' + encodeURIComponent(attempt.city)
+          + '&postalcode=' + encodeURIComponent(attempt.postalcode);
+      } else {
+        url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=es&q=' + encodeURIComponent(attempt.q);
+      }
+      const r = await fetch(url, { headers: { 'Accept-Language': 'ca,es' } });
       if (!r.ok) continue;
       const data = await r.json();
       if (data.length > 0) {
-        const lat = parseFloat(data[0].lat).toFixed(5);
-        const lng = parseFloat(data[0].lon).toFixed(5);
+        const best = data.find(function(d){ return d.address && d.address.house_number; }) || data[0];
+        const lat = parseFloat(best.lat).toFixed(5);
+        const lng = parseFloat(best.lon).toFixed(5);
         document.getElementById('lat').value = lat;
         document.getElementById('lng').value = lng;
         onFormChange();
-        if (statusEl) { statusEl.textContent = '📌 Coordenades: ' + lat + ', ' + lng + ' (' + (query === addr ? 'adreça exacta' : query) + ')'; }
-        toast('\uD83D\uDCCC Coordenades actualitzades', 'success');
+        const hasNum = attempt.type === 'structured' && best.address && best.address.house_number;
+        const precision = hasNum ? ('num. ' + best.address.house_number) : (attempt.type === 'structured' ? 'carrer' : 'aproximada');
+        if (statusEl) { statusEl.textContent = lat + ', ' + lng + ' (' + precision + ')'; statusEl.style.color = 'var(--v2)'; }
+        toast('📌 Coordenades (' + precision + ')', 'success');
         return;
       }
     } catch(e) { continue; }
-    await new Promise(res => setTimeout(res, 300));
+    await new Promise(function(res){ setTimeout(res, 250); });
   }
-  if (statusEl) { statusEl.textContent = '⚠ No s\'han trobat coordenades automàticament. Edita lat/lng manualment.'; statusEl.style.color = 'var(--am)'; }
+  if (statusEl) { statusEl.textContent = 'No shan trobat coordenades. Edita lat/lng manualment.'; statusEl.style.color = 'var(--am)'; }
 }
 
 function onFormChange() {
   updateConsumTotals();
+  updateEquipSummary();
   checkWarnings();
+  updateGmapsLink();
   clearTimeout(state.kpiTimer);
   state.kpiTimer = setTimeout(fetchKpis, 600);
+}
+
+function updateGmapsLink() {
+  const lat = document.getElementById('lat')?.value || '';
+  const lng = document.getElementById('lng')?.value || '';
+  const link = document.getElementById('gmapsLink');
+  if (link && lat && lng) {
+    link.href = `https://www.google.com/maps?q=${lat},${lng}&z=19`;
+  }
 }
 
 function checkWarnings() {
@@ -1218,24 +1303,30 @@ async function fetchKpis() {
     // Guardar per usar-lo també al payload del PDF
     state.pvgisMonthly = pvgis_monthly;
 
+    // Consums base (sense delta): el servidor aplica equips_futurs internament
     const kpiPayload = {
-      num_moduls:       p.instalacio.num_moduls,
-      potencia_wp:      modul.potencia_wp || 510,
+      num_moduls:           p.instalacio.num_moduls,
+      potencia_wp:          modul.potencia_wp || 510,
       potencia_inversor_kw: inv.potencia_kw || 6,
-      perfil_client:    document.getElementById('perfil_client')?.value || 'industria_general',
-      preu_p1:          p.economics.preu_p1,
-      preu_p2:          p.economics.preu_p2,
-      preu_p3:          p.economics.preu_p3,
-      preu_excedent:    p.economics.preu_compensacio,
-      consum_anual:     consumAnual,
-      consum_p1:        MES_CLAUS.map(k => (p.consumos[k]||{}).p1||0),
-      consum_p2:        MES_CLAUS.map(k => (p.consumos[k]||{}).p2||0),
-      consum_p3:        MES_CLAUS.map(k => (p.consumos[k]||{}).p3||0),
-      cost_instalacio:  p.economics.cost_instalacio || null,
-      manteniment_anual:p.economics.manteniment_anual,
+      perfil_client:        document.getElementById('perfil_client')?.value || 'industria_general',
+      preu_p1:              p.economics.preu_p1,
+      preu_p2:              p.economics.preu_p2,
+      preu_p3:              p.economics.preu_p3,
+      preu_excedent:        p.economics.preu_compensacio,
+      consum_anual:         consumAnual,
+      consum_p1:            MES_CLAUS.map(k => (p.consumos[k]||{}).p1||0),
+      consum_p2:            MES_CLAUS.map(k => (p.consumos[k]||{}).p2||0),
+      consum_p3:            MES_CLAUS.map(k => (p.consumos[k]||{}).p3||0),
+      cost_instalacio:      p.economics.cost_instalacio || null,
+      increment_energia_pct:p.economics.increment_energia_pct,
+      manteniment_anual:    p.economics.manteniment_anual,
+      anys_analisi:         p.economics.anys_analisi,
+      tarifa:               p.economics.tipus_tarifa,
       lat, lng, inclinacio: incl, acimut: azim,
       pvgis_monthly,
-      ombres: document.getElementById('ombres')?.value || 'cap',
+      ombres:               document.getElementById('ombres')?.value || 'cap',
+      equips_futurs:        getEquipsFuturs(),
+      perfils_equips:       state.cataleg.perfils_equips || [],
     };
     const r = await fetch(`${N8N}/solenver/calcular-kpis`, {
       method:'POST', headers:{'Content-Type':'application/json'},
@@ -1417,7 +1508,7 @@ function calcPressupost() {
   const cables_per_m = parseFloat(c.cables_per_metre)  || 4.50;
   const metres       = parseFloat(document.getElementById('metres_cablejat')?.value || 15);
   const cables       = metres * cables_per_m;
-  const MARGE       = parseFloat(c.marge)              || 0.35;
+  const MARGE       = (parseFloat(document.getElementById('marge_comercial')?.value) || 35) / 100;
 
   // Marge aplicat per línia (igual que preparar_current.js)
   const r = v => Math.round(v * 100) / 100;
@@ -1443,6 +1534,173 @@ function calcPressupost() {
     + ` · Cab. ${Math.round(tCables).toLocaleString('ca')}\u20ac`
     + ` (s/IVA)`;
   onFormChange();
+}
+
+// ─── EQUIPS FUTURS ───────────────────────────────────────────────────────────
+// Perfils per defecte (fallback si el Sheets no s'ha carregat encara)
+const PERFILS_EQUIPS_DEFAULT = [
+  { id:'cooling_granja',     nom:'Cooling granja',              kw_defecte:1.5, hores:[0,0,4,6,8,10,12,12,10,4,0,0]  },
+  { id:'camara_frigorifica', nom:'Càmera frigorífica',          kw_defecte:2.0, hores:[6,6,7,8,10,12,14,14,11,8,6,6] },
+  { id:'aerotermia_acs',     nom:'Aerotèrmia (ACS)',            kw_defecte:3.0, hores:[4,4,3,2,1,1,1,1,1,2,3,4]      },
+  { id:'aerotermia_calef',   nom:'Aerotèrmia (calefacció)',     kw_defecte:3.0, hores:[8,7,5,2,0,0,0,0,0,2,5,8]      },
+  { id:'carregador_ve',      nom:'Carregador VE',               kw_defecte:7.2, hores:[2,2,2,2,2,2,2,2,2,2,2,2]      },
+  { id:'bombament_reg',      nom:'Bomba de reg / piscina',      kw_defecte:1.5, hores:[0,0,1,2,4,6,8,8,6,2,0,0]      },
+  { id:'compressor_fred',    nom:'Compressor / fred industrial',kw_defecte:5.5, hores:[3,3,4,5,7,9,10,10,8,5,3,3]    },
+  { id:'altre',              nom:'Altre (hores uniformes)',     kw_defecte:1.0, hores:[3,3,3,3,3,3,3,3,3,3,3,3]      },
+];
+// Perfils actius: vindrà del Sheets via /cataleg; fallback als defaults
+function getPerfils() {
+  return (state.cataleg.perfils_equips && state.cataleg.perfils_equips.length > 0)
+    ? state.cataleg.perfils_equips
+    : PERFILS_EQUIPS_DEFAULT;
+}
+// Lookup ràpid per id
+function getPerfilById(id) {
+  return getPerfils().find(p => p.id === id) || PERFILS_EQUIPS_DEFAULT.find(p => p.id === id);
+}
+const DIES_MES = [31,28,31,30,31,30,31,31,30,31,30,31];
+let _nextEquipId = 0;
+
+function onEquipsFuturChange() {
+  const checked = document.getElementById('teEquipsFuturs').checked;
+  document.getElementById('equipsFutursPanel').style.display = checked ? 'block' : 'none';
+  if (checked && document.getElementById('equipsList').children.length === 0) addEquipFutur();
+  onFormChange();
+}
+
+function addEquipFutur() {
+  const id = ++_nextEquipId;
+  const perfils = getPerfils();
+  const tipusOpts = perfils
+    .map(p => `<option value="${p.id}">${p.nom}</option>`).join('');
+  const kwDefecte = perfils[0]?.kw_defecte ?? 1.5;
+  const row = document.createElement('div');
+  row.id = `equip_row_${id}`;
+  row.className = 'equip-row-grid';
+  row.innerHTML = `
+    <select id="equip_tipus_${id}" onchange="onEquipTipusChange(${id})">${tipusOpts}</select>
+    <button class="equip-mode-btn" id="equip_mode_btn_${id}" data-mode="kw" onclick="onEquipModeChange(${id})" title="Canviar entre mode kW o % sobre el consum">kW</button>
+    <input type="number" id="equip_unitats_${id}" value="1" min="1" step="1" oninput="onFormChange()">
+    <input type="number" id="equip_kw_${id}" value="${kwDefecte}" min="0.1" step="0.1" oninput="onFormChange()">
+    <button class="btn-del-equip" onclick="removeEquipFutur(${id})">×</button>`;
+  document.getElementById('equipsList').appendChild(row);
+  onFormChange();
+}
+
+function onEquipModeChange(id) {
+  const btn = document.getElementById(`equip_mode_btn_${id}`);
+  const unitatsEl = document.getElementById(`equip_unitats_${id}`);
+  const kwEl = document.getElementById(`equip_kw_${id}`);
+  if (!btn) return;
+  const isKw = btn.dataset.mode === 'kw';
+  if (isKw) {
+    // switch to % mode
+    btn.dataset.mode = 'pct';
+    btn.textContent = '%';
+    btn.classList.add('pct');
+    unitatsEl.value = 25;
+    unitatsEl.min = 1; unitatsEl.max = 500; unitatsEl.step = 5;
+    unitatsEl.title = '% sobre el consum base';
+    kwEl.style.visibility = 'hidden';
+  } else {
+    // switch back to kW mode
+    btn.dataset.mode = 'kw';
+    btn.textContent = 'kW';
+    btn.classList.remove('pct');
+    const tipus = document.getElementById(`equip_tipus_${id}`)?.value;
+    const perfil = getPerfilById(tipus);
+    unitatsEl.value = 1;
+    unitatsEl.min = 1; unitatsEl.max = 999; unitatsEl.step = 1;
+    unitatsEl.title = 'Unitats';
+    kwEl.value = perfil?.kw_defecte ?? 1.5;
+    kwEl.style.visibility = 'visible';
+  }
+  onFormChange();
+}
+
+function onEquipTipusChange(id) {
+  const tipus = document.getElementById(`equip_tipus_${id}`)?.value;
+  const perfil = getPerfilById(tipus);
+  const modeBtn = document.getElementById(`equip_mode_btn_${id}`);
+  if (modeBtn?.dataset.mode !== 'pct' && perfil?.kw_defecte) {
+    const kwEl = document.getElementById(`equip_kw_${id}`);
+    if (kwEl) kwEl.value = perfil.kw_defecte;
+  }
+  onFormChange();
+}
+
+function removeEquipFutur(id) {
+  document.getElementById(`equip_row_${id}`)?.remove();
+  onFormChange();
+}
+
+function getEquipsFuturs() {
+  if (!document.getElementById('teEquipsFuturs')?.checked) return [];
+  const result = [];
+  const rows = document.getElementById('equipsList')?.children || [];
+  for (const row of rows) {
+    const m = row.id.match(/equip_row_(\d+)/);
+    if (!m) continue;
+    const rid = m[1];
+    const tipus   = document.getElementById(`equip_tipus_${rid}`)?.value;
+    const modeBtn = document.getElementById(`equip_mode_btn_${rid}`);
+    const mode    = modeBtn?.dataset.mode || 'kw';
+    if (!tipus) continue;
+    if (mode === 'pct') {
+      const pct = parseFloat(document.getElementById(`equip_unitats_${rid}`)?.value || 25);
+      if (pct > 0) result.push({ tipus, mode: 'pct', pct });
+    } else {
+      const unitats = parseFloat(document.getElementById(`equip_unitats_${rid}`)?.value || 1);
+      const kw      = parseFloat(document.getElementById(`equip_kw_${rid}`)?.value || 0);
+      if (kw > 0 && unitats > 0) result.push({ tipus, mode: 'kw', unitats, kw_unit: kw });
+    }
+  }
+  return result;
+}
+
+function calcDeltaMensual(equips, baseMensual) {
+  const delta = new Array(12).fill(0);
+  for (const eq of equips) {
+    if (eq.mode === 'pct') {
+      const ratio = (eq.pct || 0) / 100;
+      for (let m = 0; m < 12; m++) {
+        delta[m] += (baseMensual ? baseMensual[m] : 0) * ratio;
+      }
+    } else {
+      const perfil = getPerfilById(eq.tipus);
+      if (!perfil) continue;
+      for (let m = 0; m < 12; m++) {
+        delta[m] += (eq.unitats||1) * (eq.kw_unit||0) * perfil.hores[m] * DIES_MES[m];
+      }
+    }
+  }
+  return delta;
+}
+
+function updateEquipSummary() {
+  const equips = getEquipsFuturs();
+  const summary = document.getElementById('equipSummary');
+  if (!summary) return;
+  if (equips.length === 0) { summary.style.display = 'none'; return; }
+  // Base mensual des del formulari
+  const baseMensual = MESOS.map((mes, i) => {
+    const p1 = parseFloat(document.querySelector(`.p1[data-mes="${mes}"]`)?.value||0);
+    const p2 = parseFloat(document.querySelector(`.p2[data-mes="${mes}"]`)?.value||0);
+    const p3 = parseFloat(document.querySelector(`.p3[data-mes="${mes}"]`)?.value||0);
+    return p1 + p2 + p3;
+  });
+  const consumBase = baseMensual.reduce((a,b)=>a+b,0);
+  const delta = calcDeltaMensual(equips, baseMensual);
+  const totalExtra = Math.round(delta.reduce((a,b) => a+b, 0));
+  const pct = consumBase > 0 ? Math.round(totalExtra / consumBase * 100) : 0;
+  const detall = equips.map(eq => {
+    const nom = getPerfilById(eq.tipus)?.nom || eq.tipus;
+    return eq.mode === 'pct'
+      ? `${eq.pct}% sobre consum (${nom})`
+      : `${eq.unitats}× ${nom} (${eq.kw_unit} kW/u.)`;
+  }).join(' · ');
+  summary.style.display = 'block';
+  summary.innerHTML = `&#128202; <strong>${totalExtra.toLocaleString('ca')} kWh/any addicionals</strong> (+${pct}% sobre el consum base)<br><span style="color:#374151;font-size:10.5px">${detall}</span>`;
 }
 
 function buildPayload(kpisOnly = false) {
@@ -1486,6 +1744,7 @@ function buildPayload(kpisOnly = false) {
       manteniment_anual:    parseFloat(document.getElementById('manteniment')?.value||0),
       anys_analisi:         parseInt(document.getElementById('anys_analisi')?.value||25),
       tipus_tarifa:         document.getElementById('tarifa')?.value||'2.0TD',
+      marge_comercial:      (parseFloat(document.getElementById('marge_comercial')?.value)||35) / 100,
     },
     meta: {
       comercial_id:   document.getElementById('comercial_id')?.value||'joan',
@@ -1576,6 +1835,10 @@ function buildPdfPayload(previewOnly) {
     preview_only:         !!previewOnly,
     // Informe IA
     informe:              p.informe,
+    // Equipament futur
+    equips_futurs:        getEquipsFuturs(),
+    perfils_equips:       state.cataleg.perfils_equips || [],
+    consum_base_anual:    MES_CLAUS.reduce((s,k) => { const c=p.consumos[k]||{}; return s+(c.p1||0)+(c.p2||0)+(c.p3||0); }, 0),
   };
 }
 

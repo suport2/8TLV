@@ -121,6 +121,49 @@ if (teFactura) {
   }
 }
 
+// Equips futurs: afegir delta de consum mensual proporcional a P1/P2/P3 existents
+// Perfils del Sheets (enviats al payload) amb fallback hardcodat
+const PERFILS_EQ_FALLBACK = {
+  cooling_granja:     [0,0,4,6,8,10,12,12,10,4,0,0],
+  camara_frigorifica: [6,6,7,8,10,12,14,14,11,8,6,6],
+  aerotermia_acs:     [4,4,3,2,1,1,1,1,1,2,3,4],
+  aerotermia_calef:   [8,7,5,2,0,0,0,0,0,2,5,8],
+  carregador_ve:      [2,2,2,2,2,2,2,2,2,2,2,2],
+  bombament_reg:      [0,0,1,2,4,6,8,8,6,2,0,0],
+  compressor_fred:    [3,3,4,5,7,9,10,10,8,5,3,3],
+  altre:              [3,3,3,3,3,3,3,3,3,3,3,3],
+};
+// Construir lookup des de Sheets (si disponible) o usar fallback
+const perfilsEquipsArr = Array.isArray(input.perfils_equips) && input.perfils_equips.length > 0
+  ? input.perfils_equips
+  : [];
+const PERFILS_EQ = {};
+perfilsEquipsArr.forEach(p => { if (p.id && p.hores) PERFILS_EQ[p.id] = p.hores; });
+const getHoresEq = (id) => PERFILS_EQ[id] || PERFILS_EQ_FALLBACK[id] || PERFILS_EQ_FALLBACK['altre'];
+
+const equipsFuturs = Array.isArray(input.equips_futurs) ? input.equips_futurs : [];
+if (equipsFuturs.length > 0) {
+  for (const eq of equipsFuturs) {
+    for (let m = 0; m < 12; m++) {
+      const tot = cp1[m] + cp2[m] + cp3[m];
+      let extra = 0;
+      if (eq.mode === 'pct') {
+        extra = tot * ((eq.pct || 0) / 100);
+      } else {
+        const hores = getHoresEq(eq.tipus);
+        extra = (eq.unitats || 1) * (eq.kw_unit || 0) * hores[m] * dies_l[m];
+      }
+      if (tot > 0) {
+        cp1[m] += extra * cp1[m] / tot;
+        cp2[m] += extra * cp2[m] / tot;
+        cp3[m] += extra * cp3[m] / tot;
+      } else {
+        cp3[m] += extra;
+      }
+    }
+  }
+}
+
 // SIMULACIÓ HORA·HORA
 // Si tenim dades PVGIS, escalar la producció horària perquè els totals mensuals coincideixin
 // amb els kWh/kWp/mes reals de PVGIS (lat/lng/inclinació/acimut del client)

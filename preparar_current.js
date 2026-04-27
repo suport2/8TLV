@@ -12,7 +12,7 @@ const C_MO_BASE     = C.ma_obra_base      || 600;
 const C_MO_MOD      = C.ma_obra_per_modul || 80;
 const C_PROJECTE    = C.projecte_tecnic   || 550;
 const C_CABLES_M    = C.cables_per_metre  || 4.50;  // EUR/metre cable DC+AC+MC4
-const C_MARGE       = C.marge             || 0.35;
+const C_MARGE       = parseFloat(input.marge_comercial) > 0 ? parseFloat(input.marge_comercial) : (C.marge || 0.35);
 
 // BUG 1: Decodifica escape literals \uXXXX en textos IA (doble encoding UTF-8)
 const decodeStr = (s) => {
@@ -264,19 +264,101 @@ const ivaEur       = Math.round(costSubtotal * 0.21);
 const costTotal    = costSubtotal + ivaEur;
 
 const htmlTaulaPressupost = `<table>
-  <thead><tr><th>Concepte</th><th>Quantitat</th><th>Import s/IVA</th></tr></thead>
+  <thead><tr><th>Concepte</th><th>Quantitat</th></tr></thead>
   <tbody>
-    <tr><td>Mòduls ${modul.marca||'JINKO'} ${modul.model||'Tiger Neo'} ${modul.potencia_wp||510}Wp</td><td>${numModuls} u.</td><td>${fmt(tModuls,2)} EUR</td></tr>
-    <tr><td>Inversor ${inversor.marca||'HUAWEI'} ${inversor.model||'SUN2000'} ${inversor.potencia_kw||6}kW</td><td>1 u.</td><td>${fmt(tInv,2)} EUR</td></tr>
-    <tr><td>Muntatge ${muntatge.nom||'Estructura'} (per placa)</td><td>${numModuls} u.</td><td>${fmt(tMuntatge,2)} EUR</td></tr>
-    <tr><td>Mà d'obra i instal·lació</td><td>1 lot</td><td>${fmt(tMaObra,2)} EUR</td></tr>
-    <tr><td>Projecte tècnic i legalització</td><td>1 u.</td><td>${fmt(tProjecte,2)} EUR</td></tr>
-    <tr><td>Cablejat i materials</td><td>${metresCablejat} m</td><td>${fmt(tCables,2)} EUR</td></tr>
+    <tr><td>Mòduls ${modul.marca||'JINKO'} ${modul.model||'Tiger Neo'} ${modul.potencia_wp||510}Wp</td><td>${numModuls} u.</td></tr>
+    <tr><td>Inversor ${inversor.marca||'HUAWEI'} ${inversor.model||'SUN2000'} ${inversor.potencia_kw||6}kW</td><td>1 u.</td></tr>
+    <tr><td>Muntatge ${muntatge.nom||'Estructura'} (per placa)</td><td>${numModuls} u.</td></tr>
+    <tr><td>Mà d'obra i instal·lació</td><td>1 lot</td></tr>
+    <tr><td>Projecte tècnic i legalització</td><td>1 u.</td></tr>
+    <tr><td>Elements elèctrics de protecció i petit material</td><td>1 lot</td></tr>
   </tbody>
   <tfoot>
-    <tr class="press-total"><td colspan="2"><strong>TOTAL SENSE IVA</strong></td><td><strong>${fmt(costSubtotal,2)} EUR</strong></td></tr>
+    <tr class="press-total"><td><strong>TOTAL SENSE IVA</strong></td><td><strong>${fmt(costSubtotal,2)} EUR</strong></td></tr>
   </tfoot>
 </table>`;
+
+// ─── BLOC CONSUM FUTUR (equips nous previstos) ───
+const equipsFutursInput = Array.isArray(input.equips_futurs) ? input.equips_futurs : [];
+// Perfils del Sheets (enviats al payload) amb fallback hardcodat
+const PERFILS_EQ_PDF_FB = {
+  cooling_granja:     { nom:'Cooling granja',              hores:[0,0,4,6,8,10,12,12,10,4,0,0]  },
+  camara_frigorifica: { nom:'Càmera frigorífica',          hores:[6,6,7,8,10,12,14,14,11,8,6,6] },
+  aerotermia_acs:     { nom:'Aerotèrmia (ACS)',            hores:[4,4,3,2,1,1,1,1,1,2,3,4]      },
+  aerotermia_calef:   { nom:'Aerotèrmia (calefacció)',     hores:[8,7,5,2,0,0,0,0,0,2,5,8]      },
+  carregador_ve:      { nom:'Carregador VE',               hores:[2,2,2,2,2,2,2,2,2,2,2,2]      },
+  bombament_reg:      { nom:'Bomba de reg / piscina',      hores:[0,0,1,2,4,6,8,8,6,2,0,0]      },
+  compressor_fred:    { nom:'Compressor / fred industrial',hores:[3,3,4,5,7,9,10,10,8,5,3,3]    },
+  altre:              { nom:'Altre (hores uniformes)',     hores:[3,3,3,3,3,3,3,3,3,3,3,3]      },
+};
+const perfilsEquipsPDF = {};
+(Array.isArray(input.perfils_equips) ? input.perfils_equips : []).forEach(p => {
+  if (p.id) perfilsEquipsPDF[p.id] = { nom: p.nom, hores: p.hores };
+});
+const getPerfilEqPDF = (id) => perfilsEquipsPDF[id] || PERFILS_EQ_PDF_FB[id] || PERFILS_EQ_PDF_FB['altre'];
+const PERFILS_EQ_PDF = new Proxy({}, { get: (_, id) => getPerfilEqPDF(id) });
+const diesMesPDF = [31,28,31,30,31,30,31,31,30,31,30,31];
+let htmlConsumsBase = '';
+if (equipsFutursInput.length > 0) {
+  // Calcular delta mensual per cada equip
+  const deltaMes = new Array(12).fill(0);
+  // Base mensual per calcular % sobre consum
+  const baseMensualPDF = mesClaus.map(clau => {
+    const c = consumosObj[clau];
+    return typeof c === 'object' ? (c.p1||0)+(c.p2||0)+(c.p3||0) : parseFloat(c||0);
+  });
+  const equipLines = equipsFutursInput.map(eq => {
+    let totalEq = 0;
+    if (eq.mode === 'pct') {
+      const ratio = (eq.pct||0)/100;
+      for (let m=0; m<12; m++) { const ex = baseMensualPDF[m]*ratio; totalEq += ex; deltaMes[m] += ex; }
+      const perfil = PERFILS_EQ_PDF[eq.tipus] || PERFILS_EQ_PDF['altre'];
+      return `<tr><td>${perfil.nom}</td><td style="text-align:center" colspan="2">+${eq.pct}% consum</td><td style="text-align:right">${fmt(totalEq,0)} kWh</td></tr>`;
+    } else {
+      const perfil = PERFILS_EQ_PDF[eq.tipus] || PERFILS_EQ_PDF['altre'];
+      for (let m=0; m<12; m++) { const ex = (eq.unitats||1)*(eq.kw_unit||0)*perfil.hores[m]*diesMesPDF[m]; totalEq += ex; deltaMes[m] += ex; }
+      return `<tr><td>${perfil.nom}</td><td style="text-align:center">${eq.unitats||1} u.</td><td style="text-align:center">${eq.kw_unit||0} kW</td><td style="text-align:right">${fmt(totalEq,0)} kWh</td></tr>`;
+    }
+  }).join('\n');
+  const totalDelta = deltaMes.reduce((a,b)=>a+b,0);
+  const consumBase = input.consum_base_anual || consumAnual - totalDelta;
+  const consumFutur = consumBase + totalDelta;
+  const pctExtra = consumBase > 0 ? Math.round(totalDelta/consumBase*100) : 0;
+  // Taula mensual base vs futur
+  const filesMensuals = mesClaus.map((clau, i) => {
+    const base = parseFloat((consumosObj[clau] && typeof consumosObj[clau]==='object')
+      ? (consumosObj[clau].p1||0)+(consumosObj[clau].p2||0)+(consumosObj[clau].p3||0)
+      : consumosObj[clau] || 0);
+    const fut = base + deltaMes[i];
+    return `<tr><td><strong>${mesNoms[i]}</strong></td><td style="text-align:right">${fmt(base,0)}</td><td style="text-align:right">${fmt(deltaMes[i],0)}</td><td style="text-align:right;font-weight:600;color:#1b5e20">${fmt(fut,0)}</td></tr>`;
+  }).join('\n');
+  htmlConsumsBase = `
+<div style="page-break-inside:avoid;margin-top:16px;background:#f0f7ff;border-left:4px solid #2196f3;border-radius:0 8px 8px 0;padding:14px 16px">
+  <div style="font-weight:700;font-size:11pt;color:#1565c0;margin-bottom:8px">&#9889; Escenari de Consum Futur</div>
+  <p style="font-size:9pt;color:#334155;margin-bottom:12px">
+    S'ha considerat l'addició dels equips nous indicats, que elevarà el consum anual base de
+    <strong>${fmt(consumBase,0)} kWh</strong> a <strong>${fmt(consumFutur,0)} kWh</strong>
+    (+${pctExtra}%). L'estudi fotovoltaic es dimensiona sobre el consum futur previst.
+  </p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div>
+      <div style="font-weight:700;font-size:9pt;color:#1565c0;margin-bottom:6px">Equips nous previstos</div>
+      <table style="font-size:8.5pt">
+        <thead><tr><th>Equip</th><th style="text-align:center">Unitats</th><th style="text-align:center">kW/u.</th><th style="text-align:right">kWh/any</th></tr></thead>
+        <tbody>${equipLines}</tbody>
+        <tfoot><tr style="font-weight:700;border-top:2px solid #90caf9"><td colspan="3">TOTAL ADDICIONAL</td><td style="text-align:right">${fmt(totalDelta,0)} kWh</td></tr></tfoot>
+      </table>
+    </div>
+    <div>
+      <div style="font-weight:700;font-size:9pt;color:#1565c0;margin-bottom:6px">Consum base vs futur per mes (kWh)</div>
+      <table style="font-size:8pt">
+        <thead><tr><th>Mes</th><th style="text-align:right">Base</th><th style="text-align:right">+Equips</th><th style="text-align:right">Total</th></tr></thead>
+        <tbody>${filesMensuals}</tbody>
+      </table>
+    </div>
+  </div>
+</div>`;
+}
 
 // ─── QUICKCHART V2 ───
 const labelsM        = ['Gen','Feb','Mar','Abr','Mai','Jun','Jul','Ago','Set','Oct','Nov','Des'];
@@ -508,17 +590,17 @@ const mapPlaceholder = `<div style="width:100%;height:220px;background:linear-gr
 // Intentar primer Google Maps, després múltiples OSM fallbacks
 let mapB64 = null;
 if (MAPS_API_KEY) {
-  const mapsUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=17&size=600x300&maptype=satellite&markers=color:red%7C${lat},${lng}&key=${MAPS_API_KEY}`;
+  const mapsUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=19&size=600x300&maptype=satellite&markers=color:red%7C${lat},${lng}&key=${MAPS_API_KEY}`;
   mapB64 = await fetchMapBase64(mapsUrl);
 }
 if (!mapB64) {
   // OSM fallback 1: staticmap.openstreetmap.de
-  const osmUrl1 = `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lng}&zoom=17&size=600x300&maptype=mapnik&markers=${lat},${lng},ol-marker`;
+  const osmUrl1 = `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lng}&zoom=18&size=600x300&maptype=mapnik&markers=${lat},${lng},ol-marker`;
   mapB64 = await fetchMapBase64(osmUrl1);
 }
 if (!mapB64) {
   // OSM fallback 2: maps.geoapify.com (no key needed for low usage)
-  const osmUrl2 = `https://maps.geoapify.com/v1/staticmap?style=osm-bright&width=600&height=300&center=lonlat:${lng},${lat}&zoom=16&marker=lonlat:${lng},${lat};color:%23ff0000;size:medium&apiKey=df85d1c0c31b4816b7a2c1b17f8fd8b0`;
+  const osmUrl2 = `https://maps.geoapify.com/v1/staticmap?style=osm-bright&width=600&height=300&center=lonlat:${lng},${lat}&zoom=18&marker=lonlat:${lng},${lat};color:%23ff0000;size:medium&apiKey=df85d1c0c31b4816b7a2c1b17f8fd8b0`;
   mapB64 = await fetchMapBase64(osmUrl2);
 }
 
@@ -751,6 +833,7 @@ return [{json: {
     '{{TEXT_EXCEDENTS}}':             textExcedents,
     '{{TEXT_AVALUACIO_ECONOMICA}}':   textAvaluacio,
     '{{HTML_TAULA_CONSUMS}}':         htmlTaulaConsums,
+    '{{HTML_CONSUM_FUTUR}}':          htmlConsumsBase,
     '{{HTML_TAULA_PRODUCCIO}}':       htmlTaulaProduccio,
     '{{HTML_TAULA_MODUL}}':           htmlTaulaModul,
     '{{HTML_TAULA_INVERSOR}}':        htmlTaulaInversor,

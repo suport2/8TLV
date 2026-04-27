@@ -356,8 +356,8 @@
     </div>
 
     <div style="margin-top:14px;background:var(--green-800);border-radius:10px;padding:14px 20px;color:#fff;text-align:center">
-      <div style="font-size:8.5pt;opacity:0.8;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Contacte Solenver</div>
-      <div style="font-size:10pt;font-weight:700">{{EMAIL_EMPRESA}} · {{WEB_EMPRESA}} · {{TELEFON_EMPRESA}}</div>
+      <div style="font-size:8.5pt;opacity:0.8;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">El vostre assessor energètic</div>
+      <div style="font-size:10pt;font-weight:700">{{COMERCIAL_NOM}} · {{COMERCIAL_EMAIL}} · {{TELEFON_EMPRESA}}</div>
     </div>
 
     <div class="pfooter">
@@ -455,6 +455,7 @@
 
     <h3 style="page-break-before:always;break-before:page;margin-top:14px">Consums mensuals per períodes tarifaris ({{TARIFA}})</h3>
     {{HTML_TAULA_CONSUMS}}
+    {{HTML_CONSUM_FUTUR}}
 
     <div class="pfooter">
       <span>{{EMAIL_EMPRESA}} | {{TELEFON_EMPRESA}}</span>
@@ -611,10 +612,42 @@
     </div>
   </div>
 
-  <!-- §06 ANÀLISI ECONÒMICA + CASHFLOW -->
+  <!-- §06 PRESSUPOST DETALLAT -->
   <div class="page">
     <div class="sh">
       <div class="sh-num">06</div>
+      <div class="sh-title">Pressupost Detallat</div>
+    </div>
+
+    {{HTML_TAULA_PRESSUPOST}}
+
+    <h3>El pressupost inclou</h3>
+    <ul>
+      <li>Materials de primera qualitat: mòduls <strong>{{MODUL_MODEL}}</strong> + inversor <strong>{{INVERSOR_MODEL}}</strong></li>
+      <li>Muntatge complet per instal·ladors certificats i posada en marxa</li>
+      <li>Sistema de monitoratge integrat amb app mòbil (temps real)</li>
+      <li>Memòria tècnica i direcció d'obra per enginyers titulats</li>
+      <li>Legalització administrativa davant el departament corresponent</li>
+      <li>Gestió de l'alta als sistemes de compensació d'excedents a la xarxa</li>
+      <li>Manteniment preventiu gratuït els <strong>{{ANYS_MANT_GRATUIT}} primers anys</strong> (revisió anual inclosa)</li>
+      <li>Telegestió i control d'alarmes en remot les 24h</li>
+    </ul>
+
+    <div class="callout" style="margin-top:22px">
+      <p>Pressupost vàlid per <strong>{{VALIDESA_PRESSUPOST}} dies</strong>. Tots els preus sense IVA (21% a afegir). La instal·lació es realitza per SOLENVER amb personal propi i certificat.</p>
+    </div>
+
+    <div class="pfooter">
+      <span>{{EMAIL_EMPRESA}} | {{TELEFON_EMPRESA}}</span>
+      <span>{{CLIENT_NOM}}</span>
+      <span>{{ID_ESTUDI}}</span>
+    </div>
+  </div>
+
+  <!-- §07 ANÀLISI ECONÒMICA + CASHFLOW -->
+  <div class="page">
+    <div class="sh">
+      <div class="sh-num">07</div>
       <div class="sh-title">Anàlisi Econòmica i Retorn de la Inversió</div>
     </div>
 
@@ -638,10 +671,6 @@
         <div class="l">Retorn inversió</div>
       </div>
       <div class="kcard">
-        <div class="v">{{VAN_25_ANYS}}</div>
-        <div class="l">VAN a 25 anys</div>
-      </div>
-      <div class="kcard">
         <div class="v">{{TIR_PCT}}%</div>
         <div class="l">Taxa Interna de Retorn</div>
       </div>
@@ -653,7 +682,7 @@
     </div>
 
     <div class="callout">
-      <p>La instal·lació solar es paga sola en <strong>{{RETORN_ANYS}}</strong>, generant un benefici net de <strong>{{BENEFICI_25_ANYS}}</strong> al llarg dels 25 anys de vida útil. TIR: {{TIR_PCT}}% · VAN: {{VAN_25_ANYS}}</p>
+      <p>La instal·lació solar es paga sola en <strong>{{RETORN_ANYS}}</strong>, generant un benefici net de <strong>{{BENEFICI_25_ANYS}}</strong> al llarg dels 25 anys de vida útil. TIR: {{TIR_PCT}}%</p>
     </div>
 
     <div class="chart" style="margin-top:12px">
@@ -668,42 +697,10 @@
     </div>
   </div>
 
-  <!-- §06b CASHFLOW DETALLAT -->
+  <!-- §07b CASHFLOW DETALLAT -->
   <div class="page">
     <h3 style="margin-top:0">Flux de caixa anual detallat</h3>
     {{HTML_TAULA_CASHFLOW}}
-
-    <div class="pfooter">
-      <span>{{EMAIL_EMPRESA}} | {{TELEFON_EMPRESA}}</span>
-      <span>{{CLIENT_NOM}}</span>
-      <span>{{ID_ESTUDI}}</span>
-    </div>
-  </div>
-
-  <!-- §07 PRESSUPOST DETALLAT -->
-  <div class="page">
-    <div class="sh">
-      <div class="sh-num">07</div>
-      <div class="sh-title">Pressupost Detallat</div>
-    </div>
-
-    {{HTML_TAULA_PRESSUPOST}}
-
-    <h3>El pressupost inclou</h3>
-    <ul>
-      <li>Materials de primera qualitat: mòduls <strong>{{MODUL_MODEL}}</strong> + inversor <strong>{{INVERSOR_MODEL}}</strong></li>
-      <li>Muntatge complet per instal·ladors certificats i posada en marxa</li>
-      <li>Sistema de monitoratge integrat amb app mòbil (temps real)</li>
-      <li>Memòria tècnica i direcció d'obra per enginyers titulats</li>
-      <li>Legalització administrativa davant el departament corresponent</li>
-      <li>Gestió de l'alta als sistemes de compensació d'excedents a la xarxa</li>
-      <li>Manteniment preventiu gratuït els <strong>{{ANYS_MANT_GRATUIT}} primers anys</strong> (revisió anual inclosa)</li>
-      <li>Telegestió i control d'alarmes en remot les 24h</li>
-    </ul>
-
-    <div class="callout" style="margin-top:22px">
-      <p>Pressupost vàlid per <strong>{{VALIDESA_PRESSUPOST}} dies</strong>. Tots els preus sense IVA (21% a afegir). La instal·lació es realitza per SOLENVER amb personal propi i certificat.</p>
-    </div>
 
     <div class="pfooter">
       <span>{{EMAIL_EMPRESA}} | {{TELEFON_EMPRESA}}</span>
@@ -756,11 +753,11 @@
 
     <div class="gar-grid">
       <div class="gar-box green">
-        <div class="gar-years">{{ANYS_GARANTIA_MODUL_PRODUCTE}}</div>
-        <div class="gar-label">Anys garantia mòdul (producte)</div>
+        <div class="gar-years">12</div>
+        <div class="gar-label">Anys garantia de producte</div>
       </div>
       <div class="gar-box green">
-        <div class="gar-years">25</div>
+        <div class="gar-years">30</div>
         <div class="gar-label">Anys garantia de producció</div>
       </div>
       <div class="gar-box dark">
@@ -769,7 +766,7 @@
       </div>
       <div class="gar-box dark">
         <div class="gar-years">{{ANYS_MANT_GRATUIT}}</div>
-        <div class="gar-label">Anys manteniment gratuït</div>
+        <div class="gar-label">Anys manteniment preventiu inclòs</div>
       </div>
     </div>
 
@@ -779,54 +776,62 @@
       <div class="pas-num">1</div>
       <div class="pas-text">
         <div class="pas-title">Acceptació del pressupost</div>
-        <div class="pas-desc">Confirmació de dades i signatura del document base (electrònica o física)</div>
+        <div class="pas-desc">Quan tot quedi clar i estiguis d'acord, signem el document de manera electrònica o física i posem en marxa el projecte</div>
         <div class="pas-qui">Responsabilitat: Client</div>
       </div>
     </div>
     <div class="pas">
       <div class="pas-num">2</div>
       <div class="pas-text">
-        <div class="pas-title">Pagament inicial (30%)</div>
-        <div class="pas-desc">Aportació del senyal per tancar la reserva logística dels equips</div>
-        <div class="pas-qui">Responsabilitat: Client</div>
+        <div class="pas-title">Disseny tècnic definitiu</div>
+        <div class="pas-desc">El nostre equip tècnic visita la instal·lació, pren mides exactes de la coberta i tanca el disseny definitiu adaptat a les teves necessitats</div>
+        <div class="pas-qui">Responsabilitat: Solenver</div>
       </div>
     </div>
     <div class="pas">
       <div class="pas-num">3</div>
       <div class="pas-text">
-        <div class="pas-title">Disseny tècnic definitiu</div>
-        <div class="pas-desc">Inspecció detallada, validació d'opcions i tramitació de permisos administratius</div>
-        <div class="pas-qui">Responsabilitat: Solenver</div>
+        <div class="pas-title">Pagament inicial (30%)</div>
+        <div class="pas-desc">Amb el disseny aprovat, fem la reserva dels equips al proveïdor per assegurar disponibilitat i data d'instal·lació</div>
+        <div class="pas-qui">Responsabilitat: Client</div>
       </div>
     </div>
     <div class="pas">
       <div class="pas-num">4</div>
       <div class="pas-text">
-        <div class="pas-title">Muntatge i posada en marxa</div>
-        <div class="pas-desc">Instal·lació d'estructura, plaques, tram elèctric i posada en servei del sistema</div>
+        <div class="pas-title">Documentació tècnica i gestió dels permisos</div>
+        <div class="pas-desc">Ens encarreguem de tots els tràmits: memòria tècnica, llicències municipals i comunicació a la distribuïdora elèctrica perquè no hagis de preocupar-te de res</div>
         <div class="pas-qui">Responsabilitat: Solenver</div>
       </div>
     </div>
     <div class="pas">
       <div class="pas-num">5</div>
       <div class="pas-text">
-        <div class="pas-title">Legalització i certificació</div>
-        <div class="pas-desc">Emissió del Butlletí / CIE i tramitació davant la distribuïdora elèctrica</div>
+        <div class="pas-title">Muntatge i posada en marxa</div>
+        <div class="pas-desc">El nostre equip instal·lador muntarà l'estructura, col·locarà els panells i connectarà tot el sistema elèctric. Al final del dia ja estaràs produint energia</div>
         <div class="pas-qui">Responsabilitat: Solenver</div>
       </div>
     </div>
     <div class="pas">
       <div class="pas-num">6</div>
       <div class="pas-text">
+        <div class="pas-title">Legalització i certificació</div>
+        <div class="pas-desc">Gestionem el Butlletí Elèctric i tots els papers davant la distribuïdora perquè la instal·lació quedi al 100% regularitzada</div>
+        <div class="pas-qui">Responsabilitat: Solenver</div>
+      </div>
+    </div>
+    <div class="pas">
+      <div class="pas-num">7</div>
+      <div class="pas-text">
         <div class="pas-title">Formació i entrega</div>
-        <div class="pas-desc">Configuració de l'App d'usuari i sessió on-boarding sobre monitoratge i manteniment</div>
+        <div class="pas-desc">Et fem una visita per explicar-te com funciona l'App de monitoratge, repassem junts les dades en temps real i resolem qualsevol dubte que tinguis</div>
         <div class="pas-qui">Responsabilitat: Solenver</div>
       </div>
     </div>
 
     <div style="margin-top:16px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:10px;padding:14px 18px;text-align:center">
-      <p style="text-align:center;font-size:12pt;font-weight:800;color:var(--green-800);margin:0;letter-spacing:-0.3px">Contacteu amb el vostre assessor energètic Solenver</p>
-      <p style="text-align:center;font-size:10pt;color:var(--slate-500);margin:5px 0 0;font-weight:500">{{EMAIL_EMPRESA}} · {{WEB_EMPRESA}} · {{TELEFON_EMPRESA}}</p>
+      <p style="text-align:center;font-size:12pt;font-weight:800;color:var(--green-800);margin:0;letter-spacing:-0.3px">El vostre assessor energètic: {{COMERCIAL_NOM}}</p>
+      <p style="text-align:center;font-size:10pt;color:var(--slate-500);margin:5px 0 0;font-weight:500">{{COMERCIAL_EMAIL}} · {{TELEFON_EMPRESA}} · {{WEB_EMPRESA}}</p>
     </div>
 
     <div class="pfooter">
@@ -877,13 +882,6 @@
           <td style="padding:7px 10px;border-bottom:1px solid #e2e8f0;text-align:center;color:#64748b">{{BAT5_EXC_REST}}</td>
           <td style="padding:7px 10px;border-bottom:1px solid #e2e8f0;text-align:center;color:#64748b">{{BAT10_EXC_REST}}</td>
           <td style="padding:7px 10px;border-bottom:1px solid #e2e8f0;text-align:center;color:#64748b">{{BAT15_EXC_REST}}</td>
-        </tr>
-        <tr>
-          <td style="padding:7px 10px;font-weight:600;color:#0f172a">Estalvi total 1r any</td>
-          <td style="padding:7px 10px;text-align:center;color:#64748b">{{BAT_ESTALVI_BASE}}</td>
-          <td style="padding:7px 10px;text-align:center;color:#15803d;{{BAT5_FW}}">{{BAT5_ESTALVI_T}}</td>
-          <td style="padding:7px 10px;text-align:center;color:#15803d;{{BAT10_FW}}">{{BAT10_ESTALVI_T}}</td>
-          <td style="padding:7px 10px;text-align:center;color:#15803d;{{BAT15_FW}}">{{BAT15_ESTALVI_T}}</td>
         </tr>
       </tbody>
     </table>
