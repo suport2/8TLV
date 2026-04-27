@@ -12,7 +12,7 @@ const C_MO_BASE     = C.ma_obra_base      || 600;
 const C_MO_MOD      = C.ma_obra_per_modul || 80;
 const C_PROJECTE    = C.projecte_tecnic   || 550;
 const C_CABLES_M    = C.cables_per_metre  || 4.50;  // EUR/metre cable DC+AC+MC4
-const C_MARGE       = parseFloat(input.marge_comercial) > 0 ? parseFloat(input.marge_comercial) : (C.marge || 0.35);
+const C_MARGE       = (() => { const m = parseFloat(input.marge_comercial) || parseFloat(input.economics?.marge_comercial); return m > 0 ? m : (C.marge || 0.35); })();
 
 // BUG 1: Decodifica escape literals \uXXXX en textos IA (doble encoding UTF-8)
 const decodeStr = (s) => {
@@ -288,13 +288,9 @@ const htmlTaulaPressupost = `<table>
     <span>Certificat d'Eficiència Energètica — estat final (després de la instal·lació)</span>
     <span style="font-weight:600;white-space:nowrap;padding-left:16px">150,00 EUR + IVA</span>
   </div>
-  <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #e2e8f0;color:#555">
-    <span>Subtotal certificats (sense IVA)</span>
-    <span style="white-space:nowrap;padding-left:16px">300,00 EUR</span>
-  </div>
   <div style="display:flex;justify-content:space-between;padding:6px 0 2px;font-weight:700;color:#0f172a">
-    <span>Total certificats energètics amb IVA (21%)</span>
-    <span style="white-space:nowrap;padding-left:16px">363,00 EUR</span>
+    <span>Total certificats energètics</span>
+    <span style="white-space:nowrap;padding-left:16px">300,00 EUR + IVA</span>
   </div>
 </div>`;
 
