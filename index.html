@@ -324,6 +324,9 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
               <span class="upload-confidence" id="uploadConfidence"></span>
             </div>
             <div class="upload-result-fields" id="uploadResultFields"></div>
+            <div id="uploadIeeNote" style="display:none;margin:0 14px 10px;padding:7px 10px;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;font-size:0.78rem;color:#78350f">
+              &#9432; Els preus P1/P2/P3 ja inclouen l'<strong>IEE (5,113%)</strong> i els descomptes comercials aplicats — són el cost real per kWh que paga el client.
+            </div>
             <div class="upload-result-actions">
               <button type="button" class="btn-apply" id="btnApplyExtraction">✓ Aplicar dades al formulari</button>
               <button type="button" class="btn-cancel-upload" id="btnCancelUpload">Descartar</button>
@@ -445,6 +448,7 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
               <option value="parcials">Parcials &mdash; ombres menors</option>
               <option value="importants">Importants &mdash; ombres significatives</option>
             </select>
+            <div class="hint">&#128161; Si la instal·lació és a Lleida, selecciona <strong>Parcials</strong> per obtenir un càlcul més precís amb les dades d'irradiació locals.</div>
           </div>
           <div class="field">
             <label>Superf&iacute;cie disponible (m&sup2;) <span class="text-muted">(opcional)</span></label>
@@ -514,26 +518,34 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
         <!-- Mode IA -->
         <div id="modeIA" style="display:none">
           <div class="ia-panel">
-            <h3>&#129302; Agent IA &mdash; Optimitzador de Configuraci&oacute;</h3>
-            <p style="font-size:12px;color:var(--gm)">L'agent analitzar&agrave; el teu perfil de consum i trobar&agrave; la configuraci&oacute; &ograve;ptima.</p>
+            <h3>&#129302; Proposta de dimensionat per IA</h3>
+            <p style="font-size:12px;color:var(--gm)">Indica l'objectiu del client i l'agent calcular&agrave; la millor configuraci&oacute; basant-se en els seus consums reals.</p>
             <div class="divider"></div>
-            <label style="display:block;font-size:11px;font-weight:600;color:var(--gm);text-transform:uppercase;margin-bottom:8px">Objectiu de negoci</label>
+            <label style="display:block;font-size:11px;font-weight:600;color:var(--gm);text-transform:uppercase;margin-bottom:8px">Qu&egrave; prioritza el client?</label>
             <div class="ia-objetiu-grid">
               <div class="ia-obj-btn active" id="iobj_roi_max" onclick="setIAObj('roi_max')">
-                <div class="title">&#128200; ROI M&agrave;xim</div>
-                <div class="desc">Maximitza la rendibilitat de la inversi&oacute;</div>
+                <div class="title">&#128200; Millor rendibilitat</div>
+                <div class="desc">Amortitza la inversi&oacute; en el menor temps possible</div>
               </div>
               <div class="ia-obj-btn" id="iobj_autoconsum_max" onclick="setIAObj('autoconsum_max')">
-                <div class="title">&#128267; Autoconsum M&agrave;xim</div>
-                <div class="desc">Cobreix el m&agrave;xim % del consum</div>
+                <div class="title">&#128267; M&agrave;xima autonomia</div>
+                <div class="desc">Dep&egrave;n el m&iacute;nim possible de la xarxa el&egrave;ctrica</div>
               </div>
-              <div class="ia-obj-btn" id="iobj_cost_minim" onclick="setIAObj('cost_minim')">
-                <div class="title">&#128182; Cost M&iacute;nim</div>
-                <div class="desc">Inversi&oacute; m&iacute;nima amb retorn &lt; 10 anys</div>
+              <div class="ia-obj-btn" id="iobj_pressupost" onclick="setIAObj('pressupost')">
+                <div class="title">&#128183; Pressupost limitat</div>
+                <div class="desc">Millor instal&middot;laci&oacute; possible per un cost m&agrave;xim</div>
               </div>
-              <div class="ia-obj-btn" id="iobj_potencia_max" onclick="setIAObj('potencia_max')">
-                <div class="title">&#9889; Pot&egrave;ncia M&agrave;xima</div>
-                <div class="desc">Omple la superf&iacute;cie disponible</div>
+              <div class="ia-obj-btn" id="iobj_van_max" onclick="setIAObj('van_max')">
+                <div class="title">&#128185; M&agrave;xim guany net</div>
+                <div class="desc">Maximitza el benefici total a llarg termini (25 anys)</div>
+              </div>
+            </div>
+            <div id="iaPressupostBox" style="display:none;margin-top:10px">
+              <label style="font-size:11px;font-weight:600;color:var(--gm)">Pressupost m&agrave;xim del client (sense IVA)</label>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                <input type="number" id="pressupost_max" placeholder="Ex: 8000" min="1000" step="500"
+                  style="flex:1;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px">
+                <span style="font-size:13px;color:var(--gm)">&euro;</span>
               </div>
             </div>
             <div class="ia-result" id="iaResult">
@@ -543,13 +555,13 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
             <button class="btn btn-primary" id="btnRunIA"
               onclick="fetchOptimitzar()"
               style="width:100%;margin-top:14px;background:var(--am);font-size:13px;padding:12px">
-              &#129302; Generar proposta IA
+              &#129302; Calcular dimensionat &ograve;ptim
             </button>
             <div id="iaLoading" style="display:none;text-align:center;padding:20px;color:var(--gm);font-size:12px">
               <div style="font-size:28px;margin-bottom:8px">&#129302;</div>
-              <strong>L'agent est&agrave; treballant...</strong><br>
-              Consultant cat&agrave;leg &rarr; Calculant configuraci&oacute; &rarr; Redactant informe
-              <div style="margin-top:6px;font-size:11px">Pot trigar 20-40 segons</div>
+              <strong>Analitzant consums i calculant la millor configuraci&oacute;...</strong><br>
+              <span style="color:#6b7280">Consultant cat&agrave;leg &rarr; Calculant producci&oacute; &rarr; Comparant opcions</span>
+              <div style="margin-top:8px;font-size:11px;color:#9ca3af">Pot trigar entre 20 i 40 segons</div>
             </div>
             <div id="iaError" class="warn-box" style="display:none;margin-top:10px"></div>
           </div>
@@ -1003,6 +1015,7 @@ function setIAObj(obj) {
   state.iaObj = obj;
   document.querySelectorAll('.ia-obj-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('iobj_'+obj)?.classList.add('active');
+  document.getElementById('iaPressupostBox').style.display = obj === 'pressupost' ? 'block' : 'none';
 }
 
 function initConsumsTable() {
@@ -1433,46 +1446,46 @@ async function fetchOptimitzar() {
 
     const prop=typeof d.proposta==='string'?JSON.parse(d.proposta):d.proposta;
     state.iaProposal=prop;
-
     const kpis=prop.kpis||{};
     const inf=prop.informe||{};
     const cfg=prop.configuracio||{};
     const nomModul   = state.cataleg.moduls?.find(m=>m.id===cfg.modul_id)?.nom || cfg.modul_id || '?';
     const nomInv     = (state.cataleg.mono||[]).concat(state.cataleg.trifasic||[]).find(i=>i.id===cfg.inversor_id)?.nom || cfg.inversor_id || '?';
     const nomMuntatge= state.cataleg.muntatges?.find(m=>m.id===cfg.muntatge_id)?.nom || cfg.muntatge_id || '?';
-    // retorn: usar el del motor si la IA no el té (camp del motor pot tenir nom diferent)
     const retornVal = kpis.retorn_anys || kpis.retorn_inversio || kpis.payback_anys;
+    const fmt2 = (v,dec=0) => v!=null ? parseFloat(v).toLocaleString('ca',{maximumFractionDigits:dec}) : '—';
     resText.innerHTML=`
-      <div style="margin-bottom:10px"><strong>Configuraci\u00f3 proposada:</strong><br>
-      ${cfg.num_moduls||'?'} m\u00f2duls &middot; ${cfg.kwp_resultant||'?'} kWp</div>
-      <div style="font-size:11px;color:#555;margin-bottom:10px;background:#f5f5f5;padding:8px;border-radius:6px;line-height:1.6">
-        <b>M\u00f2dul:</b> ${nomModul}<br>
+      <div style="font-size:13px;font-weight:700;color:#166534;margin-bottom:6px">
+        ${cfg.num_moduls||'?'} mòduls &middot; ${cfg.kwp_resultant||'?'} kWp
+      </div>
+      <div style="font-size:11px;color:#555;margin-bottom:12px;background:#f8f9fa;padding:8px;border-radius:6px;line-height:1.7">
+        <b>Mòdul:</b> ${nomModul}<br>
         <b>Inversor:</b> ${nomInv}<br>
         <b>Muntatge:</b> ${nomMuntatge}
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">
-        <div style="background:#e8f5e9;padding:8px;border-radius:6px;text-align:center">
-          <div style="font-size:16px;font-weight:700;color:#2E7D32">${kpis.estalvi_any1?Math.round(kpis.estalvi_any1).toLocaleString('ca')+' \u20ac':'\u2014'}</div>
-          <div style="font-size:10px;color:#757575">Estalvi any 1</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px">
+        <div style="background:#dcfce7;padding:10px 8px;border-radius:8px;text-align:center">
+          <div style="font-size:18px;font-weight:800;color:#166534">${kpis.estalvi_any1?fmt2(kpis.estalvi_any1)+' €':'—'}</div>
+          <div style="font-size:10px;color:#4b7a58;margin-top:2px">Estalvi el 1r any</div>
         </div>
-        <div style="background:#e8f5e9;padding:8px;border-radius:6px;text-align:center">
-          <div style="font-size:16px;font-weight:700;color:#2E7D32">${retornVal?parseFloat(retornVal).toFixed(1)+' anys':'\u2014'}</div>
-          <div style="font-size:10px;color:#757575">Retorn inversi\u00f3</div>
+        <div style="background:#dcfce7;padding:10px 8px;border-radius:8px;text-align:center">
+          <div style="font-size:18px;font-weight:800;color:#166534">${retornVal?parseFloat(retornVal).toFixed(1)+' anys':'—'}</div>
+          <div style="font-size:10px;color:#4b7a58;margin-top:2px">Retorn de la inversió</div>
         </div>
-        <div style="background:#e8f5e9;padding:8px;border-radius:6px;text-align:center">
-          <div style="font-size:16px;font-weight:700;color:#2E7D32">${kpis.autoconsum_pct?parseFloat(kpis.autoconsum_pct).toFixed(1)+'%':'\u2014'}</div>
-          <div style="font-size:10px;color:#757575">Autoconsum</div>
+        <div style="background:#eff6ff;padding:10px 8px;border-radius:8px;text-align:center">
+          <div style="font-size:18px;font-weight:800;color:#1d4ed8">${kpis.autoconsum_pct?fmt2(kpis.autoconsum_pct,1)+'%':'—'}</div>
+          <div style="font-size:10px;color:#3b5fa0;margin-top:2px">% Autoconsum</div>
         </div>
-        <div style="background:#e8f5e9;padding:8px;border-radius:6px;text-align:center">
-          <div style="font-size:16px;font-weight:700;color:#2E7D32">${kpis.van_25anys?Math.round(kpis.van_25anys).toLocaleString('ca')+' \u20ac':'\u2014'}</div>
-          <div style="font-size:10px;color:#757575">VAN 25 anys</div>
+        <div style="background:#eff6ff;padding:10px 8px;border-radius:8px;text-align:center">
+          <div style="font-size:18px;font-weight:800;color:#1d4ed8">${kpis.produccio_anual_kwh?fmt2(kpis.produccio_anual_kwh)+' kWh':'—'}</div>
+          <div style="font-size:10px;color:#3b5fa0;margin-top:2px">Producció anual</div>
         </div>
       </div>
-      ${inf.seccio_objecte?`<div style="font-size:11px;color:#616161;font-style:italic;padding:8px;background:#f5f5f5;border-radius:6px;margin-bottom:6px">"${inf.seccio_objecte}"</div>`:''}
-      ${prop.alternativa?.justificacio?`<div style="font-size:11px;color:#F57C00;margin-top:6px">&#128161; ${prop.alternativa.justificacio}</div>`:''}
-      ${inf.recomanacio_bateria?`<div style="font-size:11px;color:#22c55e;margin-top:6px">&#128267; ${inf.recomanacio_bateria}</div>`:''}
-      <button onclick="applyIAProposal()" style="width:100%;margin-top:12px;padding:10px;background:#166534;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">
-        \u2193 Aplicar configuraci\u00f3 al formulari
+      ${inf.seccio_objecte?`<div style="font-size:12px;color:#374151;background:#f0fdf4;border-left:3px solid #22c55e;padding:10px 12px;border-radius:0 6px 6px 0;margin-bottom:8px;line-height:1.6">${inf.seccio_objecte}</div>`:''}
+      ${inf.recomanacio_bateria?`<div style="font-size:11px;color:#92400e;background:#fef3c7;padding:8px 10px;border-radius:6px;margin-bottom:8px">&#128267; ${inf.recomanacio_bateria}</div>`:''}
+      ${prop.alternativa?.justificacio?`<div style="font-size:11px;color:#6b7280;padding:6px 0">&#128161; ${prop.alternativa.justificacio}</div>`:''}
+      <button onclick="applyIAProposal()" style="width:100%;margin-top:10px;padding:12px;background:#166534;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:0.3px">
+        ↓ Aplicar aquesta configuració
       </button>
     `;
     result.classList.add('show');
@@ -1484,7 +1497,7 @@ async function fetchOptimitzar() {
     errBox.style.display='block';
   } finally {
     btn.disabled=false;
-    btn.textContent='&#129302; Generar proposta IA';
+    btn.textContent='&#129302; Calcular dimensionat òptim';
     loading.style.display='none';
   }
 }
@@ -1945,10 +1958,11 @@ const FIELD_LABELS = {
   cups:                    'CUPS',
   tarifa:                  'Tarifa',
   potencia_contractada_kw: 'Potència contractada (kW)',
-  preu_p1_kwh:             'Preu P1 (€/kWh)',
-  preu_p2_kwh:             'Preu P2 (€/kWh)',
-  preu_p3_kwh:             'Preu P3 (€/kWh)',
+  preu_p1_kwh:             'Preu P1 amb IEE (€/kWh)',
+  preu_p2_kwh:             'Preu P2 amb IEE (€/kWh)',
+  preu_p3_kwh:             'Preu P3 amb IEE (€/kWh)',
   preu_excedent_kwh:       'Preu excedents (€/kWh)',
+  descompte_energia_pct:   'Descompte energia (%)',
   consum_total_kwh:        'Consum període (kWh) ⬇',
   comercialitzadora:       'Comercialitzadora',
 };
@@ -2049,6 +2063,8 @@ function showExtractionResult(data) {
     return '<span class="upload-field-label">' + label + '</span>' + display;
   }).join('');
 
+  const hasPreus = data.preu_p1_kwh !== null || data.preu_p2_kwh !== null || data.preu_p3_kwh !== null;
+  document.getElementById('uploadIeeNote').style.display = hasPreus ? 'block' : 'none';
   document.getElementById('uploadResult').style.display = 'block';
 }
 
