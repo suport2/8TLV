@@ -275,8 +275,28 @@ const htmlTaulaPressupost = `<table>
   </tbody>
   <tfoot>
     <tr class="press-total"><td><strong>TOTAL SENSE IVA</strong></td><td><strong>${fmt(costSubtotal,2)} EUR</strong></td></tr>
+    <tr style="background:#f0fdf4"><td style="color:#166534;font-weight:700">TOTAL AMB IVA (21%)</td><td style="font-weight:700;color:#166534">${fmt(costTotal,2)} EUR</td></tr>
   </tfoot>
-</table>`;
+</table>
+<div style="margin-top:10px;padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;font-size:8.5pt;color:#334155">
+  <div style="font-weight:700;color:#0f172a;margin-bottom:6px">Serveis complementaris (facturats a part)</div>
+  <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #e2e8f0">
+    <span>Certificat d'Eficiència Energètica — estat inicial (abans de la instal·lació)</span>
+    <span style="font-weight:600;white-space:nowrap;padding-left:16px">150,00 EUR + IVA</span>
+  </div>
+  <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #e2e8f0">
+    <span>Certificat d'Eficiència Energètica — estat final (després de la instal·lació)</span>
+    <span style="font-weight:600;white-space:nowrap;padding-left:16px">150,00 EUR + IVA</span>
+  </div>
+  <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #e2e8f0;color:#555">
+    <span>Subtotal certificats (sense IVA)</span>
+    <span style="white-space:nowrap;padding-left:16px">300,00 EUR</span>
+  </div>
+  <div style="display:flex;justify-content:space-between;padding:6px 0 2px;font-weight:700;color:#0f172a">
+    <span>Total certificats energètics amb IVA (21%)</span>
+    <span style="white-space:nowrap;padding-left:16px">363,00 EUR</span>
+  </div>
+</div>`;
 
 // ─── BLOC CONSUM FUTUR (equips nous previstos) ───
 const equipsFutursInput = Array.isArray(input.equips_futurs) ? input.equips_futurs : [];
@@ -845,8 +865,40 @@ return [{json: {
     '{{IMG_GRAFIC_COST_ACTUAL_VS_PV}}':   urlGraficCostVsPV,
     '{{IMG_GRAFIC_CASHFLOW}}':            urlGraficCashflow,
     '{{HTML_MANTENIMENT_CARDS}}':         htmlMantCards,
-    '{{HTML_IMG_MANTENIMENT}}':          (() => { const id = config['IMG_MANTENIMENT'] || ''; return id ? `<img src="${driveUrl(id)}" style="width:100%;height:200px;object-fit:cover;border-radius:10px;margin:16px 0;display:block;box-shadow:0 3px 10px rgba(0,0,0,0.07)" alt="Manteniment Solenver">` : ''; })(),
-    '{{HTML_IMG_BATERIA}}':              (() => { const id = config['IMG_BATERIA'] || ''; return id ? `<img src="${driveUrl(id)}" style="width:100%;max-height:220px;object-fit:contain;border-radius:10px;margin:12px 0 16px;display:block" alt="Esquema instal·lació amb bateria">` : ''; })(),
+    '{{SECCIO_MANTENIMENT}}': (() => {
+      if (senseSel) return '';
+      const imgMant = (() => { const id = config['IMG_MANTENIMENT'] || ''; return id ? `<img src="${driveUrl(id)}" style="width:100%;height:200px;object-fit:cover;border-radius:10px;margin:16px 0;display:block;box-shadow:0 3px 10px rgba(0,0,0,0.07)" alt="Manteniment Solenver">` : ''; })();
+      const imgRev  = (() => { const id = config['IMG_REVISIO_ANUAL'] || ''; return id ? `<div><img src="${driveUrl(id)}" style="width:100%;border-radius:10px;object-fit:cover;max-height:220px;display:block;box-shadow:0 3px 10px rgba(0,0,0,0.08)" alt="Revisió tècnica anual"></div>` : '<div></div>'; })();
+      return `<div class="page">
+    <div class="sh">
+      <div class="sh-num">08</div>
+      <div class="sh-title">Servei de Manteniment</div>
+    </div>
+    <p style="margin-top:0;margin-bottom:8px">Solenver ofereix plans de manteniment preventiu amb revisió anual presencial, telegestió contínua i assistència tècnica inclosa per mantenir el màxim rendiment de la instal·lació.</p>
+    ${htmlMantCards}
+    ${imgMant}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:16px;align-items:start">
+      <div>
+        <h3 style="margin-top:0">Revisió tècnica anual — servei inclòs als plans</h3>
+        <ul style="margin:0;padding-left:16px;font-size:9pt;color:#334155;line-height:1.9">
+          <li><strong>Inspecció visual</strong> de tots els mòduls (trencaments, brutícia, ombres)</li>
+          <li><strong>Revisió estructura</strong> i connexions: ancoratges, cargoleria i unions</li>
+          <li><strong>Verificació proteccions</strong> elèctriques i posada a terra</li>
+          <li><strong>Inspecció termogràfica</strong> amb càmera d'infraroig (punts calents)</li>
+          <li><strong>Actualització firmware</strong> de l'inversor i sistema de monitoratge</li>
+          <li><strong>Informe tècnic complet</strong> amb recomanacions per als propers mesos</li>
+        </ul>
+      </div>
+      ${imgRev}
+    </div>
+    <div class="pfooter">
+      <span>{{EMAIL_EMPRESA}} | {{TELEFON_EMPRESA}}</span>
+      <span>{{CLIENT_NOM}}</span>
+      <span>{{ID_ESTUDI}}</span>
+    </div>
+  </div>`;
+    })(),
+    '{{HTML_IMG_BATERIA}}':              (() => { const id = config['IMG_BATERIA'] || ''; return id ? `<img src="${driveUrl(id)}" style="width:100%;max-height:320px;object-fit:contain;border-radius:10px;margin:12px 0 16px;display:block" alt="Esquema instal·lació amb bateria">` : ''; })(),
     '{{HTML_IMG_REVISIO_ANUAL}}':        (() => { const id = config['IMG_REVISIO_ANUAL'] || ''; return id ? `<div><img src="${driveUrl(id)}" style="width:100%;border-radius:10px;object-fit:cover;max-height:220px;display:block;box-shadow:0 3px 10px rgba(0,0,0,0.08)" alt="Revisió tècnica anual"></div>` : '<div></div>'; })(),
     '{{MANTENIMENT_NOM}}':                mantNom,
     '{{MANTENIMENT_COST_ANY}}':           mantCostAnual > 0 ? fmtE(mantCostAnual) : 'Sense contracte',
