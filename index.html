@@ -1449,9 +1449,11 @@ async function fetchOptimitzar() {
     const kpis=prop.kpis||{};
     const inf=prop.informe||{};
     const cfg=prop.configuracio||{};
-    const nomModul   = state.cataleg.moduls?.find(m=>m.id===cfg.modul_id)?.nom || cfg.modul_id || '?';
-    const nomInv     = (state.cataleg.mono||[]).concat(state.cataleg.trifasic||[]).find(i=>i.id===cfg.inversor_id)?.nom || cfg.inversor_id || '?';
-    const nomMuntatge= state.cataleg.muntatges?.find(m=>m.id===cfg.muntatge_id)?.nom || cfg.muntatge_id || '?';
+    const _mInfo = state.cataleg.moduls?.find(m=>m.id===cfg.modul_id);
+    const nomModul = _mInfo ? `${_mInfo.marca||''} ${_mInfo.model||''}`.trim() : (cfg.modul_id||'?');
+    const _iInfo = (state.cataleg.inversors||[]).find(i=>i.id===cfg.inversor_id);
+    const nomInv = _iInfo ? `${_iInfo.marca||''} ${_iInfo.model||''}`.trim() : (cfg.inversor_id||'?');
+    const nomMuntatge = state.cataleg.muntatges?.find(m=>m.id===cfg.muntatge_id)?.nom || cfg.muntatge_id || '?';
     const retornVal = kpis.retorn_anys || kpis.retorn_inversio || kpis.payback_anys;
     const fmt2 = (v,dec=0) => v!=null ? parseFloat(v).toLocaleString('ca',{maximumFractionDigits:dec}) : '—';
     resText.innerHTML=`
@@ -1482,9 +1484,10 @@ async function fetchOptimitzar() {
         </div>
       </div>
       ${inf.seccio_objecte?`<div style="font-size:12px;color:#374151;background:#f0fdf4;border-left:3px solid #22c55e;padding:10px 12px;border-radius:0 6px 6px 0;margin-bottom:8px;line-height:1.6">${inf.seccio_objecte}</div>`:''}
-      ${inf.recomanacio_bateria?`<div style="font-size:11px;color:#92400e;background:#fef3c7;padding:8px 10px;border-radius:6px;margin-bottom:8px">&#128267; ${inf.recomanacio_bateria}</div>`:''}
-      ${prop.alternativa?.justificacio?`<div style="font-size:11px;color:#6b7280;padding:6px 0">&#128161; ${prop.alternativa.justificacio}</div>`:''}
-      <button onclick="applyIAProposal()" style="width:100%;margin-top:10px;padding:12px;background:#166534;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:0.3px">
+      ${inf.recomanacio_bateria?`<div style="font-size:11px;color:#92400e;background:#fef3c7;padding:8px 10px;border-radius:6px;margin-bottom:8px">🔋 ${inf.recomanacio_bateria}</div>`:''}
+      ${prop.alternativa?.justificacio?`<div style="font-size:11px;color:#6b7280;padding:6px 0">💡 ${prop.alternativa.justificacio}</div>`:''}
+      <div style="font-size:10px;color:#9ca3af;padding:4px 0 8px;text-align:center">⚠ Estimació basada en dades estàndard. Aplica per veure els valors exactes amb PVGIS.</div>
+      <button onclick="applyIAProposal()" style="width:100%;margin-top:2px;padding:12px;background:#166534;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:0.3px">
         ↓ Aplicar aquesta configuració
       </button>
     `;
@@ -1497,7 +1500,7 @@ async function fetchOptimitzar() {
     errBox.style.display='block';
   } finally {
     btn.disabled=false;
-    btn.textContent='&#129302; Calcular dimensionat òptim';
+    btn.innerHTML='&#129302; Calcular dimensionat &ograve;ptim';
     loading.style.display='none';
   }
 }
