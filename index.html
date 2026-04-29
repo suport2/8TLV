@@ -1416,6 +1416,22 @@ async function fetchOptimitzar() {
     let costActual=0;
     MES_CLAUS.forEach(clau=>{const c=consumos[clau];costActual+=c.p1*e.preu_p1+c.p2*e.preu_p2+c.p3*e.preu_p3;});
 
+    // Usa dades PVGIS reals (ja carregades pel panell dret) per obtenir KPIs idèntics a l'informe
+    let pvgis_monthly = state.pvgisMonthly || null;
+    if (!pvgis_monthly) {
+      try {
+        const lat = parseFloat(document.getElementById('lat')?.value || 41.39);
+        const lng = parseFloat(document.getElementById('lng')?.value || 2.17);
+        const incl = parseFloat(document.getElementById('inclinacio')?.value || 30);
+        const azim = parseFloat(document.getElementById('acimut')?.value || 0);
+        const ctrl = new AbortController();
+        const t = setTimeout(() => ctrl.abort(), 4000);
+        const rp = await fetch(`http://localhost:3333/pvgis?lat=${lat}&lng=${lng}&angle=${incl}&aspect=${azim}`, { signal: ctrl.signal });
+        clearTimeout(t);
+        if (rp.ok) { const dp = await rp.json(); pvgis_monthly = dp.monthly || null; }
+      } catch(e) { /* PVGIS no disponible, el motor usarà estimació genèrica */ }
+    }
+
     const payload={
       client: p.client,
       instalacio:{
@@ -1428,12 +1444,18 @@ async function fetchOptimitzar() {
         modul_id: state.selectedModul,
         inversor_id: state.selectedInversor,
         muntatge_id: state.selectedMuntatge,
+        inclinacio: parseFloat(document.getElementById('inclinacio')?.value||30),
+        acimut: parseFloat(document.getElementById('acimut')?.value||0),
       },
       economics: p.economics,
       consumos,
       consum_anual: Math.round(consumAnual),
+      consum_p1: MES_CLAUS.map(k => (consumos[k]||{}).p1||0),
+      consum_p2: MES_CLAUS.map(k => (consumos[k]||{}).p2||0),
+      consum_p3: MES_CLAUS.map(k => (consumos[k]||{}).p3||0),
       cost_actual: Math.round(costActual*100)/100,
       pressupost_max: parseFloat(document.getElementById('pressupost_max')?.value||0)||null,
+      pvgis_monthly,
       meta:{
         comercial_id: p.meta.comercial_id,
         objectiu_ia: state.iaObj||'roi_max',
