@@ -1368,14 +1368,21 @@ function updateKpiDisplay(k) {
 }
 
 // IA OPTIMITZAR
-function applyIAProposal() {
+function applyIAProposal(opcioIdx) {
   const prop = state.iaProposal;
   if (!prop?.configuracio) return;
   const cfg = prop.configuracio;
+
+  // Agafa num_moduls de l'opció triada (format nou) o de cfg (format antic)
+  let numModuls = cfg.num_moduls;
+  if (prop.opcions && opcioIdx != null && prop.opcions[opcioIdx]) {
+    numModuls = prop.opcions[opcioIdx].num_moduls;
+  }
+
   const slider = document.getElementById('num_moduls');
-  if (slider && cfg.num_moduls) {
-    slider.value = cfg.num_moduls;
-    document.getElementById('numModulsVal').textContent = cfg.num_moduls + ' mòduls';
+  if (slider && numModuls) {
+    slider.value = numModuls;
+    document.getElementById('numModulsVal').textContent = numModuls + ' mòduls';
   }
   if (cfg.modul_id) selectModul(cfg.modul_id);
   if (cfg.inversor_id) selectInversor(cfg.inversor_id);
@@ -1386,7 +1393,8 @@ function applyIAProposal() {
     document.getElementById('inclVal').textContent = cfg.inclinacio_optima + '°';
   }
   onMantenimentChange();
-  toast('✅ Configuració IA aplicada al formulari', 'success');
+  const etiqueta = prop.opcions?.[opcioIdx]?.etiqueta || 'IA';
+  toast(`✅ Opció ${etiqueta} aplicada al formulari`, 'success');
 }
 
 async function fetchOptimitzar() {
@@ -1472,7 +1480,6 @@ async function fetchOptimitzar() {
 
     const prop=typeof d.proposta==='string'?JSON.parse(d.proposta):d.proposta;
     state.iaProposal=prop;
-    const kpis=prop.kpis||{};
     const inf=prop.informe||{};
     const cfg=prop.configuracio||{};
     const _mInfo = state.cataleg.moduls?.find(m=>m.id===cfg.modul_id);
@@ -1480,42 +1487,66 @@ async function fetchOptimitzar() {
     const _iInfo = (state.cataleg.inversors||[]).find(i=>i.id===cfg.inversor_id);
     const nomInv = _iInfo ? `${_iInfo.marca||''} ${_iInfo.model||''}`.trim() : (cfg.inversor_id||'?');
     const nomMuntatge = state.cataleg.muntatges?.find(m=>m.id===cfg.muntatge_id)?.nom || cfg.muntatge_id || '?';
-    const retornVal = kpis.retorn_anys || kpis.retorn_inversio || kpis.payback_anys;
     const fmt2 = (v,dec=0) => v!=null ? parseFloat(v).toLocaleString('ca',{maximumFractionDigits:dec}) : '—';
+
+    // Suport format nou (opcions[]) i antic (kpis + alternativa) per retrocompatibilitat
+    const opcions = prop.opcions || (() => {
+      const kpis = prop.kpis || {};
+      const alt = prop.alternativa || {};
+      return [
+        ...(alt.num_moduls < (prop.configuracio?.num_moduls||99) ? [{etiqueta:'Econòmica', num_moduls:alt.num_moduls, kwp:+(alt.num_moduls*0.51).toFixed(2), kpis:{}}] : []),
+        {etiqueta:'Estàndard', num_moduls:cfg.num_moduls, kwp:cfg.kwp_resultant, recomanada:true, kpis},
+        ...(alt.num_moduls > (prop.configuracio?.num_moduls||0) ? [{etiqueta:'Gran', num_moduls:alt.num_moduls, kwp:+(alt.num_moduls*0.51).toFixed(2), kpis:{}}] : []),
+      ];
+    })();
+
+    const renderOpcio = (o, idx) => {
+      const k = o.kpis || {};
+      const retorn = k.retorn_anys || k.retorn_inversio || k.payback_anys;
+      const isRec = o.recomanada;
+      const border = isRec ? '2px solid #166534' : '1px solid #e5e7eb';
+      const bg = isRec ? '#f0fdf4' : '#fafafa';
+      return `
+        <div style="border:${border};background:${bg};border-radius:10px;padding:12px;position:relative">
+          ${isRec ? '<div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#166534;color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px">⭐ Recomanada</div>' : ''}
+          <div style="text-align:center;margin-bottom:8px">
+            <span style="font-size:12px;font-weight:700;color:#374151">${o.etiqueta||''}</span>
+            <span style="font-size:11px;color:#6b7280;margin-left:6px">${o.num_moduls||'?'} mòd · ${o.kwp||'?'} kWp</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:8px">
+            <div style="background:#dcfce7;padding:7px 4px;border-radius:6px;text-align:center">
+              <div style="font-size:15px;font-weight:800;color:#166534">${k.estalvi_any1?fmt2(k.estalvi_any1)+' €':'—'}</div>
+              <div style="font-size:9px;color:#4b7a58">Estalvi 1r any</div>
+            </div>
+            <div style="background:#dcfce7;padding:7px 4px;border-radius:6px;text-align:center">
+              <div style="font-size:15px;font-weight:800;color:#166534">${retorn?parseFloat(retorn).toFixed(1)+' a':'—'}</div>
+              <div style="font-size:9px;color:#4b7a58">Retorn inversió</div>
+            </div>
+            <div style="background:#eff6ff;padding:7px 4px;border-radius:6px;text-align:center">
+              <div style="font-size:15px;font-weight:800;color:#1d4ed8">${k.autoconsum_pct?fmt2(k.autoconsum_pct,1)+'%':'—'}</div>
+              <div style="font-size:9px;color:#3b5fa0">Autoconsum</div>
+            </div>
+            <div style="background:#eff6ff;padding:7px 4px;border-radius:6px;text-align:center">
+              <div style="font-size:15px;font-weight:800;color:#1d4ed8">${k.produccio_anual_kwh?fmt2(k.produccio_anual_kwh)+' kWh':'—'}</div>
+              <div style="font-size:9px;color:#3b5fa0">Producció anual</div>
+            </div>
+          </div>
+          <button onclick="applyIAProposal(${idx})" style="width:100%;padding:8px;background:${isRec?'#166534':'#4b5563'};color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">
+            ↓ Aplicar aquesta opció
+          </button>
+        </div>`;
+    };
+
     resText.innerHTML=`
-      <div style="font-size:13px;font-weight:700;color:#166534;margin-bottom:6px">
-        ${cfg.num_moduls||'?'} mòduls &middot; ${cfg.kwp_resultant||'?'} kWp
+      <div style="font-size:11px;color:#555;margin-bottom:10px;background:#f8f9fa;padding:8px;border-radius:6px;line-height:1.7">
+        <b>Mòdul:</b> ${nomModul} &nbsp;·&nbsp; <b>Inversor:</b> ${nomInv} &nbsp;·&nbsp; <b>Muntatge:</b> ${nomMuntatge}
       </div>
-      <div style="font-size:11px;color:#555;margin-bottom:12px;background:#f8f9fa;padding:8px;border-radius:6px;line-height:1.7">
-        <b>Mòdul:</b> ${nomModul}<br>
-        <b>Inversor:</b> ${nomInv}<br>
-        <b>Muntatge:</b> ${nomMuntatge}
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px">
-        <div style="background:#dcfce7;padding:10px 8px;border-radius:8px;text-align:center">
-          <div style="font-size:18px;font-weight:800;color:#166534">${kpis.estalvi_any1?fmt2(kpis.estalvi_any1)+' €':'—'}</div>
-          <div style="font-size:10px;color:#4b7a58;margin-top:2px">Estalvi el 1r any</div>
-        </div>
-        <div style="background:#dcfce7;padding:10px 8px;border-radius:8px;text-align:center">
-          <div style="font-size:18px;font-weight:800;color:#166534">${retornVal?parseFloat(retornVal).toFixed(1)+' anys':'—'}</div>
-          <div style="font-size:10px;color:#4b7a58;margin-top:2px">Retorn de la inversió</div>
-        </div>
-        <div style="background:#eff6ff;padding:10px 8px;border-radius:8px;text-align:center">
-          <div style="font-size:18px;font-weight:800;color:#1d4ed8">${kpis.autoconsum_pct?fmt2(kpis.autoconsum_pct,1)+'%':'—'}</div>
-          <div style="font-size:10px;color:#3b5fa0;margin-top:2px">% Autoconsum</div>
-        </div>
-        <div style="background:#eff6ff;padding:10px 8px;border-radius:8px;text-align:center">
-          <div style="font-size:18px;font-weight:800;color:#1d4ed8">${kpis.produccio_anual_kwh?fmt2(kpis.produccio_anual_kwh)+' kWh':'—'}</div>
-          <div style="font-size:10px;color:#3b5fa0;margin-top:2px">Producció anual</div>
-        </div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:12px">
+        ${opcions.map((o,i)=>renderOpcio(o,i)).join('')}
       </div>
       ${inf.seccio_objecte?`<div style="font-size:12px;color:#374151;background:#f0fdf4;border-left:3px solid #22c55e;padding:10px 12px;border-radius:0 6px 6px 0;margin-bottom:8px;line-height:1.6">${inf.seccio_objecte}</div>`:''}
       ${inf.recomanacio_bateria?`<div style="font-size:11px;color:#92400e;background:#fef3c7;padding:8px 10px;border-radius:6px;margin-bottom:8px">🔋 ${inf.recomanacio_bateria}</div>`:''}
-      ${prop.alternativa?.justificacio?`<div style="font-size:11px;color:#6b7280;padding:6px 0">💡 ${prop.alternativa.justificacio}</div>`:''}
-      <div style="font-size:10px;color:#9ca3af;padding:4px 0 8px;text-align:center">⚠ Estimació basada en dades estàndard. Aplica per veure els valors exactes amb PVGIS.</div>
-      <button onclick="applyIAProposal()" style="width:100%;margin-top:2px;padding:12px;background:#166534;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:0.3px">
-        ↓ Aplicar aquesta configuració
-      </button>
+      <div style="font-size:10px;color:#9ca3af;padding:4px 0;text-align:center">⚠ Estimació basada en dades PVGIS reals de la ubicació.</div>
     `;
     result.classList.add('show');
     document.getElementById('dotIA').className = 'dot ok';
