@@ -707,8 +707,9 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
                 <input type="checkbox" id="cost_manual_toggle" onchange="onCostManualToggle()"> Editar manual
               </label>
             </label>
-            <input type="number" id="cost_instalacio" value="5900" readonly style="background:var(--vbg,#f8fafc);cursor:default" oninput="onFormChange()">
+            <input type="number" id="cost_instalacio" value="5900" readonly style="background:var(--vbg,#f8fafc);cursor:default" oninput="updatePreuKwp();onFormChange()">
             <div class="hint" id="costHint">Calculant...</div>
+            <div id="preuKwpHint" style="margin-top:4px;font-size:12px;color:#6366f1;font-weight:600"></div>
           </div>
           <div class="field">
             <label>Anys d'an&agrave;lisi</label>
@@ -1583,6 +1584,18 @@ async function fetchOptimitzar() {
   }
 }
 
+function updatePreuKwp() {
+  const numModuls = parseInt(document.getElementById('num_moduls')?.value || 12);
+  const potWp = parseFloat((state.cataleg.moduls.find(m => m.id === state.selectedModul) || {}).potencia_wp) || 510;
+  const kwp = (numModuls * potWp) / 1000;
+  const cost = parseFloat(document.getElementById('cost_instalacio')?.value) || 0;
+  const el = document.getElementById('preuKwpHint');
+  if (el && kwp > 0 && cost > 0) {
+    const ratio = Math.round(cost / kwp);
+    el.textContent = `${ratio.toLocaleString('ca')} €/kWp`;
+  } else if (el) { el.textContent = ''; }
+}
+
 function onCostManualToggle() {
   const manual = document.getElementById('cost_manual_toggle')?.checked;
   const el = document.getElementById('cost_instalacio');
@@ -1645,6 +1658,8 @@ function calcPressupost() {
 
   const el = document.getElementById('cost_instalacio');
   if (el) el.value = costSubtotal;
+
+  updatePreuKwp();
   const hint = document.getElementById('costHint');
   if (hint) hint.textContent =
     'Mòduls ' + Math.round(tModuls).toLocaleString('ca') + '€'
