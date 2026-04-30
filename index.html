@@ -480,8 +480,10 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
             <div class="field">
               <label>Nombre de m&ograve;duls <span class="req">*</span></label>
               <div class="slider-wrap">
-                <input type="range" id="num_moduls" min="2" max="60" value="12"
-                  oninput="document.getElementById('numModulsVal').textContent=this.value+' m&ograve;duls';calcPressupost();onMantenimentChange()">
+                <input type="range" id="num_moduls" min="2" max="120" value="12"
+                  oninput="document.getElementById('numModulsVal').textContent=this.value+' mòduls';document.getElementById('num_moduls_num').value=this.value;calcPressupost();onMantenimentChange()">
+                <input type="number" id="num_moduls_num" value="12" min="2" max="999" step="1" style="width:64px;padding:3px 6px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;text-align:center"
+                  oninput="const v=Math.max(2,parseInt(this.value)||2);document.getElementById('num_moduls').max=Math.max(120,v);document.getElementById('num_moduls').value=v;document.getElementById('numModulsVal').textContent=v+' mòduls';calcPressupost();onMantenimentChange()">
                 <span class="slider-val" id="numModulsVal">12 m&ograve;duls</span>
               </div>
             </div>
@@ -507,6 +509,13 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
               <button class="toggle-btn" id="btnTri"  onclick="setInvType('tri')">Trif&agrave;sic (3F)</button>
             </div>
             <div class="catalog-grid" id="inversorGrid"></div>
+            <div class="field" style="margin-top:10px;max-width:220px">
+              <label>Nombre d'inversors</label>
+              <input type="number" id="num_inversors" value="1" min="1" max="20" step="1"
+                style="width:80px;padding:5px 8px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;text-align:center"
+                oninput="calcPressupost();onFormChange()">
+              <div class="hint">Per instal·lacions amb múltiples inversors</div>
+            </div>
           </div>
 
           <div class="field">
@@ -688,8 +697,13 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
         <div class="section-title">Par&agrave;metres Econ&ograve;mics</div>
         <div class="field-grid field-grid-2">
           <div class="field">
-            <label>Cost total de la instal&middot;laci&oacute; (&euro;) <span class="req">*</span></label>
-            <input type="number" id="cost_instalacio" value="5900" readonly style="background:var(--vbg,#f8fafc);cursor:default">
+            <label style="display:flex;align-items:center;justify-content:space-between">
+              <span>Cost total de la instal·lació (€) <span class="req">*</span></span>
+              <label style="display:flex;align-items:center;gap:5px;font-size:11px;font-weight:normal;cursor:pointer;text-transform:none">
+                <input type="checkbox" id="cost_manual_toggle" onchange="onCostManualToggle()"> Editar manual
+              </label>
+            </label>
+            <input type="number" id="cost_instalacio" value="5900" readonly style="background:var(--vbg,#f8fafc);cursor:default" oninput="onFormChange()">
             <div class="hint" id="costHint">Calculant...</div>
           </div>
           <div class="field">
@@ -1562,8 +1576,30 @@ async function fetchOptimitzar() {
   }
 }
 
+function onCostManualToggle() {
+  const manual = document.getElementById('cost_manual_toggle')?.checked;
+  const el = document.getElementById('cost_instalacio');
+  if (!el) return;
+  if (manual) {
+    el.removeAttribute('readonly');
+    el.style.background = '';
+    el.style.cursor = '';
+    const hint = document.getElementById('costHint');
+    if (hint) hint.textContent = 'Import manual — el marge comercial no s’aplica automàticament';
+    el.focus(); el.select();
+  } else {
+    el.setAttribute('readonly', '');
+    el.style.background = 'var(--vbg,#f8fafc)';
+    el.style.cursor = 'default';
+    calcPressupost();
+  }
+}
+
 function calcPressupost() {
-  const numModuls  = parseInt(document.getElementById('num_moduls')?.value || 12);
+  if (document.getElementById('cost_manual_toggle')?.checked) { onFormChange(); return; }
+
+  const numModuls    = parseInt(document.getElementById('num_moduls')?.value || 12);
+  const numInversors = parseInt(document.getElementById('num_inversors')?.value || 1);
   const modul      = state.cataleg.moduls.find(m => m.id === state.selectedModul) || {};
   const inversors  = (state.cataleg.mono||[]).concat(state.cataleg.trifasic||[]);
   const inversor   = inversors.find(i => i.id === state.selectedInversor) || {};
@@ -1586,26 +1622,25 @@ function calcPressupost() {
   // Marge aplicat per línia (igual que preparar_current.js)
   const r = v => Math.round(v * 100) / 100;
   const tModuls   = r(numModuls * preuModul * (1 + MARGE));
-  const tInv      = r(preuInv * (1 + MARGE));
+  const tInv      = r(preuInv * numInversors * (1 + MARGE));
   const tMuntatge = r(costMuntatge * (1 + MARGE));
   const tMaObra   = r(costMaObra * (1 + MARGE));
   const tProjecte = r(projecte * (1 + MARGE));
   const tCables   = r(cables * (1 + MARGE));
 
   const costSubtotal = Math.round(tModuls + tInv + tMuntatge + tMaObra + tProjecte + tCables);
-  const costTotal    = costSubtotal + Math.round(costSubtotal * 0.21);
 
   const el = document.getElementById('cost_instalacio');
-  if (el) el.value = costSubtotal;   // sense IVA — és la base per al càlcul de retorn
+  if (el) el.value = costSubtotal;
   const hint = document.getElementById('costHint');
   if (hint) hint.textContent =
-    `Mòduls ${Math.round(tModuls).toLocaleString('ca')}\u20ac`
-    + ` · Inv. ${Math.round(tInv).toLocaleString('ca')}\u20ac`
-    + ` · Muntatge ${Math.round(tMuntatge).toLocaleString('ca')}\u20ac`
-    + ` · MO ${Math.round(tMaObra).toLocaleString('ca')}\u20ac`
-    + ` · Proj. ${Math.round(tProjecte).toLocaleString('ca')}\u20ac`
-    + ` · Cab. ${Math.round(tCables).toLocaleString('ca')}\u20ac`
-    + ` (s/IVA)`;
+    'Mòduls ' + Math.round(tModuls).toLocaleString('ca') + '€'
+    + ' · Inv. ' + Math.round(tInv).toLocaleString('ca') + '€'
+    + ' (' + numInversors + 'u.) · Muntatge ' + Math.round(tMuntatge).toLocaleString('ca') + '€'
+    + ' · MO ' + Math.round(tMaObra).toLocaleString('ca') + '€'
+    + ' · Proj. ' + Math.round(tProjecte).toLocaleString('ca') + '€'
+    + ' · Cab. ' + Math.round(tCables).toLocaleString('ca') + '€'
+    + ' (s/IVA)';
   onFormChange();
 }
 
@@ -1798,6 +1833,7 @@ function buildPayload(kpisOnly = false) {
     },
     instalacio: {
       num_moduls:      parseInt(document.getElementById('num_moduls')?.value||12),
+      num_inversors:   parseInt(document.getElementById('num_inversors')?.value||1),
       modul_id:        state.selectedModul,
       inversor_id:     state.selectedInversor,
       muntatge_id:     state.selectedMuntatge,
@@ -1896,6 +1932,8 @@ function buildPdfPayload(previewOnly) {
     consum_p2:            MES_CLAUS.map(k => (p.consumos[k]||{}).p2||0),
     consum_p3:            MES_CLAUS.map(k => (p.consumos[k]||{}).p3||0),
     potencia_wp:          modul.potencia_wp || 510,
+    num_inversors:        parseInt(document.getElementById('num_inversors')?.value||1),
+    marge_comercial:      (parseFloat(document.getElementById('marge_comercial')?.value)||35) / 100,
     // PVGIS + pèrdues (per alinear motor PDF amb motor formulari)
     pvgis_monthly:        state.pvgisMonthly || null,
     ombres:               document.getElementById('ombres')?.value || 'cap',
