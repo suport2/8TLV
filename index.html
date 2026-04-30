@@ -489,9 +489,14 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
             </div>
             <div class="field">
               <label>Petit material (€ s/IVA)</label>
-              <input type="number" id="metres_cablejat" value="150" min="0" step="10"
-                style="max-width:120px"
-                oninput="calcPressupost();onFormChange()">
+              <div style="display:flex;align-items:center;gap:8px">
+                <input type="number" id="metres_cablejat" value="150" min="0" step="5"
+                  style="width:100px;padding:5px 8px;border:1px solid #d1d5db;border-radius:6px;font-size:14px"
+                  oninput="state.petitMaterialManual=true;calcPressupost();onFormChange()">
+                <button title="Recalcular automàticament" onclick="state.petitMaterialManual=false;calcPressupost();onFormChange()"
+                  style="padding:4px 8px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;cursor:pointer;background:#f9fafb;color:#374151">↺</button>
+                <span id="petitMatHint" style="font-size:11px;color:#9ca3af"></span>
+              </div>
               <div class="hint">Cablejat, connectors, proteccions, etc.</div>
             </div>
           </div>
@@ -1616,7 +1621,15 @@ function calcPressupost() {
   const moPerMod    = parseFloat(c.ma_obra_per_modul)  || 80;
   const costMaObra  = moBase + moPerMod * numModuls;
   const projecte    = parseFloat(c.projecte_tecnic)    || 550;
-  const cables       = parseFloat(document.getElementById('metres_cablejat')?.value || 150);
+  const petitMatPerMod = parseFloat(c.petit_material_per_modul) || 12.5;
+  const petitMatAuto   = Math.round(numModuls * petitMatPerMod);
+  const petitMatEl     = document.getElementById('metres_cablejat');
+  if (petitMatEl && !state.petitMaterialManual) petitMatEl.value = petitMatAuto;
+  const cables = parseFloat((petitMatEl && petitMatEl.value) || petitMatAuto);
+  const petitHint = document.getElementById('petitMatHint');
+  if (petitHint) petitHint.textContent = state.petitMaterialManual
+    ? '(manual)'
+    : `${numModuls} × ${petitMatPerMod}€/mòd`;
   const MARGE       = (parseFloat(document.getElementById('marge_comercial')?.value) || 35) / 100;
 
   // Marge aplicat per línia (igual que preparar_current.js)
