@@ -1275,13 +1275,16 @@ function checkWarnings() {
   const potInv  = parseFloat(inv.potencia_kw || 6);
   const sup     = parseFloat(document.getElementById('superficie')?.value || 0);
 
-  // Avís kWp vs inversor (>10% sobredimensionat)
-  const ratio = kwp / potInv;
+  // Avís kWp vs inversors (>10% sobredimensionat tenint en compte num_inversors)
+  const numInv  = parseInt(document.getElementById('num_inversors')?.value || 1);
+  const potInvTotal = potInv * numInv;
+  const ratio = kwp / potInvTotal;
   const warnEl = document.getElementById('kpiWarnings');
   if (warnEl) {
     if (ratio > 1.1) {
+      const invDesc = numInv > 1 ? `${numInv} × ${potInv} kW = ${potInvTotal} kW` : `${potInv} kW`;
       warnEl.innerHTML = `<div style="padding:8px 10px;background:#fff3cd;border:1px solid #ffc107;border-radius:6px;font-size:12px;color:#856404">
-        ⚠ ${kwp.toFixed(2)} kWp instal·lats amb inversor de ${potInv} kW (ratio ${ratio.toFixed(2)}×). Considera un inversor més gran o reduir mòduls.
+        ⚠ ${kwp.toFixed(2)} kWp instal·lats amb ${invDesc} d'inversors (ratio ${ratio.toFixed(2)}×). Considera un inversor més gran o reduir mòduls.
       </div>`;
     } else {
       warnEl.innerHTML = '';
