@@ -1622,8 +1622,7 @@ function calcPressupost() {
   const costMaObra  = moBase + moPerMod * numModuls;
   const projecte    = parseFloat(c.projecte_tecnic)    || 550;
   const petitMatPerMod = parseFloat(c.petit_material_per_modul) || 12.5;
-  // Auto-càlcul ja inclou el marge (és preu de venda s/IVA, igual que el que veu el client)
-  const petitMatAuto   = Math.round(numModuls * petitMatPerMod * (1 + MARGE));
+  const petitMatAuto   = Math.round(numModuls * petitMatPerMod);
   const petitMatEl     = document.getElementById('metres_cablejat');
   if (petitMatEl && !state.petitMaterialManual) petitMatEl.value = petitMatAuto;
   const cables = parseFloat((petitMatEl && petitMatEl.value) || petitMatAuto);
