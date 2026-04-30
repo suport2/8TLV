@@ -805,7 +805,7 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
           <div><span class="kpi-value" id="kpi_kwp">&mdash;</span><span class="kpi-unit">kWp</span></div>
         </div>
         <div class="kpi-item">
-          <div><div class="kpi-label">Preu instal·laci&oacute; (s/IVA)</div></div>
+          <div><div class="kpi-label">Preu instal·laci&oacute; (s/IVA)</div><div class="kpi-subvalue" id="kpi_sub_capex" style="color:#6366f1"></div></div>
           <div><span class="kpi-value" id="kpi_capex">&mdash;</span><span class="kpi-unit">&euro;</span></div>
         </div>
         <div class="kpi-item positive">
@@ -1382,6 +1382,9 @@ function updateKpiDisplay(k) {
   set('kpi_kwp',        fmt(k.kwp, 2));
   set('kpi_sub_kwp',    `${document.getElementById('num_moduls')?.value||12} m\u00f2duls \u00b7 ${fmt(k.hsp_equivalent||k.hsp_anual)} HSP`);
   set('kpi_capex',      k.cost_instalacio ? fmt(k.cost_instalacio, 0) : '\u2014');
+  if (k.cost_instalacio && k.kwp > 0) {
+    set('kpi_sub_capex', Math.round(k.cost_instalacio / k.kwp).toLocaleString('ca') + ' \u20ac/kWp');
+  } else { set('kpi_sub_capex', ''); }
   set('kpi_estalvi',    fmt(k.estalvi_any1, 0));
   set('kpi_retorn',     k.retorn_anys ? fmt(k.retorn_anys, 1) : '\u2014');
   set('kpi_autoconsum', fmt(k.pct_autoconsum, 1));
