@@ -1107,8 +1107,10 @@ function onDrop(e) {
 }
 async function uploadCups(input) { if(input.files[0]) await uploadCupsFile(input.files[0]); }
 
-// ── SIPS automàtic via servidor local (localhost:3333) ──────────────
-const SIPS_SERVER = 'http://localhost:3333';
+// ── URL del servidor (local o Render en producció) ──────────────────
+const SIPS_SERVER = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:3333'
+  : 'https://solenver-server.onrender.com';
 
 async function fetchSips(cupsOverride) {
   const cupsInput = document.getElementById('sipsInputCups');
@@ -1334,10 +1336,10 @@ async function fetchKpis() {
     try {
       const ctrl = new AbortController();
       const pvgisTimer = setTimeout(() => ctrl.abort(), 3000);
-      const rp = await fetch(`http://localhost:3333/pvgis?lat=${lat}&lng=${lng}&angle=${incl}&aspect=${azim}`, { signal: ctrl.signal });
+      const rp = await fetch(`${SIPS_SERVER}/pvgis?lat=${lat}&lng=${lng}&angle=${incl}&aspect=${azim}`, { signal: ctrl.signal });
       clearTimeout(pvgisTimer);
       if (rp.ok) { const dp = await rp.json(); pvgis_monthly = dp.monthly || null; }
-    } catch(e) { /* servidor local no disponible o timeout, el motor usarà fallback */ }
+    } catch(e) { /* servidor no disponible o timeout, el motor usarà fallback */ }
 
     // Guardar per usar-lo també al payload del PDF
     state.pvgisMonthly = pvgis_monthly;
@@ -1459,7 +1461,7 @@ async function fetchOptimitzar() {
         const azim = parseFloat(document.getElementById('acimut')?.value || 0);
         const ctrl = new AbortController();
         const t = setTimeout(() => ctrl.abort(), 4000);
-        const rp = await fetch(`http://localhost:3333/pvgis?lat=${lat}&lng=${lng}&angle=${incl}&aspect=${azim}`, { signal: ctrl.signal });
+        const rp = await fetch(`${SIPS_SERVER}/pvgis?lat=${lat}&lng=${lng}&angle=${incl}&aspect=${azim}`, { signal: ctrl.signal });
         clearTimeout(t);
         if (rp.ok) { const dp = await rp.json(); pvgis_monthly = dp.monthly || null; }
       } catch(e) { /* PVGIS no disponible, el motor usarà estimació genèrica */ }
@@ -2017,7 +2019,7 @@ async function _generarPdf(previewOnly) {
 
   // 2. Servidor local (Playwright) converteix HTML → PDF
   showLoading('Generant PDF...');
-  const rPdf = await fetch('http://localhost:3333/pdf', {
+  const rPdf = await fetch(`${SIPS_SERVER}/pdf`, {
     method: 'POST', headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({ html: data.html, footer: data.footer_html, header: data.header_html })
   });
