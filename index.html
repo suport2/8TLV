@@ -488,12 +488,11 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
               </div>
             </div>
             <div class="field">
-              <label>M&egrave;tres de cablejat estimats</label>
-              <div class="slider-wrap">
-                <input type="range" id="metres_cablejat" min="5" max="300" value="15"
-                  oninput="document.getElementById('metresVal').textContent=this.value+'m';calcPressupost();onFormChange()">
-                <span class="slider-val" id="metresVal">15m</span>
-              </div>
+              <label>Petit material (€ s/IVA)</label>
+              <input type="number" id="metres_cablejat" value="150" min="0" step="10"
+                style="max-width:120px"
+                oninput="calcPressupost();onFormChange()">
+              <div class="hint">Cablejat, connectors, proteccions, etc.</div>
             </div>
           </div>
 
@@ -1617,9 +1616,7 @@ function calcPressupost() {
   const moPerMod    = parseFloat(c.ma_obra_per_modul)  || 80;
   const costMaObra  = moBase + moPerMod * numModuls;
   const projecte    = parseFloat(c.projecte_tecnic)    || 550;
-  const cables_per_m = parseFloat(c.cables_per_metre)  || 4.50;
-  const metres       = parseFloat(document.getElementById('metres_cablejat')?.value || 15);
-  const cables       = metres * cables_per_m;
+  const cables       = parseFloat(document.getElementById('metres_cablejat')?.value || 150);
   const MARGE       = (parseFloat(document.getElementById('marge_comercial')?.value) || 35) / 100;
 
   // Marge aplicat per línia (igual que preparar_current.js)
@@ -1642,7 +1639,7 @@ function calcPressupost() {
     + ' (' + numInversors + 'u.) · Muntatge ' + Math.round(tMuntatge).toLocaleString('ca') + '€'
     + ' · MO ' + Math.round(tMaObra).toLocaleString('ca') + '€'
     + ' · Proj. ' + Math.round(tProjecte).toLocaleString('ca') + '€'
-    + ' · Cab. ' + Math.round(tCables).toLocaleString('ca') + '€'
+    + ' · Mat. ' + Math.round(tCables).toLocaleString('ca') + '€'
     + ' (s/IVA)';
   onFormChange();
 }
@@ -1843,7 +1840,7 @@ function buildPayload(kpisOnly = false) {
       tipus_muntatge:  state.cataleg.muntatges.find(m=>m.id===state.selectedMuntatge)?.nom||'',
       inclinacio:      parseFloat(document.getElementById('inclinacio')?.value||30),
       acimut:          parseFloat(document.getElementById('acimut')?.value||0),
-      metres_cablejat: parseFloat(document.getElementById('metres_cablejat')?.value||15),
+      petit_material:  parseFloat(document.getElementById('metres_cablejat')?.value||150),
     },
     consumos,
     economics: {
@@ -1912,7 +1909,7 @@ function buildPdfPayload(previewOnly) {
     tipus_coberta:        p.instalacio.muntatge_id,
     inclinacio:           p.instalacio.inclinacio,
     acimut:               p.instalacio.acimut,
-    metres_cablejat:      p.instalacio.metres_cablejat,
+    petit_material:       p.instalacio.petit_material,
     perfil_client:        document.getElementById('perfil_client')?.value || 'industria_general',
     potencia_modul:       modul.potencia_wp || 510,
     potencia_inversor_kw: inv.potencia_kw || 6,
