@@ -167,6 +167,34 @@ function parseSipsHtml(html) {
 // ── GET /health ────────────────────────────────────────────────────
 app.get('/health', (req, res) => res.json({ ok: true, port: PORT }));
 
+// ── GET /casos-exit ────────────────────────────────────────────────
+// Retorna les imatges de la carpeta Desktop/imatges exemple com a base64, per categoria
+app.get('/casos-exit', (req, res) => {
+  const fs   = require('fs');
+  const path = require('path');
+  const folder = 'C:\\Users\\SOLENVER-OF15\\Desktop\\imatges exemple';
+  const categories = [
+    { label: 'Autoconsum Domèstic',                    re: /autoconsum.domestic/i },
+    { label: 'Autoconsum Industrial',                   re: /^industrial/i },
+    { label: "Autoconsum Estacions Depuradores (EDAR)", re: /^edar/i },
+    { label: "Instal·lacions Solars Aïllades",          re: /^aillada/i },
+  ];
+  try {
+    const files = fs.readdirSync(folder).filter(f => /\.(jpg|jpeg|png)$/i.test(f)).sort();
+    const result = categories.map(cat => ({
+      label: cat.label,
+      images: files
+        .filter(f => cat.re.test(f))
+        .map(f => {
+          const buf  = fs.readFileSync(path.join(folder, f));
+          const mime = /\.png$/i.test(f) ? 'image/png' : 'image/jpeg';
+          return `data:${mime};base64,${buf.toString('base64')}`;
+        }),
+    })).filter(c => c.images.length > 0);
+    res.json(result);
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
 // ── POST /pdf ──────────────────────────────────────────────────────
 // Rep { html, footer, header } i retorna un PDF binari generat amb Playwright
 // Estratègia: portada (sense header/footer) + pàgines interiors (amb header/footer) → merge pdf-lib

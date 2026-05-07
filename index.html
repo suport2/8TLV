@@ -532,39 +532,8 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
         <div id="modeIA" style="display:none">
           <div class="ia-panel">
             <h3>&#129302; Proposta de dimensionat per IA</h3>
-            <p style="font-size:12px;color:var(--gm)">Indica l'objectiu del client i l'agent calcular&agrave; la millor configuraci&oacute; basant-se en els seus consums reals.</p>
-            <div class="divider"></div>
-            <label style="display:block;font-size:11px;font-weight:600;color:var(--gm);text-transform:uppercase;margin-bottom:8px">Qu&egrave; prioritza el client?</label>
-            <div class="ia-objetiu-grid">
-              <div class="ia-obj-btn active" id="iobj_roi_max" onclick="setIAObj('roi_max')">
-                <div class="title">&#128200; Millor rendibilitat</div>
-                <div class="desc">Amortitza la inversi&oacute; en el menor temps possible</div>
-              </div>
-              <div class="ia-obj-btn" id="iobj_autoconsum_max" onclick="setIAObj('autoconsum_max')">
-                <div class="title">&#128267; M&agrave;xima autonomia</div>
-                <div class="desc">Dep&egrave;n el m&iacute;nim possible de la xarxa el&egrave;ctrica</div>
-              </div>
-              <div class="ia-obj-btn" id="iobj_pressupost" onclick="setIAObj('pressupost')">
-                <div class="title">&#128183; Pressupost limitat</div>
-                <div class="desc">Millor instal&middot;laci&oacute; possible per un cost m&agrave;xim</div>
-              </div>
-              <div class="ia-obj-btn" id="iobj_van_max" onclick="setIAObj('van_max')">
-                <div class="title">&#128185; M&agrave;xim guany net</div>
-                <div class="desc">Maximitza el benefici total a llarg termini (25 anys)</div>
-              </div>
-              <div class="ia-obj-btn" id="iobj_equilibrat" onclick="setIAObj('equilibrat')" style="grid-column:1/-1">
-                <div class="title">&#9878; Proposta equilibrada (recomanada)</div>
-                <div class="desc">Cobertura &ograve;ptima del consum, bon retorn i autonomia raonable. Ideal per al client est&agrave;ndard.</div>
-              </div>
-            </div>
-            <div id="iaPressupostBox" style="display:none;margin-top:10px">
-              <label style="font-size:11px;font-weight:600;color:var(--gm)">Pressupost m&agrave;xim del client (sense IVA)</label>
-              <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
-                <input type="number" id="pressupost_max" placeholder="Ex: 8000" min="1000" step="500"
-                  style="flex:1;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px">
-                <span style="font-size:13px;color:var(--gm)">&euro;</span>
-              </div>
-            </div>
+            <p style="font-size:12px;color:var(--gm)">L'agent analitzar&agrave; els consums reals del client i calcular&agrave; la configuraci&oacute; &ograve;ptima autom&agrave;ticament.</p>
+            <div id="iaPressupostBox" style="display:none"></div>
             <div class="ia-result" id="iaResult">
               <div class="ia-badge">&#129302; Proposta IA</div>
               <div class="ia-text" id="iaResultText"></div>
@@ -852,7 +821,7 @@ let state = {
   instalMode: 'manual',
   consumMode: 'taula',
   invType: 'mono',
-  iaObj: 'roi_max',
+  iaObj: 'equilibrat',
   selectedModul: 'jinko_510',
   selectedInversor: 'hw_6ktl_l',
   selectedMuntatge: 'coplanar_teula',
@@ -1108,7 +1077,7 @@ function onDrop(e) {
 async function uploadCups(input) { if(input.files[0]) await uploadCupsFile(input.files[0]); }
 
 // ── URL del servidor (local o Render en producció) ──────────────────
-const SIPS_SERVER = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+const SIPS_SERVER = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === '')
   ? 'http://localhost:3333'
   : 'https://solenver-server.onrender.com';
 
@@ -1452,13 +1421,15 @@ async function fetchOptimitzar() {
     MES_CLAUS.forEach(clau=>{const c=consumos[clau];costActual+=c.p1*e.preu_p1+c.p2*e.preu_p2+c.p3*e.preu_p3;});
 
     // Usa dades PVGIS reals (ja carregades pel panell dret) per obtenir KPIs idèntics a l'informe
+    const lat = parseFloat(document.getElementById('lat')?.value || 41.39);
+    const lng = parseFloat(document.getElementById('lng')?.value || 2.17);
+    const incl = parseFloat(document.getElementById('inclinacio')?.value || 30);
+    const azim = parseFloat(document.getElementById('acimut')?.value || 0);
+    const modul = state.cataleg.moduls?.find(m => m.id === state.selectedModul) || {};
+    const inv = (state.cataleg.mono || []).concat(state.cataleg.trifasic || []).find(i => i.id === state.selectedInversor) || {};
     let pvgis_monthly = state.pvgisMonthly || null;
     if (!pvgis_monthly) {
       try {
-        const lat = parseFloat(document.getElementById('lat')?.value || 41.39);
-        const lng = parseFloat(document.getElementById('lng')?.value || 2.17);
-        const incl = parseFloat(document.getElementById('inclinacio')?.value || 30);
-        const azim = parseFloat(document.getElementById('acimut')?.value || 0);
         const ctrl = new AbortController();
         const t = setTimeout(() => ctrl.abort(), 4000);
         const rp = await fetch(`${SIPS_SERVER}/pvgis?lat=${lat}&lng=${lng}&angle=${incl}&aspect=${azim}`, { signal: ctrl.signal });
@@ -1466,6 +1437,46 @@ async function fetchOptimitzar() {
         if (rp.ok) { const dp = await rp.json(); pvgis_monthly = dp.monthly || null; }
       } catch(e) { /* PVGIS no disponible, el motor usarà estimació genèrica */ }
     }
+
+    // Pre-calcular rang de variants amb cost real del catàleg (mateixa fórmula que calcPressupost)
+    const pvgisSum   = Array.isArray(pvgis_monthly) ? pvgis_monthly.reduce((s,v)=>s+(v||0),0) : 0;
+    const kwhPerMod  = pvgisSum > 0 ? Math.round(pvgisSum * (modul.potencia_wp||510)/1000) : 650;
+    const minM = Math.max(4,  Math.floor(consumAnual * 0.30 / kwhPerMod / 2) * 2);
+    const maxM = Math.min(50, Math.ceil (consumAnual * 1.20 / kwhPerMod / 2) * 2);
+    const _N = 7, _pas = Math.max(2, Math.round((maxM-minM)/(_N-1)/2)*2);
+    const kpisVariants = [];
+    for (let i = 0; kpisVariants.length < _N; i++) {
+      const nm = Math.min(maxM, minM + i * _pas);
+      if (!kpisVariants.find(v => v.num_moduls === nm))
+        kpisVariants.push({ num_moduls: nm, cost_instalacio: calcCostVariant(nm) });
+      if (nm >= maxM) break;
+    }
+
+    // Payload idèntic al sidebar KPI — n8n l'usarà directament per a cada variant
+    const kpisPayload = {
+      num_moduls:            parseInt(document.getElementById('num_moduls')?.value || 12),
+      potencia_wp:           modul.potencia_wp || 510,
+      potencia_inversor_kw:  inv.potencia_kw || 6,
+      perfil_client:         document.getElementById('perfil_client')?.value || 'domestica_residencial',
+      preu_p1:               e.preu_p1,
+      preu_p2:               e.preu_p2,
+      preu_p3:               e.preu_p3,
+      preu_excedent:         e.preu_compensacio,
+      consum_anual:          Math.round(consumAnual),
+      consum_p1:             MES_CLAUS.map(k => (consumos[k]||{}).p1||0),
+      consum_p2:             MES_CLAUS.map(k => (consumos[k]||{}).p2||0),
+      consum_p3:             MES_CLAUS.map(k => (consumos[k]||{}).p3||0),
+      cost_instalacio:       e.cost_instalacio || null,
+      increment_energia_pct: e.increment_energia_pct,
+      manteniment_anual:     e.manteniment_anual,
+      anys_analisi:          e.anys_analisi,
+      tarifa:                e.tipus_tarifa,
+      lat, lng, inclinacio: incl, acimut: azim,
+      pvgis_monthly,
+      ombres:                document.getElementById('ombres')?.value || 'cap',
+      equips_futurs:         getEquipsFuturs(),
+      perfils_equips:        state.cataleg.perfils_equips || [],
+    };
 
     const payload={
       client: p.client,
@@ -1481,6 +1492,7 @@ async function fetchOptimitzar() {
         muntatge_id: state.selectedMuntatge,
         inclinacio: parseFloat(document.getElementById('inclinacio')?.value||30),
         acimut: parseFloat(document.getElementById('acimut')?.value||0),
+        ombres: document.getElementById('ombres')?.value||'cap',
       },
       economics: p.economics,
       consumos,
@@ -1491,9 +1503,11 @@ async function fetchOptimitzar() {
       cost_actual: Math.round(costActual*100)/100,
       pressupost_max: parseFloat(document.getElementById('pressupost_max')?.value||0)||null,
       pvgis_monthly,
+      kpisPayload,
+      kpisVariants,
       meta:{
         comercial_id: p.meta.comercial_id,
-        objectiu_ia: state.iaObj||'roi_max',
+        objectiu_ia: state.iaObj||'equilibrat',
         notes_internes: p.meta.notes_internes,
       }
     };
@@ -1675,6 +1689,37 @@ function calcPressupost() {
     + ' · Mat. ' + Math.round(tCables).toLocaleString('ca') + '€'
     + ' (s/IVA)';
   onFormChange();
+}
+
+function calcCostVariant(numModuls) {
+  if (document.getElementById('cost_manual_toggle')?.checked) {
+    const costActual = parseFloat(document.getElementById('cost_instalacio')?.value) || null;
+    const modulsActual = parseInt(document.getElementById('num_moduls')?.value || 12);
+    return costActual ? Math.round(costActual * numModuls / modulsActual) : null;
+  }
+  const numInversors   = parseInt(document.getElementById('num_inversors')?.value || 1);
+  const modul          = state.cataleg.moduls.find(m => m.id === state.selectedModul) || {};
+  const inversors      = (state.cataleg.mono||[]).concat(state.cataleg.trifasic||[]);
+  const inversor       = inversors.find(i => i.id === state.selectedInversor) || {};
+  const muntatge       = state.cataleg.muntatges.find(m => m.id === state.selectedMuntatge) || {};
+  const c              = state.cataleg.costos || {};
+  const preuModul      = parseFloat(modul.preu) || 71.50;
+  const preuInv        = parseFloat(inversor.preu) || 793;
+  const preuMuntRaw    = parseFloat(muntatge.preu_base || muntatge.preu) || 50;
+  const costMuntatge   = preuMuntRaw > 200 ? preuMuntRaw : preuMuntRaw * numModuls;
+  const costMaObra     = (parseFloat(c.ma_obra_base)||600) + (parseFloat(c.ma_obra_per_modul)||80) * numModuls;
+  const projecte       = parseFloat(c.projecte_tecnic) || 550;
+  const cables         = Math.round(numModuls * (parseFloat(c.petit_material_per_modul)||12.5));
+  const MARGE          = (parseFloat(document.getElementById('marge_comercial')?.value)||35) / 100;
+  const r = v => Math.round(v * 100) / 100;
+  return Math.round(
+    r(numModuls * preuModul * (1+MARGE)) +
+    r(preuInv * numInversors * (1+MARGE)) +
+    r(costMuntatge * (1+MARGE)) +
+    r(costMaObra * (1+MARGE)) +
+    r(projecte * (1+MARGE)) +
+    r(cables)
+  );
 }
 
 // ─── EQUIPS FUTURS ───────────────────────────────────────────────────────────
@@ -2017,11 +2062,36 @@ async function _generarPdf(previewOnly) {
   }
   if (!data.html) throw new Error('n8n no ha retornat HTML. Camps: ' + Object.keys(data).join(', '));
 
+  // 1.5 Injectar secció "11 - Casos d'Èxit" amb imatges locals
+  let htmlFinal = data.html;
+  try {
+    const rc = await fetch(`${SIPS_SERVER}/casos-exit`);
+    if (rc.ok) {
+      const cats = await rc.json();
+      const pfooter = `<div class="pfooter"><span>info@solenver.com | 973 261 163</span><span></span><span></span></div>`;
+      const casosHtml = cats.map((cat, idx) => `
+  <div class="page"${idx > 0 ? ' style="page-break-before:always"' : ''}>
+    <div class="sh">
+      <div class="sh-num">11</div>
+      <div class="sh-title">${cat.label}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:12px">
+      ${cat.images.map(img => `
+      <div style="border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.06)">
+        <img src="${img}" style="width:100%;height:185px;object-fit:cover;display:block">
+      </div>`).join('')}
+    </div>
+    ${pfooter}
+  </div>`).join('\n');
+      htmlFinal = htmlFinal.replace('<!-- CASOS_EXIT_PLACEHOLDER -->', casosHtml);
+    }
+  } catch(_) { /* servidor local no disponible, s'omet la secció */ }
+
   // 2. Servidor local (Playwright) converteix HTML → PDF
   showLoading('Generant PDF...');
   const rPdf = await fetch(`${SIPS_SERVER}/pdf`, {
     method: 'POST', headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ html: data.html, footer: data.footer_html, header: data.header_html })
+    body: JSON.stringify({ html: htmlFinal, footer: data.footer_html, header: data.header_html })
   });
   if (!rPdf.ok) {
     const err = await rPdf.json().catch(() => ({}));
