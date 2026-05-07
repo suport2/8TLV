@@ -2062,36 +2062,11 @@ async function _generarPdf(previewOnly) {
   }
   if (!data.html) throw new Error('n8n no ha retornat HTML. Camps: ' + Object.keys(data).join(', '));
 
-  // 1.5 Injectar secció "11 - Casos d'Èxit" amb imatges locals
-  let htmlFinal = data.html;
-  try {
-    const rc = await fetch(`${SIPS_SERVER}/casos-exit`);
-    if (rc.ok) {
-      const cats = await rc.json();
-      const pfooter = `<div class="pfooter"><span>info@solenver.com | 973 261 163</span><span></span><span></span></div>`;
-      const casosHtml = cats.map((cat, idx) => `
-  <div class="page"${idx > 0 ? ' style="page-break-before:always"' : ''}>
-    <div class="sh">
-      <div class="sh-num">11</div>
-      <div class="sh-title">${cat.label}</div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:12px">
-      ${cat.images.map(img => `
-      <div style="border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.06)">
-        <img src="${img}" style="width:100%;height:185px;object-fit:cover;display:block">
-      </div>`).join('')}
-    </div>
-    ${pfooter}
-  </div>`).join('\n');
-      htmlFinal = htmlFinal.replace('<!-- CASOS_EXIT_PLACEHOLDER -->', casosHtml);
-    }
-  } catch(_) { /* servidor local no disponible, s'omet la secció */ }
-
   // 2. Servidor local (Playwright) converteix HTML → PDF
   showLoading('Generant PDF...');
   const rPdf = await fetch(`${SIPS_SERVER}/pdf`, {
     method: 'POST', headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ html: htmlFinal, footer: data.footer_html, header: data.header_html })
+    body: JSON.stringify({ html: data.html, footer: data.footer_html, header: data.header_html })
   });
   if (!rPdf.ok) {
     const err = await rPdf.json().catch(() => ({}));

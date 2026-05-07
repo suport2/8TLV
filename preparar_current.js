@@ -673,8 +673,38 @@ const htmlImgInversor= inversorFotoUrl
   ? `<img src="${inversorFotoUrl}" alt="Inversor" style="width:100%;border-radius:8px;border:1px solid #e2e8f0;object-fit:contain;max-height:200px;background:#fff;padding:8px;display:block">`
   : `<div style="height:140px;background:#f8fafc;border:1px dashed #e2e8f0;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28pt;color:#94a3b8">⚡</div>`;
 
-// ─── CASOS D'ÈXIT — injectat pel frontend amb imatges locals (Desktop) ───
-const htmlCasosExit = '<!-- CASOS_EXIT_PLACEHOLDER -->';
+// ─── CASOS D'ÈXIT (des de Drive via Sheets casos_exit) ───
+const casosExitRows = $('Llegir casos exit PDF').all().map(i => i.json);
+const casosByCategoria = {};
+for (const row of casosExitRows) {
+  const cat = (row.categoria || '').trim();
+  const id  = (row.id_drive  || '').trim();
+  if (!cat || !id) continue;
+  if (!casosByCategoria[cat]) casosByCategoria[cat] = [];
+  casosByCategoria[cat].push({ id, ordre: parseInt(row.ordre) || 0 });
+}
+for (const cat of Object.keys(casosByCategoria))
+  casosByCategoria[cat].sort((a, b) => a.ordre - b.ordre);
+const casosCategories = Object.entries(casosByCategoria);
+let htmlCasosExit = '';
+if (casosCategories.length > 0) {
+  const telDisplay2 = telefonEmpresa ? ' | ' + telefonEmpresa : '';
+  const pagesHtml = await Promise.all(casosCategories.map(async ([catLabel, imgs], idx) => {
+    const imgHtmls = await Promise.all(imgs.map(async ({ id }) => {
+      const b64 = await driveToBase64(id, 'image/jpeg');
+      const src = b64 || `https://lh3.googleusercontent.com/d/${id}`;
+      return `<div style="border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.06)"><img src="${src}" style="width:100%;height:185px;object-fit:cover;display:block"></div>`;
+    }));
+    return `<div class="page"${idx > 0 ? ' style="page-break-before:always"' : ''}>
+  <div class="sh"><div class="sh-num">11</div><div class="sh-title">${catLabel}</div></div>
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:12px">
+    ${imgHtmls.join('\n    ')}
+  </div>
+  <div class="pfooter"><span>${emailEmpresa}${telDisplay2}</span><span>${input.client_nom||'-'}</span><span>${idEstudi}</span></div>
+</div>`;
+  }));
+  htmlCasosExit = pagesHtml.join('\n');
+}
 
 // ─── PÀGINA DE BATERIES (upsell) ──────────────────────────────────────────────
 const excedentAnualKwh   = kpis.excedent_anual || 0;
