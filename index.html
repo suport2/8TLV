@@ -9,55 +9,58 @@
 /* âââ RESET & BASE âââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --v1:#1B5E20;--v2:#2E7D32;--v3:#388E3C;--vc:#4CAF50;--vbg:#E8F5E9;--vb2:#C8E6C9;
-  --gf:#1C2B33;--gm:#455A64;--gc:#ECEFF1;--gl:#CFD8DC;
+  --v1:#2c7d2e;--v2:#48A842;--v3:#3a9636;--vc:#71BF44;--vbg:#f2faf1;--vb2:#cdeacb;
+  --gf:#212121;--gm:#6B6B6B;--gs:#7A7A7A;--gc:#F5F5F5;--gl:#E0E0E0;
   --bl:#1565C0;--blbg:#E3F2FD;
   --to:#E65100;--tobg:#FFF3E0;
   --am:#F57F17;--ambg:#FFF8E1;
   --rj:#B71C1C;
   --wh:#FFFFFF;
-  --shadow:0 2px 12px rgba(0,0,0,.10);
-  --radius:10px;
+  --shadow:0 2px 16px rgba(0,0,0,.08);
+  --shadow-sm:0 1px 6px rgba(0,0,0,.06);
+  --radius:12px;
   --font:'Inter',sans-serif;
 }
-body{font-family:var(--font);background:#F0F4F0;color:var(--gf);min-height:100vh;font-size:14px}
+body{font-family:var(--font);background:#F4F6F4;color:var(--gf);min-height:100vh;font-size:14px}
 input,select,textarea{font-family:var(--font);font-size:13px;color:var(--gf)}
 button{font-family:var(--font);cursor:pointer}
 a{color:var(--v2)}
 
 /* âââ HEADER âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
-header{background:var(--v1);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3)}
-header .logo{color:#fff;font-weight:700;font-size:18px;letter-spacing:.5px}
-header .logo span{color:var(--vb2);font-weight:300}
-header .meta{color:var(--vb2);font-size:12px}
-header .api-status{display:flex;gap:8px}
+header{background:linear-gradient(135deg,var(--v1) 0%,var(--v2) 100%);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 3px 14px rgba(44,125,46,.4)}
+header .logo{color:#fff;font-weight:800;font-size:18px;letter-spacing:2px;text-transform:uppercase;display:flex;align-items:center;gap:12px}
+header .logo .logo-img-wrap{background:#fff;border-radius:8px;padding:4px 10px;display:flex;align-items:center;height:42px;box-shadow:0 2px 8px rgba(0,0,0,.18);flex-shrink:0}
+header .logo .logo-img{height:34px;width:auto;display:block}
+header .logo .logo-sep{width:1px;height:28px;background:rgba(255,255,255,.25);margin:0 2px}
+header .logo .logo-sub{font-size:11px;font-weight:400;color:rgba(255,255,255,.7);letter-spacing:.5px;text-transform:none}
+header .api-status{display:flex;gap:10px}
 header .dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
 header .dot.ok{background:#69F0AE}
-header .dot.no{background:#FF5722}
-header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:center}
+header .dot.no{background:#FF8A65}
+header .status-chip{color:rgba(255,255,255,.65);font-size:11px;display:flex;align-items:center}
 
 /* âââ LAYOUT âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .layout{display:grid;grid-template-columns:1fr 320px;gap:20px;max-width:1200px;margin:0 auto;padding:20px}
 @media(max-width:900px){.layout{grid-template-columns:1fr}}
 
 /* âââ FORM CARD âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
-.form-card{background:var(--wh);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
-.form-card-header{background:var(--v2);padding:16px 24px;color:#fff;display:flex;justify-content:space-between;align-items:center}
-.form-card-header h2{font-size:15px;font-weight:600}
+.form-card{background:var(--wh);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;border:1px solid rgba(72,168,66,.12)}
+.form-card-header{background:linear-gradient(135deg,var(--v1) 0%,var(--v2) 100%);padding:16px 24px;color:#fff;display:flex;justify-content:space-between;align-items:center}
+.form-card-header h2{font-size:15px;font-weight:600;letter-spacing:.3px}
 .form-card-body{padding:24px}
 
 /* âââ STEPPER âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
-.stepper{display:flex;gap:0;margin-bottom:24px;border-radius:8px;overflow:hidden;border:1px solid var(--gl)}
+.stepper{display:flex;gap:0;margin-bottom:24px;border-radius:10px;overflow:hidden;border:1px solid var(--gl);box-shadow:var(--shadow-sm)}
 .step-tab{flex:1;padding:10px 4px;text-align:center;background:var(--gc);cursor:pointer;transition:all .2s;border-right:1px solid var(--gl);font-size:11px;font-weight:500;color:var(--gm);line-height:1.3}
 .step-tab:last-child{border-right:none}
-.step-tab.active{background:var(--v2);color:#fff}
-.step-tab.done{background:var(--vbg);color:var(--v2)}
+.step-tab.active{background:linear-gradient(135deg,var(--v1),var(--v2));color:#fff;box-shadow:inset 0 -2px 0 rgba(0,0,0,.15)}
+.step-tab.done{background:var(--vbg);color:var(--v2);border-bottom:2px solid var(--vc)}
 .step-tab .num{display:block;font-size:16px;font-weight:700;margin-bottom:2px}
 
 /* âââ SECTIONS ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .section{display:none}
 .section.active{display:block}
-.section-title{font-size:16px;font-weight:600;color:var(--v2);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--vb2)}
+.section-title{font-size:15px;font-weight:700;color:var(--v1);margin-bottom:16px;padding-bottom:10px;border-bottom:3px solid var(--vc);display:flex;align-items:center;gap:8px}
 
 /* âââ FORM FIELDS âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .field-grid{display:grid;gap:14px}
@@ -108,6 +111,7 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
 .consum-table input{width:70px;padding:4px 6px;border:1px solid var(--gl);border-radius:4px;text-align:center;background:#fff}
 .consum-table .mes-label{font-weight:600;color:var(--gf);white-space:nowrap}
 .consum-total{font-weight:700;color:var(--v2)}
+.hide-6p .col-6p{display:none}
 
 /* âââ DRAG DROP âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .drop-zone{border:2px dashed var(--gl);border-radius:10px;padding:32px;text-align:center;cursor:pointer;transition:all .2s;background:var(--gc)}
@@ -131,21 +135,21 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
 
 /* âââ NAV BUTTONS âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .nav-buttons{display:flex;justify-content:space-between;margin-top:24px;padding-top:16px;border-top:1px solid var(--gl)}
-.btn{padding:10px 24px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
-.btn-primary{background:var(--v2);color:#fff}
-.btn-primary:hover{background:var(--v3);transform:translateY(-1px)}
+.btn{padding:10px 24px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:linear-gradient(135deg,var(--v2),var(--vc));color:#fff;box-shadow:0 2px 8px rgba(72,168,66,.35)}
+.btn-primary:hover{background:linear-gradient(135deg,var(--v1),var(--v2));transform:translateY(-1px);box-shadow:0 4px 12px rgba(44,125,46,.4)}
 .btn-secondary{background:var(--gc);color:var(--gm);border:1.5px solid var(--gl)}
-.btn-secondary:hover{border-color:var(--v3);color:var(--v3)}
+.btn-secondary:hover{border-color:var(--v2);color:var(--v2)}
 .btn-outline{background:transparent;color:var(--v2);border:2px solid var(--v2)}
-.btn-outline:hover{background:var(--vbg)}
-.btn-success{background:#388E3C;color:#fff;font-size:14px;padding:12px 28px}
-.btn-success:hover{background:#2E7D32}
-.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-outline:hover{background:var(--vbg);color:var(--v1)}
+.btn-success{background:linear-gradient(135deg,var(--v1),var(--v2));color:#fff;font-size:14px;padding:12px 32px;box-shadow:0 3px 10px rgba(44,125,46,.4);letter-spacing:.3px}
+.btn-success:hover{background:linear-gradient(135deg,#1e5f20,var(--v1));transform:translateY(-1px);box-shadow:0 5px 16px rgba(44,125,46,.5)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
 
 /* âââ SIDEBAR KPIs ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .sidebar{position:sticky;top:72px;align-self:start}
-.kpi-card-wrap{background:var(--wh);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
-.kpi-header{background:var(--v2);padding:14px 18px;color:#fff;font-weight:600;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+.kpi-card-wrap{background:var(--wh);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;border:1px solid rgba(72,168,66,.15)}
+.kpi-header{background:linear-gradient(135deg,var(--v1) 0%,var(--v2) 100%);padding:14px 18px;color:#fff;font-weight:600;font-size:13px;display:flex;justify-content:space-between;align-items:center;letter-spacing:.3px}
 .kpi-header .refresh-dot{width:8px;height:8px;border-radius:50%;background:#69F0AE;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .kpi-body{padding:14px}
@@ -160,8 +164,8 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
 .kpi-loading{opacity:.5;font-size:11px;color:var(--gm);text-align:center;padding:8px}
 
 /* âââ ACTION BUTTONS ââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
-.action-buttons{background:var(--wh);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-top:14px}
-.action-buttons h3{font-size:12px;font-weight:600;color:var(--gm);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px}
+.action-buttons{background:var(--wh);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-top:14px;border:1px solid rgba(72,168,66,.12)}
+.action-buttons h3{font-size:11px;font-weight:700;color:var(--v1);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px}
 .action-btn-full{width:100%;margin-bottom:8px;justify-content:center}
 
 /* âââ LOADING OVERLAY âââââââââââââââââââââââââââââââââââââââââââââââââââââ */
@@ -204,7 +208,7 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
 .sep::before,.sep::after{content:'';flex:1;height:1px;background:var(--gl)}
 
 /* ── Upload factura ───────────────────────────────── */
-.upload-factura-card{border:2px dashed #4ade80;background:#f0fdf4;border-radius:var(--radius);padding:16px;margin-bottom:20px}
+.upload-factura-card{border:2px dashed var(--vc);background:var(--vbg);border-radius:var(--radius);padding:16px;margin-bottom:20px}
 .upload-hint{color:#475569;font-size:0.88rem;margin:0 0 14px}
 .badge-optional{font-size:0.72rem;background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:999px;font-weight:600;margin-left:8px}
 .upload-drop-zone{border:2px dashed var(--gl);border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:#fff}
@@ -228,8 +232,8 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
 .upload-field-value{color:#1e293b;font-weight:500}
 .upload-field-null{color:#94a3b8;font-style:italic}
 .upload-result-actions{display:flex;gap:8px;padding:10px 14px;background:#f8fafc;border-top:1px solid #e2e8f0}
-.btn-apply{flex:1;background:#16a34a;color:#fff;border:none;border-radius:8px;padding:9px 14px;font-weight:600;cursor:pointer;font-size:13px;transition:background .2s}
-.btn-apply:hover{background:#15803d}
+.btn-apply{flex:1;background:linear-gradient(135deg,var(--v1),var(--v2));color:#fff;border:none;border-radius:8px;padding:9px 14px;font-weight:600;cursor:pointer;font-size:13px;transition:all .2s;box-shadow:0 2px 6px rgba(44,125,46,.3)}
+.btn-apply:hover{background:linear-gradient(135deg,#1e5f20,var(--v1));box-shadow:0 3px 10px rgba(44,125,46,.4)}
 .btn-cancel-upload{background:#fff;color:#475569;border:1px solid #cbd5e1;border-radius:8px;padding:9px 14px;cursor:pointer;font-size:13px}
 .upload-card-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .upload-card-header h3{font-size:13px;font-weight:600;color:var(--v2);margin:0}
@@ -258,7 +262,13 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
 
 <!-- HEADER -->
 <header>
-  <div class="logo">&#9728; SOLENVER <span>&middot; Generador d'Estudis FV</span></div>
+  <div class="logo">
+    <div class="logo-img-wrap">
+      <img src="logo.png" alt="SOLENVER" class="logo-img">
+    </div>
+    <div class="logo-sep"></div>
+    <span class="logo-sub">Generador d&rsquo;Estudis Fotovolt&agrave;ics</span>
+  </div>
   <div class="api-status" id="apiStatus">
     <span class="status-chip"><span class="dot no" id="dotMaps"></span>Maps</span>
     <span class="status-chip"><span class="dot no" id="dotIA"></span>IA</span>
@@ -570,12 +580,12 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
         <div id="modeConsumTaula">
           <table class="consum-table">
             <thead>
-              <tr><th>Mes</th><th>P1 (kWh)</th><th>P2 (kWh)</th><th>P3 (kWh)</th><th>Total</th></tr>
+              <tr><th>Mes</th><th>P1 (kWh)</th><th>P2 (kWh)</th><th>P3 (kWh)</th><th class="col-6p">P4 (kWh)</th><th class="col-6p">P5 (kWh)</th><th class="col-6p">P6 (kWh)</th><th>Total</th></tr>
             </thead>
             <tbody id="consumTableBody"></tbody>
           </table>
           <div class="info-box" style="margin-top:10px">
-            &#8505; P1 = Hores punta &middot; P2 = Hores vall &middot; P3 = Supervall/festius. Pots deixar P2 i P3 a 0 si nom&eacute;s tens el total.
+            &#8505; P1 = Hores punta &middot; P2 = Hores vall &middot; P3 = Supervall/festius. Pots deixar P2 i P3 a 0 si nom&eacute;s tens el total. Per a tarifes 3.0TD/6.xTD s'afegiran les columnes P4&ndash;P6 automàticament.
           </div>
         </div>
         <div id="modeConsumCups" style="display:none">
@@ -612,7 +622,7 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
         <div class="field-grid field-grid-2" style="margin-top:8px">
           <div class="field">
             <label>Tipus de tarifa</label>
-            <select id="tarifa" onchange="onFormChange()">
+            <select id="tarifa" onchange="onTarifaChange();onFormChange()">
               <option value="2.0TD">2.0TD (Residencial / Petit comercial)</option>
               <option value="3.0TD">3.0TD (Industrial / Gran comercial)</option>
               <option value="6.1TD">6.1TD (Alta tensi&oacute;)</option>
@@ -633,6 +643,18 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
           <div class="field">
             <label>Preu P3 (&euro;/kWh)</label>
             <input type="number" id="preu_p3" value="0.075" step="0.001" min="0" oninput="onFormChange()">
+          </div>
+          <div class="field col-6p" id="fieldPreuP4" style="display:none">
+            <label>Preu P4 (&euro;/kWh)</label>
+            <input type="number" id="preu_p4" value="0.060" step="0.001" min="0" oninput="onFormChange()">
+          </div>
+          <div class="field col-6p" id="fieldPreuP5" style="display:none">
+            <label>Preu P5 (&euro;/kWh)</label>
+            <input type="number" id="preu_p5" value="0.050" step="0.001" min="0" oninput="onFormChange()">
+          </div>
+          <div class="field col-6p" id="fieldPreuP6" style="display:none">
+            <label>Preu P6 (&euro;/kWh)</label>
+            <input type="number" id="preu_p6" value="0.040" step="0.001" min="0" oninput="onFormChange()">
           </div>
         </div>
         <!-- ─── EQUIPS FUTURS ─── -->
@@ -751,9 +773,16 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
         </div>
         <div class="nav-buttons">
           <button class="btn btn-secondary" onclick="goTo(4)">&larr; Econ&ograve;mics</button>
-          <div style="display:flex;gap:10px">
-            <button class="btn btn-outline" onclick="previewPDF()">&#128065; Previsualitzar PDF</button>
-            <button class="btn btn-success" onclick="generarEnviar()">&#128228; Generar PDF</button>
+          <div style="display:flex;align-items:center;gap:16px">
+            <div style="display:flex;align-items:center;gap:6px">
+              <span style="font-size:11px;font-weight:600;color:#6b7280">Idioma:</span>
+              <button id="btnLangCA" onclick="setIdioma('ca')" style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:2px solid #22c55e;background:#f0fdf4;color:#166534">CA</button>
+              <button id="btnLangES" onclick="setIdioma('es')" style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:2px solid #d1d5db;background:#fff;color:#374151">ES</button>
+            </div>
+            <div style="display:flex;gap:10px">
+              <button class="btn btn-outline" onclick="previewPDF()">&#128065; Previsualitzar PDF</button>
+              <button class="btn btn-success" onclick="generarEnviar()">&#128228; Generar PDF</button>
+            </div>
           </div>
         </div>
       </div>
@@ -810,7 +839,7 @@ header .status-chip{color:var(--vb2);font-size:11px;display:flex;align-items:cen
 </div>
 
 <script>
-const N8N = 'https://geri.app.n8n.cloud/webhook';
+const N8N = 'https://n8n.solenver.com/webhook';
 const API = N8N;
 const MESOS = ['Gener','Febrer','Mar\u00e7','Abril','Maig','Juny',
                'Juliol','Agost','Setembre','Octubre','Novembre','Desembre'];
@@ -821,6 +850,7 @@ let state = {
   instalMode: 'manual',
   consumMode: 'taula',
   invType: 'mono',
+  idioma: 'ca',
   iaObj: 'equilibrat',
   selectedModul: 'jinko_510',
   selectedInversor: 'hw_6ktl_l',
@@ -833,6 +863,7 @@ let state = {
 
 document.addEventListener('DOMContentLoaded', async () => {
   initConsumsTable();
+  onTarifaChange();
   await loadCataleg();
   checkHealth();
   onFormChange();
@@ -996,6 +1027,14 @@ function setInstalMode(mode) {
   document.getElementById('btnIA').classList.toggle('active', mode==='ia');
 }
 
+function setIdioma(lang) {
+  state.idioma = lang;
+  const ca = document.getElementById('btnLangCA');
+  const es = document.getElementById('btnLangES');
+  if (ca) { ca.style.borderColor = lang==='ca' ? '#22c55e' : '#d1d5db'; ca.style.background = lang==='ca' ? '#f0fdf4' : '#fff'; ca.style.color = lang==='ca' ? '#166534' : '#374151'; }
+  if (es) { es.style.borderColor = lang==='es' ? '#22c55e' : '#d1d5db'; es.style.background = lang==='es' ? '#f0fdf4' : '#fff'; es.style.color = lang==='es' ? '#166534' : '#374151'; }
+}
+
 function setInvType(t) {
   state.invType = t;
   document.getElementById('btnMono').classList.toggle('active', t==='mono');
@@ -1019,6 +1058,9 @@ function initConsumsTable() {
       <td><input type="number" class="p1" data-mes="${mes}" value="${defaults[i]}" min="0" oninput="state.consumEditat=true;onFormChange()"></td>
       <td><input type="number" class="p2" data-mes="${mes}" value="${Math.round(defaults[i]*0.35)}" min="0" oninput="state.consumEditat=true;onFormChange()"></td>
       <td><input type="number" class="p3" data-mes="${mes}" value="${Math.round(defaults[i]*0.2)}" min="0" oninput="state.consumEditat=true;onFormChange()"></td>
+      <td class="col-6p"><input type="number" class="p4" data-mes="${mes}" value="0" min="0" oninput="state.consumEditat=true;onFormChange()"></td>
+      <td class="col-6p"><input type="number" class="p5" data-mes="${mes}" value="0" min="0" oninput="state.consumEditat=true;onFormChange()"></td>
+      <td class="col-6p"><input type="number" class="p6" data-mes="${mes}" value="0" min="0" oninput="state.consumEditat=true;onFormChange()"></td>
       <td class="consum-total" id="tot_${mes}">&mdash;</td>
     </tr>`).join('');
   updateConsumTotals();
@@ -1030,11 +1072,25 @@ function updateConsumTotals() {
     const p1=parseFloat(document.querySelector(`.p1[data-mes="${mes}"]`)?.value||0);
     const p2=parseFloat(document.querySelector(`.p2[data-mes="${mes}"]`)?.value||0);
     const p3=parseFloat(document.querySelector(`.p3[data-mes="${mes}"]`)?.value||0);
-    const t=p1+p2+p3; grand+=t;
+    const p4=parseFloat(document.querySelector(`.p4[data-mes="${mes}"]`)?.value||0);
+    const p5=parseFloat(document.querySelector(`.p5[data-mes="${mes}"]`)?.value||0);
+    const p6=parseFloat(document.querySelector(`.p6[data-mes="${mes}"]`)?.value||0);
+    const t=p1+p2+p3+p4+p5+p6; grand+=t;
     const el=document.getElementById('tot_'+mes);
     if(el) el.textContent=t.toFixed(0);
   });
   return grand;
+}
+
+function onTarifaChange() {
+  const tarifa = document.getElementById('tarifa')?.value || '2.0TD';
+  const is6P = tarifa === '3.0TD' || tarifa.startsWith('6');
+  ['P4','P5','P6'].forEach(p => {
+    const el = document.getElementById('fieldPreu'+p);
+    if (el) el.style.display = is6P ? '' : 'none';
+  });
+  const table = document.getElementById('modeConsumTaula');
+  if (table) table.classList.toggle('hide-6p', !is6P);
 }
 
 function setConsumMode(mode) {
@@ -1079,7 +1135,7 @@ async function uploadCups(input) { if(input.files[0]) await uploadCupsFile(input
 // ── URL del servidor (local o Render en producció) ──────────────────
 const SIPS_SERVER = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === '')
   ? 'http://localhost:3333'
-  : 'https://solenver-server.onrender.com';
+  : 'https://api.solenver.com';
 
 async function fetchSips(cupsOverride) {
   const cupsInput = document.getElementById('sipsInputCups');
@@ -1102,7 +1158,16 @@ async function fetchSips(cupsOverride) {
     const d = await r.json();
     if (!d.success) throw new Error(d.error || 'Error desconegut');
 
-    // Omplir taula mensual P1/P2/P3 i canviar a mode taula
+    // Aplicar tariff_type si 3.0TD/6.x — mostrar camps P4-P6
+    if (d.tariff_type && d.tariff_type !== '2td') {
+      const sel = document.getElementById('tarifa');
+      if (sel) {
+        if (d.tariff_type === '3td') sel.value = '3.0TD';
+        else if (d.tariff_type.startsWith('6')) sel.value = '6.1TD';
+      }
+      onTarifaChange();
+    }
+    // Omplir taula mensual P1-P6 i canviar a mode taula
     applySipsConsumos(d.consumos);
     setConsumMode('taula');
     if (status) { status.style.display = 'block'; status.innerHTML = `✅ Dades de consum extretes a través del SIPS (${d.consum_anual?.toLocaleString('ca')} kWh/any)`; status.style.color = '#15803d'; }
@@ -1128,6 +1193,10 @@ function applySipsConsumos(consumos) {
       p1el.value = Math.round(v.p1 || 0);
       document.querySelector(`.p2[data-mes="${mes}"]`).value = Math.round(v.p2 || 0);
       document.querySelector(`.p3[data-mes="${mes}"]`).value = Math.round(v.p3 || 0);
+      const p4el = document.querySelector(`.p4[data-mes="${mes}"]`);
+      if (p4el) { p4el.value = Math.round(v.p4 || 0);
+        document.querySelector(`.p5[data-mes="${mes}"]`).value = Math.round(v.p5 || 0);
+        document.querySelector(`.p6[data-mes="${mes}"]`).value = Math.round(v.p6 || 0); }
     }
   });
   state.consumEditat = true;
@@ -1147,7 +1216,10 @@ async function uploadCupsFile(file) {
         const p1el = document.querySelector(`.p1[data-mes="${mes}"]`);
         if(p1el){ p1el.value=Math.round(v.p1||0);
           document.querySelector(`.p2[data-mes="${mes}"]`).value=Math.round(v.p2||0);
-          document.querySelector(`.p3[data-mes="${mes}"]`).value=Math.round(v.p3||0); }
+          document.querySelector(`.p3[data-mes="${mes}"]`).value=Math.round(v.p3||0);
+          const p4el=document.querySelector(`.p4[data-mes="${mes}"]`); if(p4el) p4el.value=Math.round(v.p4||0);
+          const p5el=document.querySelector(`.p5[data-mes="${mes}"]`); if(p5el) p5el.value=Math.round(v.p5||0);
+          const p6el=document.querySelector(`.p6[data-mes="${mes}"]`); if(p6el) p6el.value=Math.round(v.p6||0); }
       });
       status.innerHTML = `\u2705 Importat! Total anual: ${d.total_anual?.toFixed(0)} kWh`;
       state.consumEditat = true;
@@ -1290,7 +1362,10 @@ async function fetchKpis() {
     const consumsMensuals = MESOS.map(mes => {
       return (parseFloat(document.querySelector(`.p1[data-mes="${mes}"]`)?.value||0)
             + parseFloat(document.querySelector(`.p2[data-mes="${mes}"]`)?.value||0)
-            + parseFloat(document.querySelector(`.p3[data-mes="${mes}"]`)?.value||0));
+            + parseFloat(document.querySelector(`.p3[data-mes="${mes}"]`)?.value||0)
+            + parseFloat(document.querySelector(`.p4[data-mes="${mes}"]`)?.value||0)
+            + parseFloat(document.querySelector(`.p5[data-mes="${mes}"]`)?.value||0)
+            + parseFloat(document.querySelector(`.p6[data-mes="${mes}"]`)?.value||0));
     });
     const consumAnual = consumsMensuals.reduce((a,b)=>a+b,0) ||
                         parseFloat(document.getElementById('consum_anual_total')?.value||6792);
@@ -1322,11 +1397,18 @@ async function fetchKpis() {
       preu_p1:              p.economics.preu_p1,
       preu_p2:              p.economics.preu_p2,
       preu_p3:              p.economics.preu_p3,
+      preu_p4:              p.economics.preu_p4,
+      preu_p5:              p.economics.preu_p5,
+      preu_p6:              p.economics.preu_p6,
+      tariff_type:          p.economics.tariff_type,
       preu_excedent:        p.economics.preu_compensacio,
       consum_anual:         consumAnual,
       consum_p1:            MES_CLAUS.map(k => (p.consumos[k]||{}).p1||0),
       consum_p2:            MES_CLAUS.map(k => (p.consumos[k]||{}).p2||0),
       consum_p3:            MES_CLAUS.map(k => (p.consumos[k]||{}).p3||0),
+      consum_p4:            MES_CLAUS.map(k => (p.consumos[k]||{}).p4||0),
+      consum_p5:            MES_CLAUS.map(k => (p.consumos[k]||{}).p5||0),
+      consum_p6:            MES_CLAUS.map(k => (p.consumos[k]||{}).p6||0),
       cost_instalacio:      p.economics.cost_instalacio || null,
       increment_energia_pct:p.economics.increment_energia_pct,
       manteniment_anual:    p.economics.manteniment_anual,
@@ -1343,7 +1425,7 @@ async function fetchKpis() {
       body: JSON.stringify(kpiPayload)
     });
     const d = await r.json();
-    if(d.success) updateKpiDisplay(d);
+    if(d.success) { state.kpis = d; updateKpiDisplay(d); }
   } catch(e) { console.warn('KPI error:', e); }
 }
 
@@ -1414,11 +1496,14 @@ async function fetchOptimitzar() {
       const p1=parseFloat(document.querySelector(`.p1[data-mes="${mes}"]`)?.value||0);
       const p2=parseFloat(document.querySelector(`.p2[data-mes="${mes}"]`)?.value||0);
       const p3=parseFloat(document.querySelector(`.p3[data-mes="${mes}"]`)?.value||0);
-      consumos[MES_CLAUS[i]]={p1,p2,p3}; consumAnual+=p1+p2+p3;
+      const p4=parseFloat(document.querySelector(`.p4[data-mes="${mes}"]`)?.value||0);
+      const p5=parseFloat(document.querySelector(`.p5[data-mes="${mes}"]`)?.value||0);
+      const p6=parseFloat(document.querySelector(`.p6[data-mes="${mes}"]`)?.value||0);
+      consumos[MES_CLAUS[i]]={p1,p2,p3,p4,p5,p6}; consumAnual+=p1+p2+p3+p4+p5+p6;
     });
     const e=p.economics;
     let costActual=0;
-    MES_CLAUS.forEach(clau=>{const c=consumos[clau];costActual+=c.p1*e.preu_p1+c.p2*e.preu_p2+c.p3*e.preu_p3;});
+    MES_CLAUS.forEach(clau=>{const c=consumos[clau];costActual+=c.p1*e.preu_p1+c.p2*e.preu_p2+c.p3*e.preu_p3+(c.p4||0)*e.preu_p4+(c.p5||0)*e.preu_p5+(c.p6||0)*e.preu_p6;});
 
     // Usa dades PVGIS reals (ja carregades pel panell dret) per obtenir KPIs idèntics a l'informe
     const lat = parseFloat(document.getElementById('lat')?.value || 41.39);
@@ -1461,11 +1546,18 @@ async function fetchOptimitzar() {
       preu_p1:               e.preu_p1,
       preu_p2:               e.preu_p2,
       preu_p3:               e.preu_p3,
+      preu_p4:               e.preu_p4,
+      preu_p5:               e.preu_p5,
+      preu_p6:               e.preu_p6,
+      tariff_type:           e.tariff_type,
       preu_excedent:         e.preu_compensacio,
       consum_anual:          Math.round(consumAnual),
       consum_p1:             MES_CLAUS.map(k => (consumos[k]||{}).p1||0),
       consum_p2:             MES_CLAUS.map(k => (consumos[k]||{}).p2||0),
       consum_p3:             MES_CLAUS.map(k => (consumos[k]||{}).p3||0),
+      consum_p4:             MES_CLAUS.map(k => (consumos[k]||{}).p4||0),
+      consum_p5:             MES_CLAUS.map(k => (consumos[k]||{}).p5||0),
+      consum_p6:             MES_CLAUS.map(k => (consumos[k]||{}).p6||0),
       cost_instalacio:       e.cost_instalacio || null,
       increment_energia_pct: e.increment_energia_pct,
       manteniment_anual:     e.manteniment_anual,
@@ -1500,6 +1592,9 @@ async function fetchOptimitzar() {
       consum_p1: MES_CLAUS.map(k => (consumos[k]||{}).p1||0),
       consum_p2: MES_CLAUS.map(k => (consumos[k]||{}).p2||0),
       consum_p3: MES_CLAUS.map(k => (consumos[k]||{}).p3||0),
+      consum_p4: MES_CLAUS.map(k => (consumos[k]||{}).p4||0),
+      consum_p5: MES_CLAUS.map(k => (consumos[k]||{}).p5||0),
+      consum_p6: MES_CLAUS.map(k => (consumos[k]||{}).p6||0),
       cost_actual: Math.round(costActual*100)/100,
       pressupost_max: parseFloat(document.getElementById('pressupost_max')?.value||0)||null,
       pvgis_monthly,
@@ -1873,7 +1968,10 @@ function updateEquipSummary() {
     const p1 = parseFloat(document.querySelector(`.p1[data-mes="${mes}"]`)?.value||0);
     const p2 = parseFloat(document.querySelector(`.p2[data-mes="${mes}"]`)?.value||0);
     const p3 = parseFloat(document.querySelector(`.p3[data-mes="${mes}"]`)?.value||0);
-    return p1 + p2 + p3;
+    const p4 = parseFloat(document.querySelector(`.p4[data-mes="${mes}"]`)?.value||0);
+    const p5 = parseFloat(document.querySelector(`.p5[data-mes="${mes}"]`)?.value||0);
+    const p6 = parseFloat(document.querySelector(`.p6[data-mes="${mes}"]`)?.value||0);
+    return p1 + p2 + p3 + p4 + p5 + p6;
   });
   const consumBase = baseMensual.reduce((a,b)=>a+b,0);
   const delta = calcDeltaMensual(equips, baseMensual);
@@ -1895,9 +1993,12 @@ function buildPayload(kpisOnly = false) {
     const p1=parseFloat(document.querySelector(`.p1[data-mes="${mes}"]`)?.value||0);
     const p2=parseFloat(document.querySelector(`.p2[data-mes="${mes}"]`)?.value||0);
     const p3=parseFloat(document.querySelector(`.p3[data-mes="${mes}"]`)?.value||0);
-    consumos[MES_CLAUS[i]] = {p1,p2,p3};
+    const p4=parseFloat(document.querySelector(`.p4[data-mes="${mes}"]`)?.value||0);
+    const p5=parseFloat(document.querySelector(`.p5[data-mes="${mes}"]`)?.value||0);
+    const p6=parseFloat(document.querySelector(`.p6[data-mes="${mes}"]`)?.value||0);
+    consumos[MES_CLAUS[i]] = {p1,p2,p3,p4,p5,p6};
   });
-  const totalAnual = Object.values(consumos).reduce((s,v)=>s+v.p1+v.p2+v.p3,0);
+  const totalAnual = Object.values(consumos).reduce((s,v)=>s+v.p1+v.p2+v.p3+v.p4+v.p5+v.p6,0);
   return {
     client: {
       nom:    document.getElementById('client_nom')?.value||'',
@@ -1925,12 +2026,16 @@ function buildPayload(kpisOnly = false) {
       preu_p1:              parseFloat(document.getElementById('preu_p1')?.value||0.11025),
       preu_p2:              parseFloat(document.getElementById('preu_p2')?.value||0.095),
       preu_p3:              parseFloat(document.getElementById('preu_p3')?.value||0.075),
+      preu_p4:              parseFloat(document.getElementById('preu_p4')?.value||0.060),
+      preu_p5:              parseFloat(document.getElementById('preu_p5')?.value||0.050),
+      preu_p6:              parseFloat(document.getElementById('preu_p6')?.value||0.040),
       preu_compensacio:     parseFloat(document.getElementById('preu_comp')?.value||0.07),
       cost_instalacio:      parseFloat(document.getElementById('cost_instalacio')?.value||5900),
       increment_energia_pct:parseFloat(document.getElementById('increment_energia')?.value||2.5),
       manteniment_anual:    parseFloat(document.getElementById('manteniment')?.value||0),
       anys_analisi:         parseInt(document.getElementById('anys_analisi')?.value||25),
       tipus_tarifa:         document.getElementById('tarifa')?.value||'2.0TD',
+      tariff_type:          (() => { const t = document.getElementById('tarifa')?.value||'2.0TD'; return (t==='3.0TD'||t.startsWith('6'))?'3td':'2td'; })(),
       marge_comercial:      (parseFloat(document.getElementById('marge_comercial')?.value)||35) / 100,
     },
     meta: {
@@ -1950,7 +2055,7 @@ function updateResum() {
   const p = buildPayload();
   const n = p.client.nom || '(client no especificat)';
   const kwp = (p.instalacio.num_moduls * 510 / 1000).toFixed(2);
-  const cons = Object.values(p.consumos).reduce ? Object.values(p.consumos).reduce((s,v)=>s+(v.p1||0)+(v.p2||0)+(v.p3||0),0) : 0;
+  const cons = Object.values(p.consumos).reduce ? Object.values(p.consumos).reduce((s,v)=>s+(v.p1||0)+(v.p2||0)+(v.p3||0)+(v.p4||0)+(v.p5||0)+(v.p6||0),0) : 0;
   document.getElementById('resumContent').innerHTML = `
     <b>Client:</b> ${n} &middot; ${p.client.adreca||'&mdash;'}<br>
     <b>Instal&middot;laci&oacute;:</b> ${p.instalacio.num_moduls} m&ograve;duls &rarr; ${kwp} kWp<br>
@@ -1967,7 +2072,7 @@ function buildPdfPayload(previewOnly) {
   const modul = state.cataleg.moduls.find(m => m.id === p.instalacio.modul_id) || {};
   const inv   = (state.cataleg.mono.concat(state.cataleg.trifasic||[])).find(i => i.id === p.instalacio.inversor_id) || {};
   const consumAnual = MES_CLAUS.reduce((s,k) => {
-    const c = (p.consumos[k]||{}); return s + (c.p1||0) + (c.p2||0) + (c.p3||0);
+    const c = (p.consumos[k]||{}); return s + (c.p1||0) + (c.p2||0) + (c.p3||0) + (c.p4||0) + (c.p5||0) + (c.p6||0);
   }, 0);
   return {
     // Client
@@ -1996,6 +2101,9 @@ function buildPdfPayload(previewOnly) {
     preu_p1:              p.economics.preu_p1,
     preu_p2:              p.economics.preu_p2,
     preu_p3:              p.economics.preu_p3,
+    preu_p4:              p.economics.preu_p4,
+    preu_p5:              p.economics.preu_p5,
+    preu_p6:              p.economics.preu_p6,
     preu_excedent:        p.economics.preu_compensacio,
     cost_instalacio:      p.economics.cost_instalacio,
     increment_energia_pct:p.economics.increment_energia_pct,
@@ -2003,12 +2111,16 @@ function buildPdfPayload(previewOnly) {
     manteniment_id:       document.getElementById('manteniment_pla')?.value || 'sense',
     anys_analisi:         p.economics.anys_analisi,
     tarifa:               p.economics.tipus_tarifa,
+    tariff_type:          p.economics.tariff_type,
     // Consums — format pla per al motor (arrays 12 mesos) + objecte per preparar_current.js
     consumos:             p.consumos,
     consum_anual:         Math.round(consumAnual),
     consum_p1:            MES_CLAUS.map(k => (p.consumos[k]||{}).p1||0),
     consum_p2:            MES_CLAUS.map(k => (p.consumos[k]||{}).p2||0),
     consum_p3:            MES_CLAUS.map(k => (p.consumos[k]||{}).p3||0),
+    consum_p4:            MES_CLAUS.map(k => (p.consumos[k]||{}).p4||0),
+    consum_p5:            MES_CLAUS.map(k => (p.consumos[k]||{}).p5||0),
+    consum_p6:            MES_CLAUS.map(k => (p.consumos[k]||{}).p6||0),
     potencia_wp:          modul.potencia_wp || 510,
     num_inversors:        parseInt(document.getElementById('num_inversors')?.value||1),
     marge_comercial:      (parseFloat(document.getElementById('marge_comercial')?.value)||35) / 100,
@@ -2022,6 +2134,8 @@ function buildPdfPayload(previewOnly) {
     mode_ia:              p.meta.mode_ia,
     ia_justificacio:      p.meta.ia_justificacio,
     preview_only:         !!previewOnly,
+    idioma:               state.idioma || 'ca',
+    kpis:                 state.kpis || null,
     // Informe IA
     informe:              p.informe,
     // Equipament futur
@@ -2122,7 +2236,7 @@ document.getElementById('ombres')?.addEventListener('change', function() {
 // UPLOAD FACTURA – Extracció automàtica via n8n + GPT-4o
 // ─────────────────────────────────────────────────────────────────
 
-const ENDPOINT_FACTURA = 'https://geri.app.n8n.cloud/webhook/solenver/extreure-factura';
+const ENDPOINT_FACTURA = 'https://n8n.solenver.com/webhook/solenver/extreure-factura';
 const MAX_PDF_MB = 10;
 
 const FIELD_LABELS = {
@@ -2137,6 +2251,9 @@ const FIELD_LABELS = {
   preu_p1_kwh:             'Preu P1 amb IEE (€/kWh)',
   preu_p2_kwh:             'Preu P2 amb IEE (€/kWh)',
   preu_p3_kwh:             'Preu P3 amb IEE (€/kWh)',
+  preu_p4_kwh:             'Preu P4 amb IEE (€/kWh)',
+  preu_p5_kwh:             'Preu P5 amb IEE (€/kWh)',
+  preu_p6_kwh:             'Preu P6 amb IEE (€/kWh)',
   preu_excedent_kwh:       'Preu excedents (€/kWh)',
   descompte_energia_pct:   'Descompte energia (%)',
   consum_total_kwh:        'Consum període (kWh) ⬇',
@@ -2154,6 +2271,9 @@ const FIELD_MAP = {
   preu_p1_kwh:             '#preu_p1',
   preu_p2_kwh:             '#preu_p2',
   preu_p3_kwh:             '#preu_p3',
+  preu_p4_kwh:             '#preu_p4',
+  preu_p5_kwh:             '#preu_p5',
+  preu_p6_kwh:             '#preu_p6',
   preu_excedent_kwh:       '#preu_comp',
 };
 
@@ -2239,7 +2359,8 @@ function showExtractionResult(data) {
     return '<span class="upload-field-label">' + label + '</span>' + display;
   }).join('');
 
-  const hasPreus = data.preu_p1_kwh !== null || data.preu_p2_kwh !== null || data.preu_p3_kwh !== null;
+  const hasPreus = data.preu_p1_kwh !== null || data.preu_p2_kwh !== null || data.preu_p3_kwh !== null
+                || data.preu_p4_kwh !== null || data.preu_p5_kwh !== null || data.preu_p6_kwh !== null;
   document.getElementById('uploadIeeNote').style.display = hasPreus ? 'block' : 'none';
   document.getElementById('uploadResult').style.display = 'block';
 }
