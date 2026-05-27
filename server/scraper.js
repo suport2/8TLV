@@ -17,9 +17,14 @@ const fs = require('fs');
 
   console.log(`Iniciando proceso para CUPS: ${cups}`);
 
-  const browser = await chromium.launch({ headless: true }); // Cambiar a true para n8n
+  const executablePath = process.env.CHROMIUM_PATH || undefined;
+  const browser = await chromium.launch({
+    headless: true, executablePath,
+    args: ['--no-sandbox', '--disable-setuid-sandbox', `--download-default-directory=${downloadPath}`, '--no-first-run']
+  });
   const context = await browser.newContext({
-    acceptDownloads: true
+    acceptDownloads: true,
+    downloadsPath: downloadPath
   });
   const page = await context.newPage();
 
@@ -141,14 +146,34 @@ const fs = require('fs');
     // Botó "Descargar consumos" (icona de gràfica de barres, aria-label específic)
     const downloadIcon = page.locator('[aria-label="Descargar consumos"], button[ng-click*="exportarDatosSIPSConsumos"], .fa-chart-bar').first();
     
-    const [download] = await Promise.all([
-      page.waitForEvent('download', { timeout: 60000 }),
-      downloadIcon.click(),
-    ]);
-
     const finalPath = path.join(downloadPath, `${cups}.zip`);
-    await download.saveAs(finalPath);
-    console.log(`Descarga completada: ${finalPath}`);
+
+    // Interceptar URL.createObjectURL ABANS del clic per capturar el blob abans que sigui revocat
+    await page.evaluate(() => {
+      const orig = URL.createObjectURL.bind(URL);
+      URL.createObjectURL = function(blob) {
+        const url = orig(blob);
+        const reader = new FileReader();
+        reader.onload = () => { window.__downloadBase64 = reader.result.split(',')[1]; };
+        reader.readAsDataURL(blob);
+        return url;
+      };
+    });
+
+    await downloadIcon.click();
+    console.log('[DL] click fet, esperant blob...');
+
+    // Esperar que el base64 estigui disponible (fins 30s)
+    let base64 = null;
+    for (let i = 0; i < 60; i++) {
+      await new Promise(r => setTimeout(r, 500));
+      base64 = await page.evaluate(() => window.__downloadBase64 || null);
+      if (base64) break;
+    }
+    if (!base64) throw new Error('Timeout esperant base64 del blob (30s)');
+
+    fs.writeFileSync(finalPath, Buffer.from(base64, 'base64'));
+    console.log(`Descarga completada: ${finalPath} (${Buffer.from(base64, 'base64').length} bytes)`);
 
   } catch (error) {
     console.error('Error durante el proceso:', error);

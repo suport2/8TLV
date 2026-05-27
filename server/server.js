@@ -66,43 +66,44 @@ function parseSipsHtml(html) {
   console.log('[SIPS] Headers detectats:', headers);
   console.log('[SIPS] Primera fila de dades:', rows[1]);
 
-  // Detectar columnes P1/P2/P3 per nom (permissiu: qualsevol header que contingui p1/p2/p3)
-  const hasP1Col = headers.findIndex(h => h.includes('p1'));
-  const hasP2Col = headers.findIndex(h => h.includes('p2'));
-  const hasP3Col = headers.findIndex(h => h.includes('p3'));
+  // Detectar columnes P1-P6 per nom (permissiu)
+  const pCols = [1,2,3,4,5,6].map(n => headers.findIndex(h => h.includes('p'+n)));
+  const [hasP1Col, hasP2Col, hasP3Col, hasP4Col, hasP5Col, hasP6Col] = pCols;
 
   if (hasP1Col === -1) throw new Error('No s\'han trobat columnes P1/P2/P3. Headers: ' + headers.join(', '));
 
-  // ── FORMAT B prioritari: Dades anuals amb columnes consumo_anual_p1/p2/p3 ──
-  const iP1anual = headers.findIndex(h => h.includes('anual') && h.includes('p1'));
-  const iP2anual = headers.findIndex(h => h.includes('anual') && h.includes('p2'));
-  const iP3anual = headers.findIndex(h => h.includes('anual') && h.includes('p3'));
+  // Quants períodes té realment el fitxer?
+  const N = pCols.filter(i => i !== -1).length || 3;
+
+  // ── FORMAT B prioritari: Dades anuals amb columnes consumo_anual_p1..p6 ──
+  const iPAnual = [1,2,3,4,5,6].map(n =>
+    headers.findIndex(h => h.includes('anual') && h.includes('p'+n)));
+  const iP1anual = iPAnual[0];
 
   if (iP1anual !== -1 && rows[1]) {
     const data = rows[1];
-    const p1a  = parseFloat((data[iP1anual]||'0').replace(',','.')) || 0;
-    const p2a  = parseFloat((data[iP2anual >= 0 ? iP2anual : iP1anual+1]||'0').replace(',','.')) || 0;
-    const p3a  = parseFloat((data[iP3anual >= 0 ? iP3anual : iP1anual+2]||'0').replace(',','.')) || 0;
-    const total = p1a + p2a + p3a;
-    console.log('[SIPS] Format B detectat → P1:', p1a, 'P2:', p2a, 'P3:', p3a, 'Total:', total);
+    const pa = iPAnual.map((idx, n) => {
+      const fallbackIdx = iP1anual + n;
+      const i = idx >= 0 ? idx : (fallbackIdx < data.length ? fallbackIdx : -1);
+      return i >= 0 ? (parseFloat((data[i]||'0').replace(',','.')) || 0) : 0;
+    });
+    const total = pa.reduce((s,v)=>s+v, 0);
+    console.log('[SIPS] Format B detectat → P1-P'+N+':', pa, 'Total:', total);
     const mensual = {};
     MES_CLAUS.forEach((k, i) => {
       const ratio = DIES_MES[i] / 365;
-      mensual[k] = {
-        p1: Math.round(p1a * ratio),
-        p2: Math.round(p2a * ratio),
-        p3: Math.round(p3a * ratio),
-      };
+      mensual[k] = {};
+      pa.forEach((v, n) => { mensual[k]['p'+(n+1)] = Math.round(v * ratio); });
     });
-    return { consumos: mensual, consum_anual: Math.round(total) };
+    const is6P = N >= 4 && pa.slice(3).some(v => v > 0);
+    return { consumos: mensual, consum_anual: Math.round(total),
+             tariff_type: is6P ? '3td' : '2td', num_periodes: is6P ? 6 : 3 };
   }
 
   // ── FORMAT A: Períodes de facturació ──
-  // Detecta per nom de columna
   let iDateStart = headers.findIndex(h => h.match(/fecha_inicio|data_inici|fecha.*inicio|inici|inicio/));
   let iDateEnd   = headers.findIndex(h => h.match(/fecha_fin|data_fi|fecha.*fin|fi$|fin$/));
 
-  // Si no troba per nom, detecta per contingut NOMÉS a les 3 primeres columnes
   if (iDateStart === -1 || iDateEnd === -1) {
     const isDate = v => v && /^\d{4}-\d{2}-\d{2}/.test(v.trim());
     const dateColIdxs = rows[1].slice(0, 3).map((v, i) => isDate(v) ? i : -1).filter(i => i !== -1);
@@ -113,53 +114,52 @@ function parseSipsHtml(html) {
     }
   }
 
-  console.log('[SIPS] Format A → iDateStart:', iDateStart, 'iDateEnd:', iDateEnd, 'P1:', hasP1Col, 'P2:', hasP2Col, 'P3:', hasP3Col);
+  console.log('[SIPS] Format A → iDateStart:', iDateStart, 'iDateEnd:', iDateEnd, 'P1-P'+N+':', pCols);
 
   if (iDateStart !== -1 && iDateEnd !== -1) {
-    // Consumos per periode → distribuïr per mes calendari
-    const periodes = rows.slice(1).map(r => ({
-      inici: new Date(r[iDateStart]),
-      fi:    new Date(r[iDateEnd]),
-      p1:    parseWh(r[hasP1Col]),
-      p2:    parseWh(r[hasP2Col]),
-      p3:    parseWh(r[hasP3Col]),
-    })).filter(p => !isNaN(p.inici) && !isNaN(p.fi) && (p.p1+p.p2+p.p3) > 0);
+    const validCols = pCols.map((idx, n) => ({ n: n+1, idx })).filter(c => c.idx !== -1);
+    const periodes = rows.slice(1).map(r => {
+      const obj = { inici: new Date(r[iDateStart]), fi: new Date(r[iDateEnd]) };
+      validCols.forEach(c => { obj['p'+c.n] = parseWh(r[c.idx]); });
+      return obj;
+    }).filter(p => {
+      if (isNaN(p.inici) || isNaN(p.fi)) return false;
+      return validCols.some(c => (p['p'+c.n] || 0) > 0);
+    });
 
     console.log('[SIPS] Total períodes vàlids:', periodes.length);
 
-    // Agafar els períodes dels últims 13 mesos (per capturar períodes que comencen abans però acaben dintre)
     const ara   = new Date();
-    const limit = new Date(ara.getFullYear() - 1, ara.getMonth() - 1, 1); // inici del mes fa ~13 mesos
+    const limit = new Date(ara.getFullYear() - 1, ara.getMonth() - 1, 1);
     const recents = periodes.filter(p => p.fi >= limit);
     console.log('[SIPS] Períodes usats:', recents.length, '(des de', limit.toISOString().substring(0,10), ')');
 
-    // Distribuir cada període als mesos calendari que toca, proporcional per dies
     const mensual = {};
-    MES_CLAUS.forEach(k => { mensual[k] = { p1: 0, p2: 0, p3: 0 }; });
+    MES_CLAUS.forEach(k => {
+      mensual[k] = {};
+      validCols.forEach(c => { mensual[k]['p'+c.n] = 0; });
+    });
 
     recents.forEach(p => {
       const dies_periode = Math.round((p.fi - p.inici) / 86400000);
       if (dies_periode <= 0) return;
       for (let d = new Date(p.inici); d < p.fi; d.setDate(d.getDate() + 1)) {
         const key = MES_CLAUS[d.getMonth()];
-        mensual[key].p1 += p.p1 / dies_periode;
-        mensual[key].p2 += p.p2 / dies_periode;
-        mensual[key].p3 += p.p3 / dies_periode;
+        validCols.forEach(c => { mensual[key]['p'+c.n] += (p['p'+c.n] || 0) / dies_periode; });
       }
     });
 
-    // Arrodonir
     MES_CLAUS.forEach(k => {
-      mensual[k].p1 = Math.round(mensual[k].p1);
-      mensual[k].p2 = Math.round(mensual[k].p2);
-      mensual[k].p3 = Math.round(mensual[k].p3);
+      validCols.forEach(c => { mensual[k]['p'+c.n] = Math.round(mensual[k]['p'+c.n]); });
     });
 
-    const consumAnual = MES_CLAUS.reduce((s,k) => s + mensual[k].p1 + mensual[k].p2 + mensual[k].p3, 0);
+    const consumAnual = MES_CLAUS.reduce((s,k) =>
+      s + validCols.reduce((t,c) => t + (mensual[k]['p'+c.n]||0), 0), 0);
+    const is6P = N >= 4 && recents.some(p => validCols.slice(3).some(c => (p['p'+c.n]||0) > 0));
     console.log('[SIPS] Resultat mensual:', JSON.stringify(mensual));
-    return { consumos: mensual, consum_anual: consumAnual };
+    return { consumos: mensual, consum_anual: consumAnual,
+             tariff_type: is6P ? '3td' : '2td', num_periodes: is6P ? 6 : 3 };
   }
-
 
   throw new Error('Format de fitxer SIPS no reconegut');
 }
@@ -208,7 +208,8 @@ app.post('/pdf', async (req, res) => {
   try {
     const { chromium } = require('playwright');
     const { PDFDocument } = require('pdf-lib');
-    browser = await chromium.launch({ args: ['--no-sandbox'] });
+    const executablePath = process.env.CHROMIUM_PATH || undefined;
+    browser = await chromium.launch({ executablePath, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
 
     const hasFooter = footer && typeof footer === 'string' && footer.trim().length > 20;
     let hasHeader = header && typeof header === 'string' && header.trim().length > 20;
@@ -258,6 +259,7 @@ app.post('/pdf', async (req, res) => {
 
       // Portada: PDF natiu, pageRanges:'1' garanteix 1 pàgina
       const p1 = await browser.newPage();
+      await p1.setViewportSize({ width: 794, height: 1123, deviceScaleFactor: 2 });
       await p1.setContent(portadaHtml, { waitUntil: 'networkidle' });
 
       // Injecta mapa satellite (Leaflet+ESRI) si portada-aerial té data-lat/lng
@@ -326,6 +328,7 @@ app.post('/pdf', async (req, res) => {
 
       // Pàgines interiors: amb header/footer i marges
       const p2 = await browser.newPage();
+      await p2.setViewportSize({ width: 794, height: 1123, deviceScaleFactor: 2 });
       await p2.setContent(innerHtml, { waitUntil: 'networkidle' });
 
       // Injecta mapa satellite Leaflet a la vista aèria interior si té data-lat/lng
@@ -378,6 +381,7 @@ app.post('/pdf', async (req, res) => {
       // Fallback: tot en un render (portada tindrà header)
       console.warn('[PDF] Marcador §01 no trobat, render complet sense split');
       const page = await browser.newPage();
+      await page.setViewportSize({ width: 794, height: 1123, deviceScaleFactor: 2 });
       await page.setContent(html, { waitUntil: 'networkidle' });
       finalPdf = await page.pdf({
         format: 'A4',
@@ -406,7 +410,7 @@ app.post('/pdf', async (req, res) => {
 // Query params: lat, lng, angle (inclinació), aspect (acimut)
 app.get('/pvgis', async (req, res) => {
   const { lat = 41.39, lng = 2.17, angle = 30, aspect = 0 } = req.query;
-  const url = `https://re.jrc.ec.europa.eu/api/v5_3/PVcalc?lat=${lat}&lon=${lng}&peakpower=1&loss=14&angle=${angle}&aspect=${aspect}&outputformat=json`;
+  const url = `https://re.jrc.ec.europa.eu/api/v5_3/PVcalc?lat=${lat}&lon=${lng}&peakpower=1&loss=19&angle=${angle}&aspect=${aspect}&outputformat=json`;
   try {
     const https = require('https');
     const data = await new Promise((resolve, reject) => {
