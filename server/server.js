@@ -261,6 +261,7 @@ app.post('/pdf', async (req, res) => {
       const p1 = await browser.newPage();
       await p1.setViewportSize({ width: 794, height: 1123, deviceScaleFactor: 2 });
       await p1.setContent(portadaHtml, { waitUntil: 'networkidle' });
+      await p1.evaluate(() => document.fonts.ready).catch(() => {});
 
       // Injecta mapa satellite (Leaflet+ESRI) si portada-aerial té data-lat/lng
       try {
@@ -330,6 +331,7 @@ app.post('/pdf', async (req, res) => {
       const p2 = await browser.newPage();
       await p2.setViewportSize({ width: 794, height: 1123, deviceScaleFactor: 2 });
       await p2.setContent(innerHtml, { waitUntil: 'networkidle' });
+      await p2.evaluate(() => document.fonts.ready).catch(() => {});
 
       // Injecta mapa satellite Leaflet a la vista aèria interior si té data-lat/lng
       try {
@@ -383,6 +385,7 @@ app.post('/pdf', async (req, res) => {
       const page = await browser.newPage();
       await page.setViewportSize({ width: 794, height: 1123, deviceScaleFactor: 2 });
       await page.setContent(html, { waitUntil: 'networkidle' });
+      await page.evaluate(() => document.fonts.ready).catch(() => {});
       finalPdf = await page.pdf({
         format: 'A4',
         printBackground: true,
