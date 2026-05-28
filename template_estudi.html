@@ -66,7 +66,7 @@
     /* ── SECTION HEADER ── */
     .sh {
       display: flex; align-items: flex-end;
-      margin-bottom: 22px; position: relative; padding-top: 8px
+      margin-bottom: 18px; position: relative; padding-top: 8px
     }
     .sh-num {
       font-size: 60pt; font-weight: 900; color: rgba(0,0,0,0.06);
@@ -147,7 +147,7 @@
     .igrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 }
     .ibox {
       background: var(--slate-50); border: 1px solid var(--slate-200);
-      border-radius: 8px; padding: 14px 18px;
+      border-radius: 8px; padding: 11px 14px;
       display: flex; flex-direction: column; justify-content: center
     }
     .ibox .il { font-size: 7.5pt; text-transform: uppercase; color: var(--slate-500); letter-spacing: 0.5px; font-weight: 600 }
@@ -218,7 +218,7 @@
     /* ── VALUES GRID ── */
     .vals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 20px 0 }
     .val-item {
-      text-align: center; padding: 18px 14px; background: var(--slate-50);
+      text-align: center; padding: 14px 12px; background: var(--slate-50);
       border: 1px solid var(--slate-200); border-radius: 10px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.02)
     }
@@ -233,7 +233,7 @@
 
     /* ── GARANTIES ── */
     .gar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 12px 0 }
-    .gar-box { border-radius: 10px; padding: 14px 10px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.05) }
+    .gar-box { border-radius: 10px; padding: 10px 10px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.05) }
     .gar-box.green { background: var(--green-50); border: 1px solid #a8d5b5 }
     .gar-box.dark  { background: var(--slate-900); color: #fff; border: 1px solid #1e293b }
     .gar-years { font-size: 26pt; font-weight: 900; color: var(--green-600); line-height: 1; letter-spacing: -1px }
@@ -242,7 +242,7 @@
     .gar-box.dark .gar-label { color: #cbd5e1 }
 
     /* ── PROPERS PASSOS ── */
-    .pas { display: flex; align-items: flex-start; gap: 8px; padding: 7px 10px; background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 8px; margin-bottom: 5px }
+    .pas { display: flex; align-items: flex-start; gap: 8px; padding: 6px 10px; background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 8px; margin-bottom: 4px }
     .pas-num { background: var(--green-600); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 8.5pt; flex-shrink: 0 }
     .pas-text { flex: 1 }
     .pas-title { font-weight: 800; color: var(--slate-900); font-size: 9pt; margin-bottom: 1px }
@@ -358,8 +358,8 @@
       </div>
     </div>
 
-    <div style="margin-top:14px;background:var(--green-800);border-radius:10px;padding:14px 20px;color:#fff;text-align:center">
-      <div style="font-size:8.5pt;opacity:0.8;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">El vostre assessor energètic</div>
+    <div style="margin-top:8px;background:var(--green-800);border-radius:10px;padding:10px 18px;color:#fff;text-align:center">
+      <div style="font-size:8.5pt;opacity:0.8;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">El vostre assessor energètic</div>
       <div style="font-size:10pt;font-weight:700">{{ASSESSOR_CONTACT_1}}</div>
     </div>
 
@@ -738,7 +738,7 @@
       </div>
     </div>
 
-    <h3 style="margin-top:12px;margin-bottom:8px">Propers passos per avançar</h3>
+    <h3 style="margin-top:8px;margin-bottom:6px">Propers passos per avançar</h3>
 
     <div class="pas">
       <div class="pas-num">1</div>
@@ -797,9 +797,9 @@
       </div>
     </div>
 
-    <div style="margin-top:16px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:10px;padding:14px 18px;text-align:center;page-break-inside:avoid;page-break-before:avoid">
+    <div style="margin-top:10px;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:10px;padding:11px 16px;text-align:center;page-break-inside:avoid;page-break-before:avoid">
       <p style="text-align:center;font-size:12pt;font-weight:800;color:var(--green-800);margin:0;letter-spacing:-0.3px">El vostre assessor energètic: {{COMERCIAL_NOM}}</p>
-      <p style="text-align:center;font-size:10pt;color:var(--slate-500);margin:5px 0 0;font-weight:500">{{ASSESSOR_CONTACT_2}}</p>
+      <p style="text-align:center;font-size:10pt;color:var(--slate-500);margin:4px 0 0;font-weight:500">{{ASSESSOR_CONTACT_2}}</p>
     </div>
 
     <div class="pfooter">
@@ -913,7 +913,7 @@
         <div style="font-size:7.5pt;color:#475569;line-height:1.4">Algunes bateries ofereixen funció UPS per mantenir el subministrament</div>
       </div>
     </div>
-    <div style="margin-top:10px;font-size:7.5pt;color:#94a3b8;text-align:center">Preus orientatius IVA inclòs · estimació basada en ~250 cicles/any i eficiència 90% · a confirmar en pressupost definitiu</div>
+    <div style="margin-top:8px;font-size:7.5pt;color:#94a3b8;text-align:center;page-break-before:avoid">Preus orientatius IVA inclòs · estimació basada en ~250 cicles/any i eficiència 90% · a confirmar en pressupost definitiu</div>
 
     <div class="pfooter">
       <span>{{EMAIL_EMPRESA}} | {{TELEFON_EMPRESA}}</span>
