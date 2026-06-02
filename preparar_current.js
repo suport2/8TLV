@@ -365,7 +365,7 @@ if (equipsFutursInput.length > 0) {
       ? (consumosObj[clau].p1||0)+(consumosObj[clau].p2||0)+(consumosObj[clau].p3||0)+(consumosObj[clau].p4||0)+(consumosObj[clau].p5||0)+(consumosObj[clau].p6||0)
       : consumosObj[clau] || 0);
     const fut = base + deltaMes[i];
-    return `<tr><td><strong>${mesNoms[i]}</strong></td><td style="text-align:right">${fmt(base,0)}</td><td style="text-align:right">${fmt(deltaMes[i],0)}</td><td style="text-align:right;font-weight:600;color:#1b5e20">${fmt(fut,0)}</td></tr>`;
+    return `<tr><td><strong>${mesNoms[i]}</strong></td><td style="text-align:right;color:#1565c0">+${fmt(deltaMes[i],0)}</td><td style="text-align:right;font-weight:600;color:#1b5e20">${fmt(fut,0)}</td></tr>`;
   }).join('\n');
   htmlConsumsBase = `
 <div style="page-break-inside:avoid;margin-top:10px;background:#f0f7ff;border-left:3px solid #2196f3;border-radius:0 6px 6px 0;padding:7px 12px">
@@ -374,10 +374,9 @@ if (equipsFutursInput.length > 0) {
     <table style="font-size:7.5pt">
       <thead><tr><th>${s('Equip','Equipo')}</th><th style="text-align:center">u.</th><th style="text-align:center">kW</th><th style="text-align:right">kWh/${s('any','año')}</th></tr></thead>
       <tbody>${equipLines}</tbody>
-      <tfoot><tr style="font-weight:700;border-top:1px solid #90caf9"><td colspan="3">${s('Total addicional','Total adicional')}</td><td style="text-align:right">+${fmt(totalDelta,0)}&thinsp;kWh</td></tr></tfoot>
     </table>
     <table style="font-size:7.5pt">
-      <thead><tr><th>${s('Mes','Mes')}</th><th style="text-align:right">${s('Base','Base')}</th><th style="text-align:right">+${s('Eq.','Eq.')}</th><th style="text-align:right;color:#1b5e20">${s('Futur','Futuro')}</th></tr></thead>
+      <thead><tr><th>${s('Mes','Mes')}</th><th style="text-align:right;color:#1565c0">+${s('Eq.','Eq.')}</th><th style="text-align:right;color:#1b5e20">${s('Futur','Futuro')}</th></tr></thead>
       <tbody>${filesMensuals}</tbody>
     </table>
   </div>
