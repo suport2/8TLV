@@ -657,6 +657,9 @@ header .status-chip{color:rgba(255,255,255,.65);font-size:11px;display:flex;alig
             <input type="number" id="preu_p6" value="0.040" step="0.001" min="0" oninput="onFormChange()">
           </div>
         </div>
+        <div class="info-box" id="nota3tdPerfil" style="display:none">
+          &#8505; <strong>Estimaci&oacute; P6 (3.0TD):</strong> El P6 inclou totes les nits (0h&ndash;8h) i els caps de setmana de dia. El motor distribueix el consum P6 hora per hora seguint el perfil de consum seleccionat. Si el client treballa principalment de nit, usa el perfil <strong>&ldquo;Industrial nocturn&rdquo;</strong> (secci&oacute; 1 &middot; Client) per evitar sobreestimar l&rsquo;estalvi P6.
+        </div>
         <!-- ─── EQUIPS FUTURS ─── -->
         <label class="equips-futur-toggle">
           <input type="checkbox" id="teEquipsFuturs" onchange="onEquipsFuturChange()">
@@ -762,7 +765,7 @@ header .status-chip{color:rgba(255,255,255,.65);font-size:11px;display:flex;alig
             <label>Opcions d'enviament</label>
             <div style="display:flex;gap:16px;align-items:center;padding:8px 0">
               <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;text-transform:none;font-weight:normal">
-                <input type="checkbox" id="enviar_email" checked> Enviar email al client
+                <input type="checkbox" id="enviar_email"> Enviar email al client
               </label>
             </div>
           </div>
@@ -1091,6 +1094,8 @@ function onTarifaChange() {
   });
   const table = document.getElementById('modeConsumTaula');
   if (table) table.classList.toggle('hide-6p', !is6P);
+  const nota = document.getElementById('nota3tdPerfil');
+  if (nota) nota.style.display = is6P ? '' : 'none';
 }
 
 function setConsumMode(mode) {

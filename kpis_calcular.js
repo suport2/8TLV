@@ -21,7 +21,7 @@ if (_motorRaw.solar_8760h) {
   throw new Error('Motor data format not recognized: keys=' + JSON.stringify(Object.keys(_motorRaw)));
 }
 const SOLAR   = _motorData.solar_8760h;
-const TARIFES = _motorData.tarifes_8760h;
+let   TARIFES = _motorData.tarifes_8760h;
 
 // Construir shapes des de la fulla perfils del Sheets
 const perfilsRaw = $('Llegir perfils consum').all().map(i => i.json);
@@ -66,10 +66,15 @@ const {
   perdues_cable    = 0.015,
   perdues_inversor = 0.08,
   ombres           = 'cap',
+  // Tarifa
+  tariff_type      = '2td',
   // Consum — CAS A: factura completa
   consum_p1        = null,   // array 12 mesos kWh o null
   consum_p2        = null,
   consum_p3        = null,
+  consum_p4        = null,
+  consum_p5        = null,
+  consum_p6        = null,
   // Consum — CAS B: només total anual
   consum_anual     = 6792,
   // Perfil sector (sempre necessari per forma horaria)
@@ -78,10 +83,16 @@ const {
   preu_p1          = 0.2267,
   preu_p2          = 0.1384,
   preu_p3          = 0.0877,
+  preu_p4          = null,
+  preu_p5          = null,
+  preu_p6          = null,
   preu_excedent    = 0.065,
   // Econòmics
   cost_instalacio  = null,
   manteniment_anual = 0,
+  // Equips futurs
+  equips_futurs    = [],
+  perfils_equips   = [],
 } = input;
 
 // ── Paràmetres del Sheets ────────────────────────────────────────
@@ -120,44 +131,79 @@ for (let m = 0; m < 12; m++) {
 
 // ── Perfil de consum (forma horaria del sector) ──────────────────
 const shape = SHAPES[perfil_client] || SHAPES['industria_general'];
-const PREUS_INV = {
-  'P1': preu_p1, 'P2': preu_p2, 'P3': preu_p3,
-  'P4': preu_p3, 'P5': preu_p3, 'P6': preu_p3
-};
+const tariffTypeLc = tariff_type.toLowerCase();
+const is6P         = tariffTypeLc === '3td' || tariffTypeLc.startsWith('6');
+const N            = is6P ? 6 : 3;
+if (is6P) TARIFES  = _motorData.tarifes_8760h_6p || TARIFES;
+const p4 = parseFloat(preu_p4 || _motorData.preus_defecte_3td?.P4 || 0.060);
+const p5 = parseFloat(preu_p5 || _motorData.preus_defecte_3td?.P5 || 0.050);
+const p6 = parseFloat(preu_p6 || _motorData.preus_defecte_3td?.P6 || 0.040);
+const PREUS_ARR = [preu_p1, preu_p2, preu_p3, p4, p5, p6];
+const PREUS_INV = { P1: preu_p1, P2: preu_p2, P3: preu_p3, P4: p4, P5: p5, P6: p6 };
 
-// ── Preparar consums mensuals P1/P2/P3 ──────────────────────────
-// CAS A: ve de la factura directament
-// CAS B: distribuir consum_anual uniformement i per distribució del sector
-let cp1, cp2, cp3;
+// ── Preparar consums mensuals per periode ────────────────────────
+// CAS A: ve de la factura directament (arrays explícits)
+// CAS B: distribuir consum_anual per distribució horaria del sector
+const cp = Array.from({length: N}, () => new Array(12).fill(0));
+const cpInputs = [consum_p1, consum_p2, consum_p3, consum_p4, consum_p5, consum_p6];
 
 if (consum_p1 && Array.isArray(consum_p1) && consum_p1.length === 12) {
   // CAS A — Factura completa
-  cp1 = consum_p1.map(Number);
-  cp2 = consum_p2.map(Number);
-  cp3 = consum_p3.map(Number);
+  for (let n = 0; n < N; n++)
+    cp[n] = (cpInputs[n] || new Array(12).fill(0)).map(Number);
 } else {
   // CAS B — Estimar des del consum anual + perfil sector
-  // Calcular distribució P1/P2/P3 del sector a partir dels shapes
-  let sumP = {P1: 0, P2: 0, P3: 0};
+  const sumP = {};
+  for (let n = 1; n <= N; n++) sumP['P'+n] = 0;
   let idx_tmp = 0;
   for (let m = 0; m < 12; m++) {
     for (let d = 0; d < DIES_MES[m]; d++) {
       for (let h = 0; h < 24; h++) {
-        const t = TARIFES[idx_tmp] || 'P3';
-        const tn = t === 'P1' ? 'P1' : (t === 'P2' ? 'P2' : 'P3');
-        sumP[tn] += shape[h];
+        const tn = TARIFES[idx_tmp] || 'P'+N;
+        if (sumP[tn] !== undefined) sumP[tn] += shape[h];
         idx_tmp++;
       }
     }
   }
-  const sumTot = sumP.P1 + sumP.P2 + sumP.P3;
-  const pctP1 = sumP.P1 / sumTot;
-  const pctP2 = sumP.P2 / sumTot;
-  const pctP3 = sumP.P3 / sumTot;
+  const sumTot = Object.values(sumP).reduce((a,b)=>a+b, 0);
+  for (let n = 0; n < N; n++) {
+    const pct = sumTot > 0 ? sumP['P'+(n+1)] / sumTot : (1/N);
+    cp[n] = DIES_MES.map(d => consum_anual * (d/365) * pct);
+  }
+}
 
-  cp1 = DIES_MES.map(d => consum_anual * (d/365) * pctP1);
-  cp2 = DIES_MES.map(d => consum_anual * (d/365) * pctP2);
-  cp3 = DIES_MES.map(d => consum_anual * (d/365) * pctP3);
+// ── Equips futurs: afegir delta de consum proporcional a P1..PN ──
+const PERFILS_EQ_FALLBACK = {
+  cooling_granja:     [0,0,4,6,8,10,12,12,10,4,0,0],
+  camara_frigorifica: [6,6,7,8,10,12,14,14,11,8,6,6],
+  aerotermia_acs:     [4,4,3,2,1,1,1,1,1,2,3,4],
+  aerotermia_calef:   [8,7,5,2,0,0,0,0,0,2,5,8],
+  carregador_ve:      [2,2,2,2,2,2,2,2,2,2,2,2],
+  bombament_reg:      [0,0,1,2,4,6,8,8,6,2,0,0],
+  compressor_fred:    [3,3,4,5,7,9,10,10,8,5,3,3],
+  altre:              [3,3,3,3,3,3,3,3,3,3,3,3],
+};
+const PERFILS_EQ = {};
+(Array.isArray(perfils_equips) ? perfils_equips : []).forEach(p => { if (p.id && p.hores) PERFILS_EQ[p.id] = p.hores; });
+const getHoresEq = (id) => PERFILS_EQ[id] || PERFILS_EQ_FALLBACK[id] || PERFILS_EQ_FALLBACK['altre'];
+if (Array.isArray(equips_futurs) && equips_futurs.length > 0) {
+  for (const eq of equips_futurs) {
+    for (let m = 0; m < 12; m++) {
+      const tot = cp.reduce((s, cpi) => s + cpi[m], 0);
+      let extra = 0;
+      if (eq.mode === 'pct') {
+        extra = tot * ((eq.pct || 0) / 100);
+      } else {
+        const hores = getHoresEq(eq.tipus);
+        extra = (eq.unitats || 1) * (eq.kw_unit || 0) * hores[m] * DIES_MES[m];
+      }
+      if (tot > 0) {
+        for (let n = 0; n < N; n++) cp[n][m] += extra * cp[n][m] / tot;
+      } else {
+        cp[N-1][m] += extra;
+      }
+    }
+  }
 }
 
 // ── SIMULACIÓ HORA×HORA ──────────────────────────────────────────
@@ -167,21 +213,19 @@ let idx = 0;
 for (let m = 0; m < 12; m++) {
   const dies = DIES_MES[m];
 
-  // Calcular factors per P1/P2/P3 (suma shape en hores de cada periode)
-  const sP = {P1: 0, P2: 0, P3: 0};
+  // Calcular factors per P1..PN (suma shape en hores de cada periode)
+  const sP = {};
+  for (let n = 1; n <= N; n++) sP['P'+n] = 0;
   for (let d = 0; d < dies; d++) {
     for (let h = 0; h < 24; h++) {
       const i = idx + d*24 + h;
-      const t = TARIFES[i] || 'P3';
-      const tn = t === 'P1' ? 'P1' : (t === 'P2' ? 'P2' : 'P3');
-      sP[tn] += shape[h];
+      const tn = TARIFES[i] || 'P'+N;
+      if (sP[tn] !== undefined) sP[tn] += shape[h];
     }
   }
-  const fP = {
-    P1: sP.P1 > 0 ? cp1[m] / sP.P1 : 0,
-    P2: sP.P2 > 0 ? cp2[m] / sP.P2 : 0,
-    P3: sP.P3 > 0 ? cp3[m] / sP.P3 : 0,
-  };
+  const fP = {};
+  for (let n = 1; n <= N; n++)
+    fP['P'+n] = sP['P'+n] > 0 ? cp[n-1][m] / sP['P'+n] : 0;
 
   // Factor d'escala PVGIS per aquest mes
   let scalePvgis = 1;
@@ -195,7 +239,7 @@ for (let m = 0; m < 12; m++) {
     for (let h = 0; h < 24; h++) {
       if (idx >= SOLAR.length) break;
 
-      // kW produïts: PVGIS escala el perfil horari (ja inclou pèrdues al 14%)
+      // kW produïts: PVGIS escala el perfil horari (ja inclou pèrdues al 19% → PR≈81%)
       // Si no hi ha PVGIS, apliquem factorPerdues manualment
       const pv_brut = pvgisMonthly
         ? SOLAR[idx] * kwp * scalePvgis * factorOmbres
@@ -205,12 +249,11 @@ for (let m = 0; m < 12; m++) {
       const pv_real = Math.min(pv_brut, potencia_inversor_kw);
 
       // kW consumits per client aquesta hora
-      const t = TARIFES[idx] || 'P3';
-      const tn = t === 'P1' ? 'P1' : (t === 'P2' ? 'P2' : 'P3');
-      const con_h = shape[h] * fP[tn];
+      const tn = TARIFES[idx] || 'P'+N;
+      const con_h = shape[h] * (fP[tn] || 0);
 
       // Preu de la factura del client per aquest periode
-      const pr = PREUS_INV[t] || preu_p3;
+      const pr = PREUS_INV[tn] || PREUS_ARR[N-1];
 
       ac    += Math.min(pv_real, con_h);
       exc   += Math.max(0, pv_real - con_h);
@@ -224,14 +267,14 @@ for (let m = 0; m < 12; m++) {
 
   resultats_mes.push({
     mes: NOMS_MES[m],
-    consum: Math.round(cp1[m] + cp2[m] + cp3[m]),
+    consum: Math.round(cp.reduce((s,cpi)=>s+cpi[m],0)),
     produccio: Math.round(pv),
     autoconsum: Math.round(ac),
     excedent: Math.round(exc),
     xarxa: Math.round(xarxa),
     cost_xarxa: Math.round(cost * 100) / 100,
     compensacio: Math.round(comp * 100) / 100,
-    estalvi: Math.round((cp1[m]*preu_p1 + cp2[m]*preu_p2 + cp3[m]*preu_p3 - cost + comp) * 100) / 100,
+    estalvi: Math.round((cp.reduce((s,cpi,n)=>s+cpi[m]*PREUS_ARR[n],0) - cost + comp) * 100) / 100,
   });
 }
 
@@ -244,22 +287,21 @@ const t_xarxa    = resultats_mes.reduce((s,r) => s + r.xarxa, 0);
 const t_cost_xar = resultats_mes.reduce((s,r) => s + r.cost_xarxa, 0);
 const t_comp     = resultats_mes.reduce((s,r) => s + r.compensacio, 0);
 const t_estalvi  = resultats_mes.reduce((s,r) => s + r.estalvi, 0);
-const cost_act   = cp1.reduce((s,v,i) => s + v*preu_p1 + cp2[i]*preu_p2 + cp3[i]*preu_p3, 0);
+const cost_act   = cp[0].reduce((s,_,i) => s + cp.reduce((sum,cpi,n) => sum + cpi[i]*PREUS_ARR[n], 0), 0);
 
 const pct_autoconsum = t_pv > 0 ? t_ac / t_pv * 100 : 0;
 const pct_cobertura  = t_consum > 0 ? t_ac / t_consum * 100 : 0;
 const estalvi_any1   = t_estalvi;
 
 // ── Cashflow 25 anys ─────────────────────────────────────────────
-// Formula Excel: estalvi_n = estalvi_1 × 1.015^(n-1)
-// NO s'aplica degradació a l'estalvi (igual que l'Excel)
+// estalvi_n = estalvi_1 × (1+inflació)^(n-1) × (1-degradació)^(n-1)
 const costInst = cost_instalacio || 0;
 const cashflow = [{any: 0, flux: -costInst, acumulat: -costInst}];
 let acum = -costInst;
 let retorn_anys = null;
 
 for (let n = 1; n <= VIDA_UTIL; n++) {
-  const estalvi_n = estalvi_any1 * Math.pow(1 + INFLACIO, n-1) - manteniment_anual;
+  const estalvi_n = estalvi_any1 * Math.pow(1 + INFLACIO, n-1) * Math.pow(1 - DEGRADACIO, n-1) - manteniment_anual;
   acum += estalvi_n;
   cashflow.push({any: n, flux: Math.round(estalvi_n), acumulat: Math.round(acum)});
   if (retorn_anys === null && acum >= 0) {
