@@ -28,7 +28,7 @@ const injectKpisText = (text) => {
   if (!text || typeof text !== 'string') return text;
   let t = text;
   if (kpis.retorn_anys != null)
-    t = t.replace(/(\b(?:retorn|amortitz)[^\d]{0,30})(\d+)(\s*anys)/gi, `$1${kpis.retorn_anys}$3`);
+    t = t.replace(/(\b(?:retorn|amortitz)[^\d]{0,30})(\d+[.,]?\d*)(\s*anys)/gi, `$1${kpis.retorn_anys}$3`);
   if (kpis.tir_pct != null)
     t = t.replace(/(TIR[^0-9]{0,15})(\d+[.,]?\d*)(\s*%)/gi, `$1${kpis.tir_pct}$3`);
   if (kpis.van_25anys != null)
@@ -41,6 +41,11 @@ const injectKpisText = (text) => {
     t = t.replace(/(autoconsum[^0-9]{0,25})(\d+[.,]?\d*)(\s*%)/gi, `$1${fmt(kpis.pct_autoconsum,1)}$3`);
   if (kpis.cost_actual_anual != null)
     t = t.replace(/(cost energètic[^0-9]{0,30})(\d[\d.,]*)(\s*EUR)/gi, `$1${fmt(kpis.cost_actual_anual,0)}$3`);
+  if (kpis.kwp != null)
+    t = t.replace(/\b\d+(?:[.,]\d+)?\s*kWp\b/gi, `${fmt(kpis.kwp,2)} kWp`);
+  const _nm = parseInt(kpis.num_moduls || input.num_moduls);
+  if (_nm > 0)
+    t = t.replace(/\b\d+\s*(mòduls?|moduls?|módulos?)\b/gi, `${_nm} $1`);
   return t;
 };
 const modulsData       = $('Llegir catàleg PDF').all().map(i => i.json);
