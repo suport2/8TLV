@@ -380,7 +380,6 @@ header .status-chip{color:rgba(255,255,255,.65);font-size:11px;display:flex;alig
               <option value="granja_avicola">&#128020; Granja av&iacute;cola</option>
               <option value="comercial_oficines">&#127970; Comer&ccedil; / Oficines</option>
               <option value="domestica_residencial" selected>&#127968; Dom&egrave;stica / Residencial</option>
-              <option value="domestica_plana">&#127968; Dom&egrave;stica plana (REE)</option>
               <option value="agricola_reg">&#127793; Agr&iacute;cola / Reg</option>
             </select>
           </div>
@@ -443,16 +442,6 @@ header .status-chip{color:rgba(255,255,255,.65);font-size:11px;display:flex;alig
         <div class="divider"></div>
         <div class="field-grid field-grid-2">
           <div class="field">
-            <label>Tipus de coberta</label>
-            <select id="tipus_coberta" onchange="onFormChange()">
-              <option value="teula">Teula cer&agrave;mica / formig&oacute;</option>
-              <option value="xapa">Xapa met&agrave;l&middot;lica (grecada o sandwich)</option>
-              <option value="plana">Coberta plana (llosa o impermeabilitzada)</option>
-              <option value="terra">Instal&middot;laci&oacute; en terra</option>
-              <option value="pergola">P&egrave;rgola / Aparcament</option>
-            </select>
-          </div>
-          <div class="field">
             <label>Pres&egrave;ncia d'ombres</label>
             <select id="ombres" onchange="onFormChange()">
               <option value="cap">Cap &mdash; coberta completament lliure</option>
@@ -460,11 +449,6 @@ header .status-chip{color:rgba(255,255,255,.65);font-size:11px;display:flex;alig
               <option value="importants">Importants &mdash; ombres significatives</option>
             </select>
             <div class="hint">&#128161; Si la instal·lació és a Lleida, selecciona <strong>Parcials</strong> per obtenir un càlcul més precís amb les dades d'irradiació locals.</div>
-          </div>
-          <div class="field">
-            <label>Superf&iacute;cie disponible (m&sup2;) <span class="text-muted">(opcional)</span></label>
-            <input type="number" id="superficie" placeholder="50" min="1" oninput="onFormChange()">
-            <div id="superficieWarn" style="display:none;margin-top:6px;padding:8px 10px;background:#fff3cd;border:1px solid #ffc107;border-radius:6px;font-size:12px;color:#856404"></div>
           </div>
         </div>
         <div id="ombraWarn" class="warn-box" style="display:none">
