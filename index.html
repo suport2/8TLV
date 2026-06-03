@@ -300,8 +300,8 @@ header .status-chip{color:rgba(255,255,255,.65);font-size:11px;display:flex;alig
       <div class="stepper">
         <div class="step-tab active" id="tab0" onclick="goTo(0)"><span class="num">1</span>Client</div>
         <div class="step-tab" id="tab1" onclick="goTo(1)"><span class="num">2</span>Ubicaci&oacute;</div>
-        <div class="step-tab" id="tab2" onclick="goTo(2)"><span class="num">3</span>Instal&middot;laci&oacute;</div>
-        <div class="step-tab" id="tab3" onclick="goTo(3)"><span class="num">4</span>Consums</div>
+        <div class="step-tab" id="tab2" onclick="goTo(2)"><span class="num">3</span>Consums</div>
+        <div class="step-tab" id="tab3" onclick="goTo(3)"><span class="num">4</span>Instal&middot;laci&oacute;</div>
         <div class="step-tab" id="tab4" onclick="goTo(4)"><span class="num">5</span>Econ&ograve;mics</div>
         <div class="step-tab" id="tab5" onclick="goTo(5)"><span class="num">6</span>Enviar</div>
       </div>
@@ -456,106 +456,12 @@ header .status-chip{color:rgba(255,255,255,.65);font-size:11px;display:flex;alig
         </div>
         <div class="nav-buttons">
           <button class="btn btn-secondary" onclick="goTo(0)">&larr; Client</button>
-          <button class="btn btn-primary" onclick="goTo(2)">Seg&uuml;ent &rarr; Instal&middot;laci&oacute;</button>
+          <button class="btn btn-primary" onclick="goTo(2)">Seg&uuml;ent &rarr; Consums</button>
         </div>
       </div>
 
-      <!-- SECCI&Oacute; 3: INSTAL&middot;LACI&Oacute; -->
+      <!-- SECCI&Oacute; 3: CONSUMS -->
       <div class="section" id="sec2">
-        <div class="section-title">Configuraci&oacute; de la Instal&middot;laci&oacute;</div>
-
-        <div class="mode-toggle">
-          <button class="mode-btn active" id="btnManual" onclick="setInstalMode('manual')">&#9998; Mode Manual</button>
-          <button class="mode-btn" id="btnIA" onclick="setInstalMode('ia')">&#129302; Mode IA Optimitzador</button>
-        </div>
-
-        <!-- Mode Manual -->
-        <div id="modeManual">
-          <div class="field-grid field-grid-2" style="margin-bottom:16px">
-            <div class="field">
-              <label>Nombre de m&ograve;duls <span class="req">*</span></label>
-              <div class="slider-wrap">
-                <input type="range" id="num_moduls" min="2" max="120" value="12"
-                  oninput="document.getElementById('numModulsVal').textContent=this.value+' mòduls';document.getElementById('num_moduls_num').value=this.value;calcPressupost();onMantenimentChange()">
-                <input type="number" id="num_moduls_num" value="12" min="2" max="999" step="1" style="width:64px;padding:3px 6px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;text-align:center"
-                  oninput="const v=Math.max(2,parseInt(this.value)||2);document.getElementById('num_moduls').max=Math.max(120,v);document.getElementById('num_moduls').value=v;document.getElementById('numModulsVal').textContent=v+' mòduls';calcPressupost();onMantenimentChange()">
-                <span class="slider-val" id="numModulsVal">12 m&ograve;duls</span>
-              </div>
-            </div>
-            <div class="field">
-              <label>Petit material (€ s/IVA)</label>
-              <div style="display:flex;align-items:center;gap:8px">
-                <input type="number" id="metres_cablejat" value="150" min="0" step="5"
-                  style="width:100px;padding:5px 8px;border:1px solid #d1d5db;border-radius:6px;font-size:14px"
-                  oninput="state.petitMaterialManual=true;calcPressupost();onFormChange()">
-                <button title="Recalcular automàticament" onclick="state.petitMaterialManual=false;calcPressupost();onFormChange()"
-                  style="padding:4px 8px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;cursor:pointer;background:#f9fafb;color:#374151">↺</button>
-                <span id="petitMatHint" style="font-size:11px;color:#9ca3af"></span>
-              </div>
-              <div class="hint">Cablejat, connectors, proteccions, etc.</div>
-            </div>
-          </div>
-
-          <div class="field" style="margin-bottom:12px">
-            <label>Selecciona el m&ograve;dul fotovoltaic</label>
-            <div class="catalog-grid" id="modulGrid"></div>
-          </div>
-
-          <div style="margin-bottom:12px">
-            <label style="display:block;font-size:11px;font-weight:600;color:var(--gm);margin-bottom:8px;text-transform:uppercase">Inversor</label>
-            <div class="toggle-group" style="margin-bottom:8px">
-              <button class="toggle-btn active" id="btnMono" onclick="setInvType('mono')">Monof&agrave;sic (1F)</button>
-              <button class="toggle-btn" id="btnTri"  onclick="setInvType('tri')">Trif&agrave;sic (3F)</button>
-            </div>
-            <div class="catalog-grid" id="inversorGrid"></div>
-            <div class="field" style="margin-top:10px;max-width:220px">
-              <label>Nombre d'inversors</label>
-              <input type="number" id="num_inversors" value="1" min="1" max="20" step="1"
-                style="width:80px;padding:5px 8px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;text-align:center"
-                oninput="calcPressupost();onFormChange()">
-              <div class="hint">Per instal·lacions amb múltiples inversors</div>
-            </div>
-          </div>
-
-          <div class="field">
-            <label>Tipus de muntatge</label>
-            <div class="catalog-grid" id="muntGrid"></div>
-          </div>
-        </div>
-
-        <!-- Mode IA -->
-        <div id="modeIA" style="display:none">
-          <div class="ia-panel">
-            <h3>&#129302; Proposta de dimensionat per IA</h3>
-            <p style="font-size:12px;color:var(--gm)">L'agent analitzar&agrave; els consums reals del client i calcular&agrave; la configuraci&oacute; &ograve;ptima autom&agrave;ticament.</p>
-            <div id="iaPressupostBox" style="display:none"></div>
-            <div class="ia-result" id="iaResult">
-              <div class="ia-badge">&#129302; Proposta IA</div>
-              <div class="ia-text" id="iaResultText"></div>
-            </div>
-            <button class="btn btn-primary" id="btnRunIA"
-              onclick="fetchOptimitzar()"
-              style="width:100%;margin-top:14px;background:var(--am);font-size:13px;padding:12px">
-              &#129302; Calcular dimensionat &ograve;ptim
-            </button>
-            <div id="iaLoading" style="display:none;text-align:center;padding:20px;color:var(--gm);font-size:12px">
-              <div style="font-size:28px;margin-bottom:8px">&#129302;</div>
-              <strong>Analitzant consums i calculant la millor configuraci&oacute;...</strong><br>
-              <span style="color:#6b7280">Consultant cat&agrave;leg &rarr; Calculant producci&oacute; &rarr; Comparant opcions</span>
-              <div style="margin-top:8px;font-size:11px;color:#9ca3af">Pot trigar entre 20 i 40 segons</div>
-            </div>
-            <div id="iaError" class="warn-box" style="display:none;margin-top:10px"></div>
-          </div>
-        </div>
-
-        <div class="nav-buttons">
-          <button class="btn btn-secondary" onclick="goTo(1)">&larr; Ubicaci&oacute;</button>
-          <button class="btn btn-primary" onclick="goTo(3)">Seg&uuml;ent &rarr; Consums</button>
-        </div>
-      </div>
-
-      <!-- SECCI&Oacute; 4: CONSUMS -->
-      <div class="section" id="sec3">
         <div class="section-title">Consums Energ&egrave;tics</div>
         <div class="mode-toggle">
           <button class="mode-btn active" id="btnConsA" onclick="setConsumMode('taula')">&#128202; Taula mensual</button>
@@ -670,10 +576,105 @@ header .status-chip{color:rgba(255,255,255,.65);font-size:11px;display:flex;alig
         </div>
 
         <div class="nav-buttons">
-          <button class="btn btn-secondary" onclick="goTo(2)">&larr; Instal&middot;laci&oacute;</button>
+          <button class="btn btn-secondary" onclick="goTo(1)">&larr; Ubicaci&oacute;</button>
+          <button class="btn btn-primary" onclick="goTo(3)">Seg&uuml;ent &rarr; Instal&middot;laci&oacute;</button>
+        </div>
+      </div>
+
+      <!-- SECCI&Oacute; 4: INSTAL&middot;LACI&Oacute; -->
+      <div class="section" id="sec3">
+        <div class="section-title">Configuraci&oacute; de la Instal&middot;laci&oacute;</div>
+
+        <div class="mode-toggle">
+          <button class="mode-btn active" id="btnManual" onclick="setInstalMode('manual')">&#9998; Mode Manual</button>
+          <button class="mode-btn" id="btnIA" onclick="setInstalMode('ia')">&#129302; Mode IA Optimitzador</button>
+        </div>
+
+        <!-- Mode Manual -->
+        <div id="modeManual">
+          <div class="field-grid field-grid-2" style="margin-bottom:16px">
+            <div class="field">
+              <label>Nombre de m&ograve;duls <span class="req">*</span></label>
+              <div class="slider-wrap">
+                <input type="range" id="num_moduls" min="2" max="120" value="12"
+                  oninput="document.getElementById('numModulsVal').textContent=this.value+' mòduls';document.getElementById('num_moduls_num').value=this.value;calcPressupost();onMantenimentChange()">
+                <input type="number" id="num_moduls_num" value="12" min="2" max="999" step="1" style="width:64px;padding:3px 6px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;text-align:center"
+                  oninput="const v=Math.max(2,parseInt(this.value)||2);document.getElementById('num_moduls').max=Math.max(120,v);document.getElementById('num_moduls').value=v;document.getElementById('numModulsVal').textContent=v+' mòduls';calcPressupost();onMantenimentChange()">
+                <span class="slider-val" id="numModulsVal">12 m&ograve;duls</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>Petit material (€ s/IVA)</label>
+              <div style="display:flex;align-items:center;gap:8px">
+                <input type="number" id="metres_cablejat" value="150" min="0" step="5"
+                  style="width:100px;padding:5px 8px;border:1px solid #d1d5db;border-radius:6px;font-size:14px"
+                  oninput="state.petitMaterialManual=true;calcPressupost();onFormChange()">
+                <button title="Recalcular automàticament" onclick="state.petitMaterialManual=false;calcPressupost();onFormChange()"
+                  style="padding:4px 8px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;cursor:pointer;background:#f9fafb;color:#374151">↺</button>
+                <span id="petitMatHint" style="font-size:11px;color:#9ca3af"></span>
+              </div>
+              <div class="hint">Cablejat, connectors, proteccions, etc.</div>
+            </div>
+          </div>
+
+          <div class="field" style="margin-bottom:12px">
+            <label>Selecciona el m&ograve;dul fotovoltaic</label>
+            <div class="catalog-grid" id="modulGrid"></div>
+          </div>
+
+          <div style="margin-bottom:12px">
+            <label style="display:block;font-size:11px;font-weight:600;color:var(--gm);margin-bottom:8px;text-transform:uppercase">Inversor</label>
+            <div class="toggle-group" style="margin-bottom:8px">
+              <button class="toggle-btn active" id="btnMono" onclick="setInvType('mono')">Monof&agrave;sic (1F)</button>
+              <button class="toggle-btn" id="btnTri"  onclick="setInvType('tri')">Trif&agrave;sic (3F)</button>
+            </div>
+            <div class="catalog-grid" id="inversorGrid"></div>
+            <div class="field" style="margin-top:10px;max-width:220px">
+              <label>Nombre d'inversors</label>
+              <input type="number" id="num_inversors" value="1" min="1" max="20" step="1"
+                style="width:80px;padding:5px 8px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;text-align:center"
+                oninput="calcPressupost();onFormChange()">
+              <div class="hint">Per instal·lacions amb múltiples inversors</div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Tipus de muntatge</label>
+            <div class="catalog-grid" id="muntGrid"></div>
+          </div>
+        </div>
+
+        <!-- Mode IA -->
+        <div id="modeIA" style="display:none">
+          <div class="ia-panel">
+            <h3>&#129302; Proposta de dimensionat per IA</h3>
+            <p style="font-size:12px;color:var(--gm)">L'agent analitzar&agrave; els consums reals del client i calcular&agrave; la configuraci&oacute; &ograve;ptima autom&agrave;ticament.</p>
+            <div id="iaPressupostBox" style="display:none"></div>
+            <div class="ia-result" id="iaResult">
+              <div class="ia-badge">&#129302; Proposta IA</div>
+              <div class="ia-text" id="iaResultText"></div>
+            </div>
+            <button class="btn btn-primary" id="btnRunIA"
+              onclick="fetchOptimitzar()"
+              style="width:100%;margin-top:14px;background:var(--am);font-size:13px;padding:12px">
+              &#129302; Calcular dimensionat &ograve;ptim
+            </button>
+            <div id="iaLoading" style="display:none;text-align:center;padding:20px;color:var(--gm);font-size:12px">
+              <div style="font-size:28px;margin-bottom:8px">&#129302;</div>
+              <strong>Analitzant consums i calculant la millor configuraci&oacute;...</strong><br>
+              <span style="color:#6b7280">Consultant cat&agrave;leg &rarr; Calculant producci&oacute; &rarr; Comparant opcions</span>
+              <div style="margin-top:8px;font-size:11px;color:#9ca3af">Pot trigar entre 20 i 40 segons</div>
+            </div>
+            <div id="iaError" class="warn-box" style="display:none;margin-top:10px"></div>
+          </div>
+        </div>
+
+        <div class="nav-buttons">
+          <button class="btn btn-secondary" onclick="goTo(2)">&larr; Consums</button>
           <button class="btn btn-primary" onclick="goTo(4)">Seg&uuml;ent &rarr; Econ&ograve;mics</button>
         </div>
       </div>
+
 
       <!-- SECCI&Oacute; 5: ECON&Ograve;MICS -->
       <div class="section" id="sec4">
@@ -724,7 +725,7 @@ header .status-chip{color:rgba(255,255,255,.65);font-size:11px;display:flex;alig
           </div>
         </div>
         <div class="nav-buttons">
-          <button class="btn btn-secondary" onclick="goTo(3)">&larr; Consums</button>
+          <button class="btn btn-secondary" onclick="goTo(3)">&larr; Instal&middot;laci&oacute;</button>
           <button class="btn btn-primary" onclick="goTo(5)">&Uacute;ltim pas &rarr; Enviar</button>
         </div>
       </div>
@@ -956,8 +957,8 @@ function goTo(n) {
     else if(i<n) t.classList.add('done');
   });
   state.currentStep = n;
-  const titles = ['Dades del Client','Ubicaci\u00f3 i Coberta','Configuraci\u00f3 de la Instal\u00b7laci\u00f3',
-                  'Consums Energ\u00e8tics','Par\u00e0metres Econ\u00f2mics','Revisi\u00f3 i Enviament'];
+  const titles = ['Dades del Client','Ubicaci\u00f3 i Coberta','Consums Energ\u00e8tics',
+                  'Configuraci\u00f3 de la Instal\u00b7laci\u00f3','Par\u00e0metres Econ\u00f2mics','Revisi\u00f3 i Enviament'];
   document.getElementById('sectionTitle').textContent = `Secci\u00f3 ${n+1} \u2014 ${titles[n]}`;
   document.getElementById('sectionProgress').textContent = `${n+1} de 6`;
   if(n===5) updateResum();
