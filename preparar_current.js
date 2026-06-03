@@ -13,7 +13,7 @@ const C = Object.fromEntries(costosRaw.map(r => [r.clau, parseFloat(r.valor) || 
 const C_MO_BASE     = C.ma_obra_base      || 600;
 const C_MO_MOD      = C.ma_obra_per_modul || 80;
 const C_PROJECTE    = C.projecte_tecnic   || 550;
-const C_CABLES_M    = C.cables_per_metre  || 4.50;  // EUR/metre cable DC+AC+MC4
+const C_PETIT_MOD   = C.petit_material_per_modul || 20;  // EUR/mòdul (cables + petits materials)
 const C_MARGE       = (() => { const m = parseFloat(input.marge_comercial) || parseFloat(input.economics?.marge_comercial); return m > 0 ? m : (C.marge || 0.35); })();
 
 // BUG 1: Decodifica escape literals \uXXXX en textos IA (doble encoding UTF-8)
@@ -268,8 +268,7 @@ const preuMuntPerPlaca = preuMuntRaw > 200 ? preuMuntRaw / numModuls : preuMuntR
 const costMuntatge     = preuMuntRaw > 200 ? preuMuntRaw : preuMuntRaw * numModuls;
 const costMaObra       = C_MO_BASE + (C_MO_MOD * numModuls);
 const projecte         = C_PROJECTE;
-const metresCablejat   = parseFloat(input.metres_cablejat || 15);
-const cables           = metresCablejat * C_CABLES_M;
+const cables           = parseFloat(input.petit_material) || (C_PETIT_MOD * numModuls);
 const MARGE            = C_MARGE;
 
 // Marge aplicat per línia (cada concepte × (1 + MARGE))

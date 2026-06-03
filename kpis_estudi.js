@@ -262,7 +262,7 @@ if (input.cost_instalacio && parseFloat(input.cost_instalacio) > 0) {
   const costMuntatge = preuMuntRaw > 200 ? preuMuntRaw : (preuMuntRaw || C.preu_muntatge || 50) * numMod;
   const costMaObra   = (C.ma_obra_base || 600) + (C.ma_obra_per_modul || 80) * numMod;
   const projecte     = C.projecte_tecnic || 550;
-  const cables       = parseFloat(input.metres_cablejat || input.petit_material || 15) * (C.cables_per_metre || 4.5);
+  const cables       = parseFloat(input.petit_material) || ((C.petit_material_per_modul || 20) * numMod);
   subtotal   = (numMod * preuMod) + preuInvEur + costMuntatge + costMaObra + projecte + cables;
   costInstal = Math.round(subtotal * (1 + MARGE)); // pre-IVA, consistent amb normal path
 }
