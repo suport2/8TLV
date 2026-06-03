@@ -27,16 +27,18 @@ let   TARIFES = _motorData.tarifes_8760h;
 const perfilsRaw = $('Llegir perfils consum').all().map(i => i.json);
 const SHAPES_SHEETS = {};
 perfilsRaw.forEach(row => {
-  const hora = parseInt(row.horra) - 1; // horra va de 1 a 24
+  const hora = parseInt(row.hora) - 1; // hora va de 1 a 24
   if (hora < 0 || hora > 23) return;
   const cols = {
-    'granja_porcina':        parseFloat(row.granja_porcina)    || 0,
-    'granja_avicola':        parseFloat(row.granja_avicola)    || 0,
-    'industria_general':     parseFloat(row.industria_general) || 0,
-    'logistica_magatzem':    parseFloat(row.logistica_magatz)  || 0,
-    'domestica_residencial': parseFloat(row.domestica_resid)   || 0,
-    'comercial_oficines':    parseFloat(row.comercial_oficin)  || 0,
-    'agricola_reg':          parseFloat(row.agricola_reg)      || 0,
+    'granja_porcina':        parseFloat(row.granja_porcina)        || 0,
+    'granja_avicola':        parseFloat(row.granja_avicola)        || 0,
+    'industria_general':     parseFloat(row.industria_general)     || 0,
+    'logistica_magatzem':    parseFloat(row.logistica_magatzem)    || 0,
+    'domestica_residencial': parseFloat(row.domestica_residencial) || 0,
+    'comercial_oficines':    parseFloat(row.comercial_oficines)    || 0,
+    'agricola_reg':          parseFloat(row.agricola_reg)          || 0,
+    'industrial_nocturn':    parseFloat(row.industrial_nocturn)    || 0,
+    'domestica_plana':       parseFloat(row.domestica_plana)       || 0,
   };
   Object.entries(cols).forEach(([key, val]) => {
     if (!SHAPES_SHEETS[key]) SHAPES_SHEETS[key] = new Array(24).fill(0);
